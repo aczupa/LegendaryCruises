@@ -361,3 +361,28 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+
+# ============================
+#   Sensitive configuration
+# ============================
+
+# Local secrets — NEVER commit
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+
+# Your production file contains secrets → ignore it too
+appsettings.json
+
+# User secrets folder
+secrets.json
+
+# ============================
+#   Videos / Large files
+# ============================
+
+wwwroot/videos/*.mp4
+wwwroot/videos/*.mov
+wwwroot/videos/*.avi
+wwwroot/videos/*.mkv
