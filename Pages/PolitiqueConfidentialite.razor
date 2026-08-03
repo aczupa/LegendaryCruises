@@ -1,0 +1,274 @@
+﻿@page "/politique-confidentialite"
+
+@using LegendaryCruises.Interfaces
+@using LegendaryCruises.Services
+@using System.Security.Claims
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Nav
+@inject AuthenticationStateProvider Auth
+@inject ICartService CartService
+
+<nav class="navbar navbar-expand-md navbar-light px-1">
+
+    <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+    </a>
+
+
+
+    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
+        <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
+
+            <AuthorizeView Roles="Admin">
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/cruises-table">
+                        CRUISES
+                    </a>
+                </div>
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/add-cruise">
+                        ADD CRUISE
+                    </a>
+                </div>
+            </AuthorizeView>
+
+            <!-- LOGGED IN -->
+            <AuthorizeView>
+                <Authorized Context="authState">
+                    <button class="btn btn-primary rounded-pill px-3 py-1 d-flex align-items-center"
+                            @onclick="GoToCart">
+                        <i class="bi bi-cart me-2 icon-white"></i>
+                        <span>@CartItemCount</span>
+                    </button>
+
+                    <span class="me-2 login2">
+                            Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                        </span>
+
+                   
+
+
+                    <a class="btn btn-primary" href="/newcruises">
+                        ✨ Nouvelles croisières
+                    </a>
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Logout">
+                            LOGOUT
+                        </a>
+                    </div>
+
+                </Authorized>
+
+                <!-- NOT LOGGED IN -->
+                <NotAuthorized>
+                    <div class="nav-item px-1">
+                        <a class="btn login"
+                           href="/Identity/Account/Login?returnUrl=/@Nav.ToBaseRelativePath(Nav.Uri)">
+                            LOGIN
+                        </a>
+                    </div>
+                    <div class="nav-item px-1">
+                        <a class="custom-buy-btn mt-3" style="text-decoration: none!important" href="/newcruises">
+                            ✨ Nouvelles croisières
+                        </a>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+
+        </div>
+    </div>
+</nav>
+
+<div class="cruise-details-container">
+    <div class="cruise-card">
+
+        <h1 class="cruise-title">Politique de confidentialité</h1>
+
+        <div class="cruise-description">
+
+            <p>
+                <strong>1. Introduction</strong><br />
+                Chez Legendary Cruises, nous accordons une importance particulière à la protection
+                de vos données personnelles et au respect de votre vie privée.
+                La présente politique de confidentialité explique quelles données nous collectons,
+                comment nous les utilisons et quels sont vos droits conformément au Règlement Général
+                sur la Protection des Données (RGPD - Règlement UE 2016/679).
+            </p>
+
+
+            <p>
+                <strong>2. Responsable du traitement des données</strong><br />
+                Le responsable du traitement des données personnelles collectées sur ce site est
+                Legendary Cruises.
+                Les données sont traitées uniquement dans le cadre de la gestion des services
+                proposés sur notre plateforme de réservation de croisières.
+            </p>
+
+
+            <p>
+                <strong>3. Données personnelles collectées</strong><br />
+                Dans le cadre de votre utilisation de notre site, nous pouvons collecter les
+                informations suivantes :
+            </p>
+
+            <ul>
+                <li>Nom et prénom ;</li>
+                <li>Adresse électronique (email) ;</li>
+                <li>Informations nécessaires à la gestion de votre compte client ;</li>
+                <li>Informations relatives à vos réservations de croisières ;</li>
+                <li>Informations nécessaires au paiement lorsque celui-ci est effectué via un prestataire sécurisé ;</li>
+                <li>Données techniques liées à votre navigation (cookies, adresse IP, type de navigateur).</li>
+            </ul>
+
+
+            <p>
+                <strong>4. Finalités de la collecte des données</strong><br />
+                Vos données personnelles sont utilisées uniquement pour les finalités suivantes :
+            </p>
+
+            <ul>
+                <li>Créer et gérer votre espace client ;</li>
+                <li>Traiter vos réservations de croisières ;</li>
+                <li>Vous envoyer les confirmations de réservation et documents nécessaires ;</li>
+                <li>Assurer le suivi de votre commande et répondre à vos demandes ;</li>
+                <li>Améliorer la qualité de nos services et l’expérience utilisateur ;</li>
+                <li>Garantir la sécurité du site et prévenir les utilisations frauduleuses.</li>
+            </ul>
+
+
+            <p>
+                <strong>5. Base légale du traitement</strong><br />
+                Le traitement de vos données repose principalement sur :
+            </p>
+
+            <ul>
+                <li>
+                    L’exécution du contrat lorsque vous effectuez une réservation ;
+                </li>
+                <li>
+                    Votre consentement pour certaines communications commerciales ;
+                </li>
+                <li>
+                    Nos obligations légales en matière de conservation des données.
+                </li>
+            </ul>
+
+
+            <p>
+                <strong>6. Protection et sécurité des données</strong><br />
+                Legendary Cruises met en œuvre des mesures techniques et organisationnelles
+                appropriées afin de protéger vos données personnelles contre toute perte,
+                utilisation abusive, accès non autorisé ou divulgation.
+                Les informations liées aux paiements sont traitées par des systèmes sécurisés
+                conformes aux standards de sécurité applicables.
+            </p>
+
+
+            <p>
+                <strong>7. Conservation des données</strong><br />
+                Vos données personnelles sont conservées uniquement pendant la durée nécessaire
+                aux finalités pour lesquelles elles ont été collectées.
+                Les données liées aux réservations peuvent être conservées pendant les durées
+                imposées par les obligations comptables et légales applicables.
+            </p>
+
+
+            <p>
+                <strong>8. Partage des données</strong><br />
+                Vos données personnelles ne sont jamais vendues, louées ou utilisées à des fins
+                commerciales par des tiers.
+                Elles peuvent uniquement être transmises aux prestataires indispensables au bon
+                fonctionnement du service (par exemple : solutions de paiement, services
+                techniques ou partenaires nécessaires à l’exécution de votre réservation).
+            </p>
+
+
+            <p>
+                <strong>9. Vos droits</strong><br />
+                Conformément au RGPD, vous disposez des droits suivants :
+            </p>
+
+            <ul>
+                <li>Droit d’accès à vos données personnelles ;</li>
+                <li>Droit de rectification des informations incorrectes ;</li>
+                <li>Droit à l’effacement de vos données ;</li>
+                <li>Droit à la limitation du traitement ;</li>
+                <li>Droit d’opposition dans certains cas ;</li>
+                <li>Droit à la portabilité de vos données.</li>
+            </ul>
+
+            <p>
+                Pour exercer vos droits, vous pouvez nous contacter en précisant votre demande
+                et en fournissant les informations nécessaires à la vérification de votre identité.
+            </p>
+
+
+            <p>
+                <strong>10. Cookies</strong><br />
+                Notre site utilise des cookies nécessaires au fonctionnement du service,
+                notamment pour assurer la connexion utilisateur, la sécurité et l’amélioration
+                de votre expérience de navigation.
+                Vous pouvez configurer votre navigateur afin de limiter ou refuser certains cookies.
+            </p>
+
+
+            <p>
+                <strong>11. Modifications de cette politique</strong><br />
+                Legendary Cruises se réserve le droit de modifier cette politique de confidentialité
+                afin de rester conforme aux évolutions réglementaires ou aux améliorations
+                apportées à ses services.
+                La date de dernière mise à jour sera indiquée lors de toute modification importante.
+            </p>
+
+
+            <p>
+                <strong>12. Contact</strong><br />
+                Pour toute question concernant la protection de vos données personnelles,
+                vous pouvez nous contacter via les coordonnées disponibles sur notre site.
+            </p>
+
+        </div>
+
+    </div>
+</div>
+
+@code {
+    private int CartItemCount = 0;
+    private bool IsLoggedIn = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await Auth.GetAuthenticationStateAsync();
+
+        var user = authState.User;
+
+        IsLoggedIn = user.Identity?.IsAuthenticated ?? false;
+
+
+        if (IsLoggedIn)
+        {
+            var userId =
+                user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                CartItemCount =
+                    await CartService.GetCartItemCount(userId);
+            }
+        }
+    }
+
+    private void GoToCart()
+    {
+        Nav.NavigateTo("/cart");
+    }
+
+
+
+}

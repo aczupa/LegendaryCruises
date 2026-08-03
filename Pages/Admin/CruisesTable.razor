@@ -1,0 +1,269 @@
+﻿@page "/admin/cruises-table"
+@using LegendaryCruises.Interfaces
+@using LegendaryCruises.Models
+@using LegendaryCruises.Components
+@using LegendaryCruises.Services
+@using System.Security.Claims
+
+@inject ICruiseService CruiseService
+@inject NavigationManager Nav
+@inject AuthenticationStateProvider Auth
+@inject ICartService CartService
+
+<nav class="navbar navbar-expand-md navbar-light px-1">
+
+    <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+    </a>
+
+    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
+        <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
+
+            <AuthorizeView Roles="Admin">
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/add-cruise">ADD CRUISE</a>
+                </div>
+            </AuthorizeView>
+
+            <AuthorizeView>
+                <Authorized Context="authState">
+
+                    <button class="btn btn-primary rounded-pill px-3 py-1 d-flex align-items-center"
+                            @onclick="GoToCart">
+                        <i class="bi bi-cart me-2 icon-white"></i>
+                        <span>@CartItemCount</span>
+                    </button>
+
+                    <span class="me-2 login2">
+                        Bonjour @(authState.User.Identity?.Name ??
+                                                authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                    </span>
+
+                    <a class="btn btn-primary" href="/newcruises">✨ Nouvelles croisières</a>
+
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Logout">LOGOUT</a>
+                    </div>
+
+                </Authorized>
+
+                <NotAuthorized>
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Login">LOGIN</a>
+                    </div>
+                    <div class="nav-item px-1">
+                        <a class="custom-buy-btn mt-3" style="text-decoration: none!important" href="/newcruises">
+                            ✨ Nouvelles croisières
+                        </a>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid mt-3 mt-md-4">
+    <h3 class="mb-3 text-center">Gestion des Croisières</h3>
+
+    @if (cruises == null)
+    {
+        <p class="text-center">Chargement...</p>
+    }
+    else
+    {
+        <Card>
+            <div class="table-responsive">
+
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="floatingInput"
+                           placeholder="Destination here" @oninput="FilterCruises" />
+                    <label for="floatingInput">Filter by destination</label>
+                </div>
+
+                <table class="table table-striped table-hover align-middle admin-mobile-table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Titre</th>
+                            <th>Itinerary</th>
+                            <th>Dates & Cabins</th>
+                            <th>Actif</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var c in cruises)
+                        {
+                            <tr>
+
+                                <td data-label="Titre" class="fw-semibold">@c.Title</td>
+
+                                <td data-label="Itinerary" style="white-space: normal;">
+                                    @if (c.Itinerary?.Any() == true)
+                                    {
+                                        foreach (var day in c.Itinerary.OrderBy(i => i.DayNumber))
+                                        {
+                                            <div class="mb-1">
+                                                <strong>Jour @day.DayNumber</strong> : @day.Location
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No itinerary</span>
+                                    }
+                                </td>
+
+                                <td data-label="Dates & Cabins" style="white-space: normal;">
+                                    @if (c.CruiseDates?.Any() == true)
+                                    {
+                                        foreach (var d in c.CruiseDates.OrderBy(x => x.DepartureDate))
+                                        {
+                                            var key = $"{c.Id}-{d.Id}";
+
+                                            <div class="mb-2">
+
+                                                <button class="btn btn-sm btn-outline-primary w-100 text-start"
+                                                        @onclick="() => ToggleDate(key)">
+                                                    📅 @d.DepartureDate:yyyy-MM-dd →
+                                                    @d.ReturnDate:yyyy-MM-dd
+                                                    <span class="float-end">
+                                                        @(expandedDates.Contains(key) ? "▲" : "▼")
+                                                    </span>
+                                                </button>
+
+                                                @if (expandedDates.Contains(key))
+                                                {
+                                                    <div class="border rounded p-2 mt-2 bg-light">
+
+                                                        <div class="text-muted mb-2">
+                                                            Durée : @d.DurationDays jours
+                                                        </div>
+
+                                                        <hr class="my-1" />
+
+                                                        @if (d.Cabins?.Any() == true)
+                                                        {
+                                                            @foreach (var group in d.Cabins
+                                                                                                .GroupBy(x => x.CabinType)
+                                                                                                .OrderBy(x => x.Key))
+                                                            {
+                                                                var available = group.Sum(x => x.Available);
+                                                                var capacity = group.Sum(x => x.Capacity);
+                                                                double ratio = capacity == 0 ? 0 : (double)available / capacity;
+
+                                                                string cssClass =
+                                                                ratio >= 0.6 ? "cabin-high" :
+                                                                ratio >= 0.3 ? "cabin-medium" :
+                                                                "cabin-low";
+
+                                                                <div class="ms-2 @cssClass">
+                                                                    <strong>@group.Key</strong> :
+                                                                    @available libres / @capacity
+                                                                </div>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="text-muted">Aucune cabine</div>
+                                                        }
+
+                                                    </div>
+                                                }
+
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No dates</span>
+                                    }
+                                </td>
+
+                                <td data-label="Actif">
+                                    @if (c.IsActive)
+                                    {
+                                        <span class="badge bg-success">Oui</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Non</span>
+                                    }
+                                </td>
+
+                                <td data-label="Actions">
+                                    <button class="btn btn-sm btn-primary"
+                                            @onclick="() => EditCruise(c.Id)">
+                                        Modifier
+                                    </button>
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </Card>
+    }
+</div>
+
+
+@code {
+    private List<Cruise>? cruises;
+    private List<Cruise>? cruisesBackup;
+    private int CartItemCount = 0;
+    private bool IsLoggedIn = false;
+
+    private HashSet<string> expandedDates = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await Auth.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        IsLoggedIn = user.Identity?.IsAuthenticated ?? false;
+
+        if (IsLoggedIn)
+        {
+            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                CartItemCount = await CartService.GetCartItemCount(userId);
+            }
+        }
+
+        var result = await CruiseService.GetCruises();
+        cruises = result.Cruises;
+        cruisesBackup = new List<Cruise>(cruises);
+    }
+
+    private void GoToCart() => Nav.NavigateTo("/cart");
+
+    private void ToggleDate(string key)
+    {
+        if (expandedDates.Contains(key))
+            expandedDates.Remove(key);
+        else
+            expandedDates.Add(key);
+    }
+
+    private void EditCruise(int id)
+    {
+        Nav.NavigateTo($"/admin/cruise/{id}");
+    }
+
+    private void FilterCruises(ChangeEventArgs e)
+    {
+        var text = e.Value?.ToString() ?? "";
+        cruises = cruisesBackup
+            .Where(x => x.Destination.Contains(text, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+}

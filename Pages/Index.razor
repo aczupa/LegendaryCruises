@@ -1,0 +1,316 @@
+﻿@page "/"
+@using LegendaryCruises.Interfaces
+@using LegendaryCruises.Services
+@using System.Security.Claims
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Nav
+@inject AuthenticationStateProvider Auth
+@inject ICartService CartService
+
+<PageTitle>Legendary World Crusises</PageTitle>
+<nav class="navbar navbar-expand-md navbar-light px-1">
+
+    <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+    </a>
+
+
+
+    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
+        <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
+
+            <AuthorizeView Roles="Admin">
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/cruises-table">
+                        CRUISES
+                    </a>
+                </div>
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/add-cruise">
+                        ADD CRUISE
+                    </a>
+                </div>
+            </AuthorizeView>
+
+            <!-- LOGGED IN -->
+            <AuthorizeView>
+                <Authorized Context="authState">
+                    <button class="btn btn-primary rounded-pill px-3 py-1 d-flex align-items-center"
+                            @onclick="GoToCart">
+                        <i class="bi bi-cart me-2 icon-white"></i>
+                        <span>@CartItemCount</span>
+                    </button>
+
+                        <span class="me-2 login2" >
+                            Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                        </span>
+
+                  
+
+                  
+                    <a class="btn btn-primary" href="/newcruises">    
+                            ✨ Nouvelles croisières 
+                    </a>
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Logout">
+                            LOGOUT
+                        </a>
+                    </div>
+
+                </Authorized>
+
+                <!-- NOT LOGGED IN -->
+                <NotAuthorized>
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Login">
+                            LOGIN
+                        </a>
+                    </div>
+                    <div class="nav-item px-1">
+                        <a class="custom-buy-btn mt-3" style="text-decoration: none!important" href="/newcruises">
+                            ✨ Nouvelles croisières
+                        </a>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+
+        </div>
+    </div>
+</nav>
+
+<div class="video-container"> 
+    <video autoplay muted loop playsinline id="bg-video">
+
+        <source src="/videos/bg.mp4" type="video/mp4">
+    </video>
+    <div id="video-overlay"></div>
+    <div class="video-title">
+        Là où commencent les croisières les plus légendaires du monde
+    </div>
+</div>
+
+<div class="video-nav-bar">
+    <a class="video-nav-link" href="#tour-du-monde">Tour du Monde</a>
+    <a class="video-nav-link" href="#antarctique">Antarctique</a>
+    <a class="video-nav-link" href="#alaska">Alaska</a>
+    <a class="video-nav-link" href="#iles-grecques">Îles Grecques</a>
+    <a class="video-nav-link" href="#nil">Le Nil</a>
+    <a class="video-nav-link" href="#polynesie">Polynésie</a>
+    <a class="video-nav-link" href="#transatlantique">Transatlantique</a>
+    <a class="video-nav-link" href="#japan">Japon</a>
+    <a class="video-nav-link" href="#islande">Norvège & Islande</a>
+</div>
+
+<div class="row gy-4 mt-2">
+    <!-- Card 4 -->
+    <div class="col-md-4 animate-fadeInUp" id="antarctique" style="animation-delay: 1.1s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/antarctique.jpg" class="card-img-top fixed-img" alt="Croisière Antarctique" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Antarctique</h5>
+                <p class="card-text">Découvrez les paysages glacés et la faune unique.</p>
+                <p class="fw-bold">Prix à partir de 4 990 €</p>
+                <a href="/antarctica" class="btn btn-primary">Détails</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="col-md-4 animate-fadeInUp" id="nil" style="animation-delay: 1.3s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/le-nil.jpg" class="card-img-top fixed-img" alt="Croisière sur le Nil" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Le Nil</h5>
+                <p class="card-text">Naviguez au cœur de l’histoire égyptienne.</p>
+                <p class="fw-bold">Prix à partir de 1 299 €</p>
+                <a href="/nil" class="btn btn-primary">Détails</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="col-md-4 animate-fadeInUp" id="polynesie" style="animation-delay: 1.5s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/polynesie.jpg" class="card-img-top fixed-img" alt="Croisière Polynésie" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Polynésie</h5>
+                <p class="card-text">Profitez des lagons turquoise et des plages paradisiaques.</p>
+                <p class="fw-bold">Prix à partir de 3 490 €</p>
+                <a href="/polynesie" class="btn btn-primary">Détails</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row gy-4 mt-2">
+    <!-- Card 7 -->
+    <div class="col-md-4 animate-fadeInUp" id="transatlantique" style="animation-delay: 1.7s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/transatlantique.jpg" class="card-img-top fixed-img" alt="Croisière Transatlantique" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Transatlantique</h5>
+                <p class="card-text">Traversez l’océan et vivez une expérience unique.</p>
+                <p class="fw-bold">Prix à partir de 1 200 €</p>
+                <a href="/transatlantique" class="btn btn-primary">Détails</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 8 -->
+    <div class="col-md-4 animate-fadeInUp" id="japan" style="animation-delay: 1.9s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/Japon/japan.jpg" class="card-img-top fixed-img" alt="Croisière Japon" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Japon</h5>
+                <p class="card-text">Explorez la tradition et la modernité du pays du Soleil-Levant.</p>
+                <p class="fw-bold">Prix à partir de 2 990 €</p>
+                <a href="/japon" class="btn btn-primary">Détails</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 9 -->
+    <div class="col-md-4 animate-fadeInUp" id="islande" style="animation-delay: 2.1s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/islande.jpg" class="card-img-top fixed-img" alt="Croisière Islande" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Norvège Islande</h5>
+                <p class="card-text">Terres de feu et de glace : geysers, glaciers et volcans majestueux.</p>
+                <p class="fw-bold">Prix à partir de 1 899 €</p>
+                <a href="/islande" class="btn btn-primary">Détails</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row gy-4 mt-2">
+    <!-- Card 1 -->
+    <div class="col-md-4 animate-fadeInUp" id="tour-du-monde" style="animation-delay: 0.5s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/tour-du-monde.jpg" class="card-img-top fixed-img" alt="Tour du Monde" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Tour du Monde</h5>
+                <p class="card-text">Une aventure inoubliable autour du globe.</p>
+                <p class="fw-bold">Prix à partir de 19 900 €</p>
+                <a href="/tourdumonde" class="btn btn-primary">Détails</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="col-md-4 animate-fadeInUp" id="alaska" style="animation-delay: 0.7s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/alaska.jpg" class="card-img-top fixed-img" alt="Croisière Alaska" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Alaska</h5>
+                <p class="card-text">Explorez les glaciers majestueux et la faune sauvage.</p>
+                <p class="fw-bold">Prix à partir de 1 899 €</p>
+                <a href="/alaska" class="btn btn-primary">Détails</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="col-md-4 animate-fadeInUp" id="iles-grecques" style="animation-delay: 0.9s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/iles-grecques.jpg" class="card-img-top fixed-img" alt="Croisière Îles Grecques" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Îles Grecques</h5>
+                <p class="card-text">Découvrez les villages blancs et les eaux turquoise.</p>
+                <p class="fw-bold">Prix à partir de 1 799 €</p>
+                <a href="/ilesgrecques" class="btn btn-primary">Détails</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()">
+    ↑
+</button>
+
+<footer class="footer-modern py-5 mt-4">
+    <div class="container">
+        <div class="row gy-5">
+
+            <div class="col-md-4">
+                <h6 class="footer-title">Informations légales</h6>
+                <ul class="footer-links">
+                    <li><a href="/mentions-legales">Mentions légales</a></li>
+                    <li><a href="/conditions-generales">Conditions générales</a></li>
+                    <li><a href="/politique-confidentialite">Politique de confidentialité</a></li>
+                </ul>
+            </div>
+
+            <div class="col-md-4">
+                <h6 class="footer-title">À très bientôt à bord de nos navires</h6>
+                <p class="footer-subtext">
+                    Découvrez des expériences uniques, des destinations inoubliables et un service d’exception.
+                </p>
+            </div>
+
+            <div class="col-md-4 text-md-end">
+                <h6 class="footer-title">Contact</h6>
+                <ul class="footer-links">
+                    <li><span class="icon">📧</span> <a href="mailto:legendary.cruises.booking@gmail.com">legendary.cruises.booking@gmail.com</a></li>
+                    <li><span class="icon">📞</span> +33 6 00 00 00 00</li>
+                    <li><a href="/contact">Formulaire de contact</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="text-center mt-4">
+            <small class="footer-copy">&copy; 2026 World Cruises. Tous droits réservés.</small>
+        </div>
+    </div>
+</footer>
+
+@code {
+    private int CartItemCount = 0;
+    private bool IsLoggedIn = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await Auth.GetAuthenticationStateAsync();
+
+        var user = authState.User;
+
+        IsLoggedIn = user.Identity?.IsAuthenticated ?? false;
+
+
+        if (IsLoggedIn)
+        {
+            var userId =
+                user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                CartItemCount =
+                    await CartService.GetCartItemCount(userId);
+            }
+        }
+    }
+
+    private void GoToCart()
+    {
+        Nav.NavigateTo("/cart");
+    }
+
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        await JSRuntime.InvokeVoidAsync("initVideoNavScroll");
+
+        await Task.Delay(50);
+        await JSRuntime.InvokeVoidAsync("scrollToHashIfAny");
+    }
+}

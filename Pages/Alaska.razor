@@ -1,0 +1,124 @@
+﻿@page "/alaska"
+@using LegendaryCruises.Components
+@using LegendaryCruises.Interfaces
+@using System.Security.Claims
+@inject IJSRuntime JS
+@inject ICruiseService CruiseService
+@inject NavigationManager Nav
+
+
+<nav class="navbar navbar-expand-md navbar-light px-1" >
+
+    <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+    </a>
+    <h3>Alaska</h3>
+
+    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
+        <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
+
+            <AuthorizeView Roles="Admin">
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/cruises-table">
+                        CRUISES
+                    </a>
+                </div>
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/add-cruise">
+                        ADD CRUISE
+                    </a>
+                </div>
+            </AuthorizeView>
+
+            <!-- LOGGED IN -->
+            <AuthorizeView>
+                <Authorized Context="authState">
+                     <span class="me-2 login2" >
+                    
+                            Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                        </span>
+
+                
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Logout">
+                            LOGOUT
+                        </a>
+                    </div>
+                   
+                </Authorized>
+
+                <!-- NOT LOGGED IN -->
+                <NotAuthorized>
+                    <div class="nav-item px-1">
+                        <a class="btn login"
+                           href="/Identity/Account/Login?returnUrl=/@Nav.ToBaseRelativePath(Nav.Uri)">
+                            LOGIN
+                        </a>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+         
+  
+        <ButtonBuy Slug="@cruiseSlug" />
+
+          
+
+        </div>
+    </div>
+</nav>
+
+
+@{
+    string[] videos = new[]
+    {
+        "alaska2.mp4", "alaska10.mp4", "alaska4.mp4", "alaska1.mp4",
+        "alaska3.mp4", "alaska6.mp4", "alaska13.mp4", "alaska8.mp4",
+        "alaska7.mp4", "alaska9.mp4",
+    };
+}
+
+<div class="page">
+    <div class="accordion-grid">
+        @foreach (var video in videos)
+        {
+            <div class="cell">
+                <video src="@($"/videos/alaska/{video}")"
+                       autoplay muted loop playsinline preload="auto">
+                </video>
+            </div>
+        }
+    </div>
+</div>
+
+<div id="overlay" class="overlay" onclick="closeOverlay()">
+    <div class="overlay-content" onclick="stopPropagation(event)">
+        <button class="close-btn" onclick="closeOverlay()">×</button>
+        <div id="overlay-text"></div>
+    </div>
+</div>
+
+@code {
+    private string cruiseSlug = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var cruise = await CruiseService.GetCruiseByName("Alaska");
+
+        if (cruise != null)
+            cruiseSlug = cruise.Slug;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initVideos");
+            await JS.InvokeVoidAsync("initAlaskaOverlay");
+        }
+    }
+}

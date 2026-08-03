@@ -1,0 +1,44 @@
+﻿@page 
+@model LegendaryCruises.Areas.Identity.Pages.Account.LoginModel
+
+<div class="container h-100">
+    <div class="row justify-content-center align-items-center h-100">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+            <div class="card shadow-2-strong" style="background-color: #f5f7fa;">
+                <div class="card-body p-4">
+
+                    
+                    @if (!string.IsNullOrEmpty(Model.InfoMessage))
+                    {
+                        <div class="alert alert-warning text-center mb-3">
+                            @Model.InfoMessage
+                        </div>
+                    }
+
+
+                    <form id="account" method="post" asp-route-returnUrl="@Model.ReturnUrl">
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="E-mail">
+                            <label asp-for="Input.Email">Adresse e-mail</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Password" class="form-control" autocomplete="password" aria-required="true" placeholder="Mot de passe">
+                            <label asp-for="Input.Password">Mot de passe</label>
+                        </div>
+
+                        <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary mb-3">Se connecter</button>
+
+                        <div class="text-center">
+                            Vous n’avez pas de compte ? <a href="/Identity/Account/Register">Créer un compte</a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

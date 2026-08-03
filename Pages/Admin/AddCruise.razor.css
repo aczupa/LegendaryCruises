@@ -1,0 +1,136 @@
+﻿/* ================================
+   LEGENDARY CRUISES — ADMIN THEME
+   Premium Navy + Gold
+   ================================ */
+
+:root {
+    --lc-navy: rgb(7,45,79);
+    --lc-navy-light: rgb(12,65,110);
+    --lc-gold: rgb(212,175,55);
+    --lc-white: #ffffff;
+    --lc-gray: #f5f7fa;
+}
+
+
+/* ================================
+   FORMS — INPUTS & SELECTS
+   ================================ */
+
+.form-control,
+.form-select {
+    color: var(--lc-navy) !important;
+    border: 1px solid var(--lc-navy) !important;
+    background-color: var(--lc-white) !important;
+}
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--lc-gold) !important;
+        box-shadow: 0 0 0 0.2rem rgba(212,175,55,0.25) !important;
+    }
+
+/* Floating labels */
+.form-floating > label {
+    color: var(--lc-navy) !important;
+}
+
+/* ================================
+   CHECKBOXES
+   ================================ */
+
+.form-check-label {
+    color: var(--lc-navy) !important;
+}
+
+.form-check-input:checked {
+    background-color: var(--lc-gold) !important;
+    border-color: var(--lc-gold) !important;
+}
+
+/* ================================
+   BUTTONS
+   ================================ */
+
+.btn-primary {
+    background-color: var(--lc-navy) !important;
+    border-color: var(--lc-navy) !important;
+    color: var(--lc-white) !important;
+}
+
+    .btn-primary:hover {
+        background-color: var(--lc-navy-light) !important;
+        border-color: var(--lc-navy-light) !important;
+    }
+
+.btn-outline-primary {
+    color: var(--lc-navy) !important;
+    border-color: var(--lc-navy) !important;
+}
+
+    .btn-outline-primary:hover {
+        background-color: var(--lc-navy) !important;
+        color: var(--lc-white) !important;
+    }
+
+
+.card,
+.lc-card,
+legendarycruises-components-card {
+    border: 1px solid var(--lc-navy) !important;
+    border-radius: 10px !important;
+    padding: 20px !important;
+    background: var(--lc-gray) !important;
+}
+
+    .card h5,
+    .lc-card h5 {
+        color: var(--lc-navy) !important;
+        font-weight: 600 !important;
+    }
+
+/* ================================
+   TABLES
+   ================================ */
+
+.table thead th {
+    background-color: var(--lc-navy) !important;
+    color: var(--lc-white) !important;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(7,45,79,0.05) !important;
+}
+
+/* ================================
+   MODALS (jeśli używasz)
+   ================================ */
+
+.modal-content {
+    border: 2px solid var(--lc-navy) !important;
+}
+
+.modal-header,
+.modal-footer {
+    background-color: var(--lc-gray) !important;
+}
+
+/* ================================
+   LINKS
+   ================================ */
+
+a {
+    color: var(--lc-navy) !important;
+}
+
+    a:hover {
+        color: var(--lc-navy-light) !important;
+    }
+
+/* ================================
+   ADMIN PAGE WRAPPER (opcjonalne)
+   ================================ */
+
+.admin-page {
+    padding: 20px;
+    background-color: var(--lc-gray);
+}

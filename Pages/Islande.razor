@@ -1,0 +1,156 @@
+﻿@page "/islande"
+@using LegendaryCruises.Components
+@using LegendaryCruises.Interfaces
+@using System.Security.Claims
+@inject NavigationManager Nav
+<nav class="navbar navbar-expand-md navbar-light px-1" style="background-color: rgba(255,255,255,0.25); backdrop-filter: blur(8px);">
+
+    <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+    </a>
+
+    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
+        <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
+
+
+            <AuthorizeView Roles="Admin">
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/cruises-table">
+                        CRUISES
+                    </a>
+                </div>
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/add-cruise">
+                        ADD CRUISE
+                    </a>
+                </div>
+            </AuthorizeView>
+
+            <!-- LOGGED IN -->
+            <AuthorizeView>
+                <Authorized Context="authState">
+
+
+                    <span class="me-2 login2">
+                            Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                        </span>
+
+                   
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Logout">
+                            LOGOUT
+                        </a>
+                    </div>
+                  
+                </Authorized>
+
+                <!-- NOT LOGGED IN -->
+                <NotAuthorized>
+                    <div class="nav-item px-1">
+                        <a class="btn login"
+                           href="/Identity/Account/Login?returnUrl=/@Nav.ToBaseRelativePath(Nav.Uri)">
+                            LOGIN
+                        </a>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+
+           <ButtonBuy Slug="@cruiseSlug" />
+
+
+        </div>
+    </div>
+</nav>
+
+<div class="norway-iceland-page">
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <h1 class="title">Norvège & Islande</h1>
+    </div>
+
+    <!-- INTRO POETIC TEXT -->
+    <div class="poetry">
+        Entre les fjords vertigineux de Norvège et les terres volcaniques d’Islande,
+        cette croisière est une odyssée polaire.
+        Les montagnes se jettent dans la mer, les cascades chantent,
+        et les aurores boréales révèlent la magie du grand Nord.
+    </div>
+
+    <!-- MASONRY GRID -->
+    <div class="norway-iceland-grid">
+
+        <div class="item">
+            <img src="Images/Islande/Bergen.jpg" alt="Fjord norvégien" />
+            <p class="caption">Jour 1 – Départ de Bergen, entrée dans les fjords.</p>
+        </div>
+
+        <div class="item">
+            <img src="Images/Islande/alesund.jpg" alt="Alesund" />
+            <p class="caption">Jour 2 – Alesund et l’architecture Art Nouveau.</p>
+        </div>
+
+        <div class="item">
+            <img src="Images/Islande/cascades.jpg" alt="Geirangerfjord" />
+            <p class="caption">Jour 3 – Geirangerfjord, cascades et panoramas.</p>
+        </div>
+
+        <div class="item">
+            <img src="Images/Islande/lofoten.jpg" alt="Îles Lofoten" />
+            <p class="caption">Jour 4 – Archipel des Lofoten, villages de pêcheurs.</p>
+        </div>
+
+        <div class="item">
+            <img src="Images/Islande/Reykjavik.jpg" alt="Reykjavik" />
+            <p class="caption">Jour 5 – Reykjavik, capitale et culture islandaise.</p>
+        </div>
+
+        <div class="item">
+            <img src="Images/Islande/Ísafjörður.jpg" alt="Geyser" />
+            <p class="caption">Jour 6 – Cercle d’or : geysers et cascades.</p>
+        </div>
+
+        <div class="item">
+            <img src="Images/Islande/glacier.jpg" alt="Glacier" />
+            <p class="caption">Jour 7 – Glacier et lagune glaciaire.</p>
+        </div>
+
+        <div class="item">
+            <img src="Images/Islande/Tromso.jpg" alt="Aurore boréale" />
+            <p class="caption">Jour 8 – Aurores boréales.</p>
+        </div>
+
+        <div class="item">
+            <img src="Images/Islande/Reykjavik2.jpg" alt="Aurore boréale" />
+            <p class="caption"> Jour 9 - Débarquement Reykjavik et vol de retour</p>
+        </div>
+    </div>
+
+</div>
+<button id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()">
+    ↑
+</button>
+
+<button id="scrollDownBtn" class="scroll-down-btn" onclick="scrollDown()">
+    ↓
+</button>
+
+@code
+{
+    [Inject] ICruiseService CruiseService { get; set; }
+
+    private string cruiseSlug = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var cruise = await CruiseService.GetCruiseByName("Norvège Islande");
+
+        if (cruise != null)
+            cruiseSlug = cruise.Slug;
+    }
+}

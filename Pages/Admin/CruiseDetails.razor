@@ -1,0 +1,384 @@
+﻿@page "/admin/cruise/{Id:int}"
+@using LegendaryCruises.Components
+@using LegendaryCruises.Models
+@using LegendaryCruises.Interfaces
+@using LegendaryCruises.Models.Responses
+@using static LegendaryCruises.Components.Warning
+
+
+@if (ShowWarning)
+{
+    <Warning OnClickCallback="DismissWarning" Type=@Warning_Type Message="@Warning_Message" />
+}
+else
+{
+    <LegendaryCruises.Components.Card>
+        @if (isLoading)
+        {
+            <p>Loading...</p>
+        }
+        else if (cruise == null)
+        {
+            <p>❌ Cruise not found</p>
+        }
+        else
+        {
+            <h3>Cruise Details</h3>
+
+            <EditForm Model="cruise" OnValidSubmit="SaveChanges">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <!-- TITLE -->
+                <div class="mb-3">
+                    <label>Title</label>
+                    <InputText @bind-Value="cruise.Title" class="form-control" />
+                </div>
+
+                <!-- DESCRIPTION -->
+                <div class="mb-3">
+                    <label>Description</label>
+                    <InputText @bind-Value="cruise.Description" class="form-control" />
+                </div>
+
+                <!-- DESTINATION -->
+                <div class="mb-3">
+                    <label>Destination</label>
+                    <InputText @bind-Value="cruise.Destination" class="form-control" />
+                </div>
+
+                <!-- PORTS -->
+                <div class="mb-3">
+                    <label>Departure Port</label>
+                    <InputText @bind-Value="cruise.DeparturePort" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label>Arrival Port</label>
+                    <InputText @bind-Value="cruise.ArrivalPort" class="form-control" />
+                </div>
+
+                <!-- PRICE -->
+                
+
+                <div class="mb-3">
+                    <label>Currency</label>
+                    <InputSelect @bind-Value="cruise.Currency" class="form-select">
+                        <option value="EUR">EUR</option>
+                        <option value="USD">USD</option>
+                        <option value="PLN">PLN</option>
+                        <option value="GBP">GBP</option>
+                    </InputSelect>
+                </div>
+
+                <!-- FLAGS -->
+                <div class="mb-3 d-flex gap-4">
+                    <div class="form-check">
+                        <InputCheckbox @bind-Value="cruise.IsActive" class="form-check-input" />
+                        <label class="form-check-label">Active</label>
+                    </div>
+
+                    <div class="form-check">
+                        <InputCheckbox @bind-Value="cruise.IsFeatured" class="form-check-input" />
+                        <label class="form-check-label">Featured</label>
+                    </div>
+                </div>
+
+                <!-- CRUISE DATES -->
+                <LegendaryCruises.Components.Card>
+                    <h5>Cruise Dates</h5>
+
+                    @foreach (var date in cruise.CruiseDates)
+                    {
+                        <div class="border rounded p-3 mb-3">
+
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="m-0">Date</h6>
+                                <button type="button" class="btn btn-sm btn-danger"
+                                        @onclick="() => RemoveDate(date)">
+                                    Remove date
+                                </button>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label>Departure Date</label>
+                                    <InputDate @bind-Value="date.DepartureDate"
+                                               @bind-Value:format="yyyy-MM-dd"
+                                               class="form-control" />
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label>Return Date</label>
+                                    <InputDate @bind-Value="date.ReturnDate"
+                                               @bind-Value:format="yyyy-MM-dd"
+                                               class="form-control" />
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label>Duration</label>
+                                    <input class="form-control" value="@date.DurationDays days" disabled />
+                                </div>
+                            </div>
+
+                            <h6>Cabins for this date</h6>
+
+                            @foreach (var cabin in date.Cabins)
+                            {
+                                <div class="row mb-2 align-items-center">
+
+                                    <div class="col">
+                                        <label>Cabin Type</label>
+                                        <InputSelect @bind-Value="cabin.CabinType" class="form-select">
+                                            @foreach (var type in Enum.GetValues<CabinType>())
+                                            {
+                                                <option value="@type">@type</option>
+                                            }
+                                        </InputSelect>
+                                    </div>
+
+                                    <div class="col">
+                                        <label>Price</label>
+                                        <InputNumber @bind-Value="cabin.Price" class="form-control" />
+                                    </div>
+
+                                    <div class="col">
+                                        <label>Capacity</label>
+                                        <InputNumber @bind-Value="cabin.Capacity" class="form-control" />
+                                    </div>
+
+                                    <div class="col">
+                                        <label>Reserved</label>
+                                        <InputNumber @bind-Value="cabin.Reserved" class="form-control" />
+                                    </div>
+
+                                    <div class="col-auto">
+                                        <button type="button"
+                                                class="btn btn-outline-danger btn-sm"
+                                                @onclick="() => RemoveCabin(date, cabin)">
+                                            X
+                                        </button>
+                                    </div>
+
+                                </div>
+                            }
+
+                            <button type="button"
+                                    class="btn btn-outline-primary btn-sm mt-2"
+                                    @onclick="() => AddCabin(date)">
+                                + Add cabin
+                            </button>
+
+                        </div>
+                    }
+
+                    <button type="button"
+                            class="btn btn-primary mt-2"
+                            @onclick="AddDate">
+                        + Add date
+                    </button>
+
+                </LegendaryCruises.Components.Card>
+
+                <!-- ITINERARY -->
+                <LegendaryCruises.Components.Card>
+                    <h5>Itinerary</h5>
+
+                    @foreach (var day in cruise.Itinerary)
+                    {
+                        <div class="row mb-2 align-items-center">
+
+                            <div class="col-2">
+                                <label>Day</label>
+                                <InputNumber @bind-Value="day.DayNumber" class="form-control" />
+                            </div>
+
+                            <div class="col">
+                                <label>Location</label>
+                                <InputText @bind-Value="day.Location" class="form-control" />
+                            </div>
+
+                            <div class="col">
+                                <label>Description</label>
+                                <InputText @bind-Value="day.Description" class="form-control" />
+                            </div>
+
+                            <div class="col-auto">
+                                <button type="button"
+                                        class="btn btn-outline-danger btn-sm"
+                                        @onclick="() => RemoveItinerary(day)">
+                                    X
+                                </button>
+                            </div>
+
+                        </div>
+                    }
+
+                    <button type="button"
+                            class="btn btn-outline-primary mt-2"
+                            @onclick="AddItinerary">
+                        + Add itinerary day
+                    </button>
+
+                </LegendaryCruises.Components.Card>
+
+                <button type="submit" class="btn btn-success mt-3">
+                    Save Changes
+                </button>
+
+                <button type="button"
+                        class="btn btn-danger mt-3"
+                        @onclick="ShowDeleteConfirmation">
+                    Delete
+                </button>
+            </EditForm>
+        }
+    </LegendaryCruises.Components.Card>
+
+    @if (showDeleteModal)
+    {
+        <LegendaryCruises.Components.DeleteConfirmationModal>
+            <p>Are you sure you want to delete this cruise?</p>
+
+            <button class="btn btn-danger" @onclick="() => DeleteCruise(cruise.Id)">
+                Yes, delete
+            </button>
+
+            <button class="btn btn-secondary" @onclick="() => showDeleteModal = false">
+                Cancel
+            </button>
+        </LegendaryCruises.Components.DeleteConfirmationModal>
+    }
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    [Inject] private ICruiseService CruiseService { get; set; }
+    [Inject] private NavigationManager Nav { get; set; }
+
+    private Cruise? cruise;
+    private bool isLoading = true;
+    private bool showDeleteModal = false;
+    private bool ShowWarning = false;
+    private string Warning_Message = "";
+    private WarningType Warning_Type;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await CruiseService.GetCruise(Id);
+
+        if (response.StatusCode == 200)
+        {
+            cruise = response.Cruise;
+        }
+
+        isLoading = false;
+    }
+
+    // ============================
+    // ADD / REMOVE DATES
+    // ============================
+
+    private void AddDate()
+    {
+        cruise.CruiseDates.Add(new CruiseDate
+        {
+            DepartureDate = DateTime.Today,
+            ReturnDate = DateTime.Today.AddDays(7),
+            Cabins = new List<DateCabin>()
+        });
+
+        StateHasChanged();
+    }
+
+    private void RemoveDate(CruiseDate date)
+    {
+        cruise.CruiseDates.Remove(date);
+        StateHasChanged();
+    }
+
+    // ============================
+    // ADD / REMOVE CABINS
+    // ============================
+
+    private void AddCabin(CruiseDate date)
+    {
+        date.Cabins.Add(new DateCabin
+        {
+            CabinType = CabinType.Interior,
+            Price = 0,
+            Capacity = 1,
+            Reserved = 0
+        });
+
+        StateHasChanged();
+    }
+
+    private void RemoveCabin(CruiseDate date, DateCabin cabin)
+    {
+        date.Cabins.Remove(cabin);
+        StateHasChanged();
+    }
+
+    // ============================
+    // ADD / REMOVE ITINERARY
+    // ============================
+
+    private void AddItinerary()
+    {
+        cruise.Itinerary.Add(new ItineraryDay
+        {
+            DayNumber = cruise.Itinerary.Count + 1,
+            Location = "",
+            Description = ""
+        });
+
+        StateHasChanged();
+    }
+
+    private void RemoveItinerary(ItineraryDay day)
+    {
+        cruise.Itinerary.Remove(day);
+        StateHasChanged();
+    }
+
+    // ============================
+    // SAVE / DELETE
+    // ============================
+
+    private async Task SaveChanges()
+    {
+        if (cruise == null) return;
+
+        var response = await CruiseService.EditCruise(cruise);
+
+        Warning_Type = response.StatusCode == 200 ? WarningType.Success : WarningType.Error;
+        Warning_Message = response.Message;
+        ShowWarning = true;
+    }
+
+    private async Task DeleteCruise(int id)
+    {
+        var result = await CruiseService.DeleteCruise(id);
+
+        Warning_Type = result.StatusCode == 200 ? WarningType.Success : WarningType.Error;
+        Warning_Message = result.Message;
+
+        showDeleteModal = false;
+        ShowWarning = true;
+
+        if (result.StatusCode == 200)
+        {
+            Nav.NavigateTo("/admin/cruises-table");
+        }
+    }
+
+    private void ShowDeleteConfirmation() => showDeleteModal = true;
+
+    private void DismissWarning()
+    {
+        ShowWarning = false;
+        Nav.NavigateTo("/admin/cruises-table");
+    }
+}

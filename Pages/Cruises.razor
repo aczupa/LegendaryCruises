@@ -1,0 +1,467 @@
+﻿@page "/cruises/{Slug}"
+@using LegendaryCruises.Interfaces
+@using LegendaryCruises.Models
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+
+@inject ProtectedSessionStorage SessionStorage
+@inject IJSRuntime JS
+@inject ICartService CartService
+@inject AuthenticationStateProvider Auth
+@inject NavigationManager Nav
+
+<nav class="navbar navbar-expand-md navbar-light px-1">
+
+    <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+    </a>
+
+
+
+    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
+        <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
+
+            <AuthorizeView Roles="Admin">
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/cruises-table">
+                        CRUISES
+                    </a>
+                </div>
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/add-cruise">
+                        ADD CRUISE
+                    </a>
+                </div>
+            </AuthorizeView>
+
+            <!-- LOGGED IN -->
+            <AuthorizeView>
+                <Authorized Context="authState">
+                    <button class="btn btn-primary rounded-pill px-3 py-1 d-flex align-items-center"
+                            @onclick="GoToCart">
+                        <i class="bi bi-cart me-2 icon-white"></i>
+                        <span>@CartItemCount</span>
+                    </button>
+
+                    <span class="me-2 login2">
+                        Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                    </span>
+
+
+
+
+                    <a class="btn btn-primary" href="/newcruises">
+                        ✨ Nouvelles croisières
+                    </a>
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Logout">
+                            LOGOUT
+                        </a>
+                    </div>
+
+                </Authorized>
+
+                <!-- NOT LOGGED IN -->
+                <NotAuthorized>
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Login">
+                            LOGIN
+                        </a>
+                    </div>
+                    <div class="nav-item px-1">
+                        <a class="custom-buy-btn mt-3" style="text-decoration: none!important" href="/newcruises">
+                            ✨ Nouvelles croisières
+                        </a>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+
+        </div>
+    </div>
+</nav>
+
+<div class="cruise-details-container animate-fadeInUp">
+
+    @if (cruise == null)
+    {
+        <p>Chargement...</p>
+    }
+    else
+    {
+        <div class="cruise-card">
+
+            <h1 class="cruise-title">@cruise.Title</h1>
+
+            <div class="cruise-meta">
+                <p><strong>Destination :</strong> @cruise.Destination</p>
+                <p><strong>Port de départ :</strong> @cruise.DeparturePort</p>
+            </div>
+
+            <div class="cruise-description">
+                @cruise.Description
+            </div>
+
+            <!-- BOOKING -->
+            <div class="booking-section">
+
+                <!-- DATE SELECT -->
+                <div class="booking-block">
+                    <label>Choisissez votre date de départ</label>
+
+                    <select class="form-control" @onchange="OnDateChanged">
+                        <option value="">-- choisissez une date --</option>
+
+                        @foreach (var date in cruise.CruiseDates)
+                        {
+                            <option value="@date.Id">
+                                @date.DepartureDate.ToString("dd MMM yyyy")
+                                -
+                                @date.ReturnDate.ToString("dd MMM yyyy")
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <!-- CABINS -->
+                <div class="booking-block">
+                    <label>Choisissez votre cabine</label>
+
+                    @if (selectedCruiseDate == null)
+                    {
+                        <p>Veuillez choisir une date</p>
+                    }
+                    else
+                    {
+                        @foreach (var cabin in selectedCruiseDate.Cabins)
+                        {
+                            <div class="cabin-row">
+                                <div class="cabin-info">
+                                    <span>@cabin.CabinType</span>
+                                    <span class="cabin-price">@cabin.Price @cruise.Currency</span>
+                                    <span>Disponible: @cabin.Available</span>
+                                </div>
+
+                                <input type="number"
+                                       min="0"
+                                       max="@cabin.Available"
+                                       class="form-control cabin-qty"
+                                       @bind="cabinSelections[cabin.Id]" />
+                            </div>
+                        }
+                    }
+                </div>
+
+                <!-- TOTAL -->
+                <div class="booking-total">
+                    Total: @CalculateTotal() @cruise.Currency
+                </div>
+
+                <!-- BUTTON -->
+                <!-- ERROR MESSAGE -->
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="alert alert-warning mt-3" role="alert">
+                        @errorMessage
+                    </div>
+                }
+                <!-- SUCCESS MESSAGE -->
+                @if (!string.IsNullOrEmpty(successMessage))
+                {
+                    <div class="alert alert-success mt-3" role="alert">
+                        @successMessage
+                    </div>
+                }
+                <button class="custom-buy-btn mt-3" @onclick="AddToCart">
+                    Réserver maintenant
+                </button>
+
+            </div>
+        </div>
+    }
+</div>
+
+<!-- ===================== GALLERY ===================== -->
+
+<div class="cruise-gallery-section animate-fadeInUp">
+
+    <h2 class="gallery-title">Découvrez nos cabines et nos navires</h2>
+
+    <div class="cruise-gallery">
+
+        <!-- LARGE VIDEO -->
+        <div class="gallery-item gallery-large">
+            <div class="gallery-image-wrapper">
+                <video autoplay muted loop playsinline>
+                    <source src="/videos/bg.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="gallery-caption"> Un navire moderne et luxueux, conçu pour offrir une expérience exceptionnelle dès l’embarquement. Son architecture contemporaine associe lignes épurées, matériaux nobles et technologies de pointe pour garantir un confort optimal à chaque instant. Les espaces communs sont vastes, lumineux, décorés avec raffinement, et invitent à la détente comme à la découverte.</div>
+        </div>
+
+        <!-- BALCONY -->
+        <div class="gallery-item gallery-clickable">
+            <div class="gallery-image-wrapper">
+                <img src="/Images/Cabins/balcony.jpg" />
+            </div>
+            <div class="gallery-caption">
+                La Cabine Balcony est l’un des espaces les plus prisés du navire, pensée pour offrir une expérience intime et raffinée. Son balcon privé devient une véritable extension de la cabine : un lieu exclusif où l’on peut savourer un café au lever du soleil, admirer les reflets dorés de l’océan ou profiter d’un moment de calme sous le ciel étoilé..
+            </div>
+        </div>
+
+        <!-- INTERIOR -->
+        <div class="gallery-item gallery-clickable">
+            <div class="gallery-image-wrapper">
+                <img src="/Images/Cabins/interior.jpg" />
+            </div>
+            <div class="gallery-caption">
+                La Cabine Interior est l’option idéale pour les voyageurs recherchant un excellent rapport qualité‑prix sans renoncer au confort. Conçue avec un design épuré, elle offre une atmosphère moderne et apaisante, pensée pour garantir un séjour agréable tout au long de la croisière.
+            </div>
+        </div>
+
+        <!-- OCEAN VIEW -->
+        <div class="gallery-item gallery-clickable">
+            <div class="gallery-image-wrapper">
+                <img src="/Images/Cabins/oceanvue.jpg" />
+            </div>
+            <div class="gallery-caption">
+                La Cabine Ocean View est un véritable havre de lumière et de sérénité. Grâce à sa grande fenêtre panoramique, elle offre une immersion constante dans l’univers maritime : les reflets du soleil sur l’eau, les nuances changeantes du ciel, et la ligne d’horizon qui accompagne chaque instant du voyage.
+            </div>
+        </div>
+
+        <!-- SUITE -->
+        <div class="gallery-item gallery-clickable">
+            <div class="gallery-image-wrapper">
+                <img src="/Images/Cabins/suite.jpg" />
+            </div>
+            <div class="gallery-caption">
+                La Suite représente le summum du luxe à bord : un espace généreux, raffiné et pensé pour offrir une expérience de croisière incomparable. Dès l’entrée, on découvre un salon séparé, élégant et lumineux, idéal pour se détendre, partager un verre ou simplement profiter du calme de l’océan dans un cadre privilégié.
+            </div>
+        </div>
+
+        <!-- SHIP VIDEO -->
+        <div class="gallery-item">
+            <div class="gallery-image-wrapper">
+                <video autoplay muted loop playsinline>
+                    <source src="/videos/ship.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="gallery-caption">Notre navire – technologie moderne et élégance.</div>
+        </div>
+
+        <!-- SHIP PORT -->
+        <div class="gallery-item gallery-wide gallery-clickable">
+            <div class="gallery-image-wrapper">
+                <img src="/Images/Cabins/ship-port.jpg" />
+            </div>
+            <div class="gallery-caption">
+                Navire au port – prêt pour l’embarquement, ambiance maritime authentique.
+            </div>
+        </div>
+
+        <!-- SHIP EXTERIOR -->
+        <div class="gallery-item gallery-clickable">
+            <div class="gallery-image-wrapper">
+                <img src="/Images/Cabins/ship.jpg" />
+            </div>
+            <div class="gallery-caption">
+                Vue extérieure – design contemporain, stabilité optimale, confort exceptionnel.
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+@code {
+
+    [Inject] public ICruiseService CruiseService { get; set; } = default!;
+
+    [Parameter] public string Slug { get; set; } = string.Empty;
+
+    private Cruise? cruise;
+
+    private CruiseDate? selectedCruiseDate;
+    private Dictionary<int, int> cabinSelections = new();
+
+    private bool IsLoggedIn = false;
+    private int CartItemCount = 0;
+   
+  private bool cartRestored = false;
+    private string? errorMessage;
+    private string? successMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await Auth.GetAuthenticationStateAsync();
+
+        var user = authState.User;
+
+        IsLoggedIn = user.Identity?.IsAuthenticated ?? false;
+
+
+        if (IsLoggedIn)
+        {
+            var userId =
+                user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                CartItemCount =
+                    await CartService.GetCartItemCount(userId);
+            }
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        cruise = await CruiseService.GetCruiseBySlug(Slug);
+    }
+
+    private void OnDateChanged(ChangeEventArgs e)
+    {
+        errorMessage = null;
+        if (!int.TryParse(e.Value?.ToString(), out int id))
+            return;
+
+        selectedCruiseDate = cruise?.CruiseDates.FirstOrDefault(d => d.Id == id);
+
+        if (selectedCruiseDate != null)
+        {
+            cabinSelections = selectedCruiseDate.Cabins
+                .ToDictionary(c => c.Id, c => 0);
+        }
+    }
+
+    private decimal CalculateTotal()
+    {
+        if (selectedCruiseDate == null) return 0;
+
+        return selectedCruiseDate.Cabins.Sum(c =>
+            cabinSelections.TryGetValue(c.Id, out int qty) ? c.Price * qty : 0);
+    }
+
+    private async Task AddToCart()
+    {
+        if (selectedCruiseDate == null)
+        {
+            errorMessage = "Vous devez choisir la date et la cabine avant de réserver";
+            return;
+        }
+
+
+        var selectedCabins = cabinSelections
+            .Where(x => x.Value > 0)
+            .ToDictionary(
+                x => x.Key,
+                x => x.Value);
+
+
+        if (!selectedCabins.Any())
+        {
+            errorMessage = "Vous devez choisir votre cabine avant de réserver la croisière";
+            return;
+        }
+
+        errorMessage = null;
+        var authState = await Auth.GetAuthenticationStateAsync();
+
+        var user = authState.User;
+
+
+        if (!(user.Identity?.IsAuthenticated ?? false))
+        {
+            var pending = new PendingCart
+            {
+                Slug = Slug,
+                CruiseId = cruise!.Id,
+                CruiseDateId = selectedCruiseDate.Id,
+                Cabins = selectedCabins
+            };
+
+
+            await SessionStorage.SetAsync(
+                "PendingCart",
+                pending);
+
+
+            Nav.NavigateTo(
+    $"/Identity/Account/Login?returnUrl={Uri.EscapeDataString($"/cruises/{Slug}")}&message=login-required",
+    true);
+
+            return;
+        }
+
+
+      
+        var userId =
+            user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+
+        foreach (var cabin in selectedCabins)
+        {
+            await CartService.AddToCart(
+                userId!,
+                cruise!.Id,
+                selectedCruiseDate.Id,
+                cabin.Key,
+                cabin.Value);
+        }
+
+
+        Nav.NavigateTo("/cart");
+    }
+
+    private void GoToCart()
+    {
+        Nav.NavigateTo("/cart");
+    }
+
+    
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!cartRestored)
+        {
+            cartRestored = true;
+
+            var authState = await Auth.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                var pending = await SessionStorage.GetAsync<PendingCart>("PendingCart");
+
+                if (pending.Success && pending.Value != null)
+                {
+                    foreach (var cabin in pending.Value.Cabins)
+                    {
+                        await CartService.AddToCart(
+                            userId!,
+                            pending.Value.CruiseId,
+                            pending.Value.CruiseDateId,
+                            cabin.Key,
+                            cabin.Value);
+                    }
+
+                    await SessionStorage.DeleteAsync("PendingCart");
+
+                    CartItemCount = await CartService.GetCartItemCount(userId);
+                    successMessage = "Votre croisière a été ajoutée au panier !";
+                    StateHasChanged();
+
+                }
+            }
+        }
+    }
+
+}

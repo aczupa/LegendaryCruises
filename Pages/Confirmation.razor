@@ -1,0 +1,190 @@
+﻿@page "/confirmation/{OrderId:int}"
+@using LegendaryCruises.Interfaces
+@using LegendaryCruises.Models
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IOrderService OrderService
+@inject ICartService CartService
+@inject AuthenticationStateProvider Auth
+@inject NavigationManager Nav
+
+<nav class="navbar navbar-expand-md navbar-light px-1">
+    <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+    </a>
+
+    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
+        <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
+
+            <AuthorizeView Roles="Admin">
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/cruises-table">
+                        CRUISES
+                    </a>
+                </div>
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/add-cruise">
+                        ADD CRUISE
+                    </a>
+                </div>
+            </AuthorizeView>
+
+            <!-- LOGGED IN -->
+            <AuthorizeView>
+                <Authorized Context="authState">
+                    <button class="btn btn-primary rounded-pill px-3 py-1 d-flex align-items-center"
+                            @onclick="GoToCart">
+                        <i class="bi bi-cart me-2 icon-white"></i>
+                        <span>@CartItemCount</span>
+                    </button>
+
+
+                    <span class="me-2 login2">
+                            Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                        </span>
+                  
+
+                    <a class="btn btn-primary" href="/newcruises">
+                        ✨ Nouvelles croisières
+                    </a>
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Logout">
+                            LOGOUT
+                        </a>
+                    </div>
+                </Authorized>
+
+                <!-- NOT LOGGED IN -->
+                <NotAuthorized>
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Login">
+                            LOGIN
+                        </a>
+                    </div>
+                    <div class="nav-item px-1">
+                        <a class="custom-buy-btn mt-3" style="text-decoration: none!important" href="/newcruises">
+                            ✨ Nouvelles croisières
+                        </a>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+
+        </div>
+    </div>
+</nav>
+
+<div class="cruise-details-container">
+    <div class="cruise-card">
+
+        <h2 class="cruise-title">Confirmation de paiement</h2>
+
+        @if (currentOrder == null)
+        {
+            <div class="text-center p-4">
+                <p>Chargement des détails de votre commande...</p>
+            </div>
+        }
+        else
+        {
+            <p class="cruise-description">
+                Votre paiement a été validé avec succès. (Commande N° @OrderId)<br />
+                Merci d’avoir choisi <strong>Legendary Cruises</strong> pour votre voyage.
+            </p>
+
+            <div class="booking-section">
+
+                @foreach (var item in currentOrder.Items)
+                {
+                    <div class="booking-block mb-3" style="border-bottom: 1px solid #eee; padding-bottom: 15px;">
+                        <label>Destination</label>
+                        <div class="cabin-row">
+                            <div class="cabin-info">
+                                <strong>@item.Cruise?.Title</strong>
+                                @if (item.CruiseDate != null)
+                                {
+                                    <span>Dates : @item.CruiseDate.DepartureDate.ToString("dd MMM yyyy") → @item.CruiseDate.ReturnDate.ToString("dd MMM yyyy")</span>
+                                }
+                            </div>
+                        </div>
+
+                        <label class="mt-2">Cabine réservée</label>
+                        <div class="cabin-row">
+                            <div class="cabin-info">
+                                <strong>@item.CabinType</strong>
+                                <span class="cabin-price">
+                                    @item.Price @(item.Cruise?.Currency ?? "€") x @item.Quantity
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="booking-total">
+                    Total payé : @currentOrder.TotalPrice €
+                </div>
+
+                <div class="mt-4 text-center">
+                    <button class="btn btn-primary custom-buy-btn" @onclick="GoHome">
+                        Retour à l'accueil
+                    </button>
+                </div>
+
+            </div>
+        }
+
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int OrderId { get; set; }
+
+    private Order? currentOrder;
+    private bool processed = false;
+    private int CartItemCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await Auth.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+            return;
+
+        CartItemCount = await CartService.GetCartItemCount(userId);
+
+        currentOrder = await OrderService.GetOrderById(OrderId);
+
+        if (currentOrder == null)
+            return;
+
+        if (currentOrder.UserId != userId)
+        {
+            Nav.NavigateTo("/");
+            return;
+        }
+
+       
+        if (!processed)
+        {
+            processed = true;
+            await OrderService.ProcessOrderAfterPayment(OrderId);
+        }
+    }
+
+    private void GoToCart()
+    {
+        Nav.NavigateTo("/cart");
+    }
+
+    private void GoHome()
+    {
+        Nav.NavigateTo("/");
+    }
+}

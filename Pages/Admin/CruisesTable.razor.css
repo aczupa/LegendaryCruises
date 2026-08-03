@@ -1,0 +1,158 @@
+﻿
+
+:root {
+    --lc-navy: rgb(7,45,79);
+    --lc-navy-light: rgb(12,65,110);
+    --lc-gold: rgb(212,175,55);
+    --lc-white: #ffffff;
+    --lc-gray: #f5f7fa;
+}
+
+
+
+
+/* ================================
+   FORMS — INPUTS & SELECTS
+   ================================ */
+
+.form-control,
+.form-select {
+    color: var(--lc-navy) !important;
+    border: 1px solid var(--lc-navy) !important;
+    background-color: var(--lc-white) !important;
+}
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--lc-gold) !important;
+        box-shadow: 0 0 0 0.2rem rgba(212,175,55,0.25) !important;
+    }
+
+/* Floating labels */
+.form-floating > label {
+    color: var(--lc-navy) !important;
+}
+
+/* ================================
+   CHECKBOXES
+   ================================ */
+
+.form-check-label {
+    color: var(--lc-navy) !important;
+}
+
+.form-check-input:checked {
+    background-color: var(--lc-gold) !important;
+    border-color: var(--lc-gold) !important;
+}
+
+
+.card,
+.lc-card,
+legendarycruises-components-card {
+    border: 1px solid var(--lc-navy) !important;
+    border-radius: 10px !important;
+    padding: 20px !important;
+    background: var(--lc-gray) !important;
+}
+
+    .card h5,
+    .lc-card h5 {
+        color: var(--lc-navy) !important;
+        font-weight: 600 !important;
+    }
+
+/* ================================
+   TABLES
+   ================================ */
+
+.table thead th {
+    background-color: var(--lc-navy) !important;
+    color: var(--lc-white) !important;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(7,45,79,0.05) !important;
+}
+
+
+.modal-content {
+    border: 2px solid var(--lc-navy) !important;
+}
+
+.modal-header,
+.modal-footer {
+    background-color: var(--lc-gray) !important;
+}
+
+
+
+
+
+
+.admin-page {
+    padding: 20px;
+    background-color: var(--lc-gray);
+}
+/* ================================
+   CABIN AVAILABILITY COLORS
+   ================================ */
+
+.cabin-high {
+    color: #0a7a25 !important; /* zielony */
+    font-weight: 600;
+}
+
+.cabin-medium {
+    color: #c7a400 !important; /* złoty / żółty */
+    font-weight: 600;
+}
+
+.cabin-low {
+    color: #b30000 !important; /* czerwony */
+    font-weight: 600;
+}
+
+
+
+@media (max-width: 768px) {
+    .admin-mobile-table thead
+
+{
+    display: none;
+}
+
+.admin-mobile-table,
+.admin-mobile-table tbody,
+.admin-mobile-table tr,
+.admin-mobile-table td {
+    display: block;
+    width: 100%;
+}
+
+    .admin-mobile-table tr {
+        margin-bottom: 1rem;
+        border: 1px solid var(--lc-navy);
+        border-radius: 10px;
+        padding: 10px;
+        background: var(--lc-gray);
+    }
+
+    .admin-mobile-table td {
+        text-align: left !important;
+        padding-left: 45%;
+        position: relative;
+        min-height: 40px;
+        border: none !important;
+    }
+
+        .admin-mobile-table td::before {
+            content: attr(data-label);
+            position: absolute;
+            left: 10px;
+            top: 8px;
+            font-weight: 600;
+            color: var(--lc-navy);
+        }
+
+}

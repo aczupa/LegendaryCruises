@@ -1,0 +1,163 @@
+﻿
+
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .video-title {
+        font-size: clamp(1rem, 5vw, 2.2rem);
+        margin-bottom: 0.5rem;
+    }
+
+    .video-nav-bar {
+        flex-direction: column;
+        border-radius: 15px;
+        width: 95%;
+    }
+
+    .video-nav-link {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .video-container {
+        height: auto; /* kontener dopasowuje się do wideo */
+    }
+
+    #bg-video {
+        height: auto;
+        aspect-ratio: 16 / 9; /* zachowuje proporcje */
+    }
+
+
+    .video-nav-bar {
+        position: static; /* wychodzi z overlay */
+        transform: none;
+        margin: 1rem auto 0 auto; /* odstęp pod wideo */
+        width: 95%;
+        border-radius: 15px;
+        flex-direction: column;
+    }
+
+    .video-nav-link {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.5rem;
+    }
+}
+/* Desktop: nav-bar jako overlay */
+.video-nav-bar {
+    position: absolute;
+    top: 22%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: space-around;
+    width: 90%;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 0.5rem 1rem;
+    border-radius: 30px;
+    z-index: 1050;
+}
+
+/* Mobile: nav-bar pod wideo */
+@media (max-width: 768px) {
+    .video-nav-bar {
+        position: static; /* normalny flow */
+        transform: none;
+        margin: 1rem auto; /* odstęp od wideo */
+        width: 95%;
+        border-radius: 15px;
+        flex-direction: column;
+    }
+}
+
+/* Desktop: pełne tło */
+.video-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#bg-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+/* Mobile: prostokątne wideo pod treścią */
+@media (max-width: 768px) {
+    .video-container {
+        height: auto; /* kontener dopasowuje się do wideo */
+    }
+
+    #bg-video {
+        position: relative; /* nie absolute */
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 9; /* zachowuje proporcje */
+        object-fit: contain; /* nie rozciąga */
+    }
+}
+
+@media (max-width: 768px) {
+    .video-container {
+        height: auto; /* kontener dopasowuje się do wideo */
+        background: none; /* usuń tło kontenera */
+    }
+
+    #bg-video {
+        position: relative; /* nie absolute */
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 9; /* zachowuje proporcje */
+        object-fit: contain; /* nie rozciąga */
+        display: block;
+    }
+
+    #video-overlay {
+        display: none; /* overlay niepotrzebny na mobile */
+    }
+}
+
+.video-title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: clamp(1.2rem, 4vw, 3rem);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+    font-weight: 300;
+    width: 80%;
+    z-index: 1050;
+    line-height: 1.2;
+    text-shadow: 0 4px 8px rgba(0,0,0,0.6);
+}
+
+/* MOBILE: linki wyśrodkowane pod wideo */
+@media (max-width: 768px) {
+
+    .video-nav-bar {
+        justify-content: center;
+        align-items: center; /* wyśrodkowanie poziome */
+        text-align: center;
+        flex-direction: column; /* link poniżej linku */
+        gap: 0.4rem;
+    }
+
+    .video-nav-link {
+        display: block;
+        width: 100%;
+        text-align: center; /* centralnie */
+        padding: 0.5rem 0.8rem;
+    }
+}

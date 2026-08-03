@@ -1,0 +1,16 @@
+﻿@inject NavigationManager Nav
+
+<button class="btn login"
+        @onclick="GoToBooking">
+    Acheter le ticket
+</button>
+
+@code {
+    [Parameter] public string Slug { get; set; } = "";
+
+    private void GoToBooking()
+    {
+        if (!string.IsNullOrWhiteSpace(Slug))
+            Nav.NavigateTo($"/cruises/{Slug}");
+    }
+}

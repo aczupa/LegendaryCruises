@@ -1,0 +1,125 @@
+﻿/* ===== GLOBAL ===== */
+
+html, body {
+    height: 100%;
+    margin: 0;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+}
+
+/* ===== SEKCJE FULLSCREEN ===== */
+
+.nil-container,
+.nil-container2 {
+    display: flex;
+    gap: 40px;
+    width: 100%;
+    margin: 0;
+    /* KLUCZOWE – pełna wysokość bez overflow */
+    height: calc(100svh - 100px);
+    /* usunięty padding pionowy */
+    padding: 0 20px;
+    align-items: stretch;
+    overflow: hidden;
+    scroll-snap-align: start;
+}
+
+/* ===== KOLUMNY ===== */
+
+.nil-program {
+    flex: 1;
+    height: 100%;
+    background-color: #f5f5f5;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    padding: 30px;
+    line-height: 1.6;
+}
+
+.nil-film,
+.nil-film2 {
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+    .nil-film img,
+    .nil-film2 img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        border-radius: 12px;
+    }
+
+/* ===== TYPO ===== */
+
+.nil-program h2 {
+    margin-bottom: 20px;
+}
+
+.nil-program li {
+    margin-bottom: 15px;
+}
+
+/* ===== MOBILE ===== */
+
+@media (max-width: 768px) {
+
+    .nil-container,
+    .nil-container2 {
+        flex-direction: column;
+        justify-content: center;
+        /* mobile NIE fullscreen */
+        height: auto;
+        padding: 20px 0;
+    }
+
+    .nil-program {
+        order: 2;
+        width: 90%;
+        margin-top: 20px;
+    }
+
+    .nil-film,
+    .nil-film2 {
+        order: 1;
+        width: 90%;
+        max-width: 420px;
+        height: 35vh;
+        flex: none;
+    }
+}
+.nil-container {
+    margin-bottom: 50px;
+}
+
+.nil-container2 {
+    background-color: #fafafa;
+}
+
+
+@media (max-width: 768px) {
+
+    .nil-container,
+    .nil-container2 {
+        flex-direction: column;
+        align-items: center; /* 🔥 KLUCZOWE */
+        justify-content: center;
+        height: auto;
+        padding: 20px 0;
+    }
+
+    .nil-film,
+    .nil-film2 {
+        order: 1;
+        width: 90%;
+        max-width: 420px;
+        height: 35vh;
+        flex: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}

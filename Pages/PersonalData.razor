@@ -1,0 +1,296 @@
+﻿@page "/personaldata"
+@using System.Security.Claims
+@using System.ComponentModel.DataAnnotations
+@using LegendaryCruises.Interfaces
+@using LegendaryCruises.Models
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject UserManager<IdentityUser> UserManager
+@inject IUserProfileService UserProfileService
+@inject IPassengerService PassengerService
+@inject ICartService CartService
+@inject AuthenticationStateProvider Auth
+@inject NavigationManager Nav
+
+<nav class="navbar navbar-expand-md navbar-light px-1">
+    <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+    </a>
+
+    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
+        <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
+
+            <AuthorizeView Roles="Admin">
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/cruises-table">
+                        CRUISES
+                    </a>
+                </div>
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/add-cruise">
+                        ADD CRUISE
+                    </a>
+                </div>
+            </AuthorizeView>
+
+            <!-- LOGGED IN -->
+            <AuthorizeView>
+                <Authorized Context="authState">
+                    <button class="btn btn-primary rounded-pill px-3 py-1 d-flex align-items-center"
+                            @onclick="GoToCart">
+                        <i class="bi bi-cart me-2 icon-white"></i>
+                        <span>@CartItemCount</span>
+                    </button>
+
+                    <span class="me-2 login2">
+                            Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                        </span>
+                    
+
+                    <a class="btn btn-primary" href="/newcruises">
+                        ✨ Nouvelles croisières
+                    </a>
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Logout">
+                            LOGOUT
+                        </a>
+                    </div>
+                </Authorized>
+
+                <!-- NOT LOGGED IN -->
+                <NotAuthorized>
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Login">
+                            LOGIN
+                        </a>
+                    </div>
+                    <div class="nav-item px-1">
+                        <a class="custom-buy-btn mt-3" style="text-decoration: none!important" href="/newcruises">
+                            ✨ Nouvelles croisières
+                        </a>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Informations personnelles</h2>
+
+    @if (isLoading)
+    {
+        <p>Chargement...</p>
+    }
+    else
+    {
+        <EditForm Model="@checkoutInfo" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <!-- PASSAGER 1 (UTILISATEUR) -->
+            <h4 class="mb-3">Passager principal</h4>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Prénom</label>
+                    <InputText class="form-control" @bind-Value="checkoutInfo.FirstName" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Nom</label>
+                    <InputText class="form-control" @bind-Value="checkoutInfo.LastName" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Adresse email</label>
+                <InputText class="form-control" @bind-Value="checkoutInfo.Email" disabled />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Téléphone</label>
+                <InputText class="form-control" @bind-Value="checkoutInfo.Phone" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Numéro de passeport</label>
+                <InputText class="form-control" @bind-Value="checkoutInfo.PassportNumber" />
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-2">
+                    <label class="form-label">Numéro</label>
+                    <InputText class="form-control" @bind-Value="checkoutInfo.StreetNumber" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Rue</label>
+                    <InputText class="form-control" @bind-Value="checkoutInfo.Street" />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Code postal</label>
+                    <InputText class="form-control" @bind-Value="checkoutInfo.PostalCode" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Ville</label>
+                    <InputText class="form-control" @bind-Value="checkoutInfo.City" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Pays</label>
+                    <InputText class="form-control" @bind-Value="checkoutInfo.Country" />
+                </div>
+            </div>
+
+            <!-- OPTION : VOYAGE SEUL -->
+            <div class="form-check mt-4 mb-3">
+                <InputCheckbox class="form-check-input" @bind-Value="travelAlone" />
+                <label class="form-check-label">Je voyage seul</label>
+            </div>
+
+            <!-- MESSAGE D'AVERTISSEMENT -->
+            @if (showSecondPassengerWarning)
+            {
+                <div class="alert alert-danger">
+                    Les informations concernant le deuxième passager sont nécessaires
+                    ou vous devez sélectionner l’option « Je voyage seul ».
+                </div>
+            }
+
+            <!-- PASSAGER 2 -->
+            <h4 class="mt-5 mb-3">Passager 2</h4>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Prénom</label>
+                    <InputText class="form-control" @bind-Value="secondPassenger.FirstName" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Nom</label>
+                    <InputText class="form-control" @bind-Value="secondPassenger.LastName" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Date de naissance</label>
+                <InputDate class="form-control" @bind-Value="secondPassenger.DateOfBirth" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Numéro de passeport</label>
+                <InputText class="form-control" @bind-Value="secondPassenger.PassportNumber" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Adresse email</label>
+                <InputText class="form-control" @bind-Value="secondPassenger.Email" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Téléphone</label>
+                <InputText class="form-control" @bind-Value="secondPassenger.Phone" />
+            </div>
+
+            <!-- PAIEMENT -->
+            <div class="mb-3 mt-4">
+                <label class="form-label">Méthode de paiement</label>
+                <InputSelect class="form-select" @bind-Value="checkoutInfo.PaymentMethod">
+                    <option value="">-- Choisir une option --</option>
+                    <option value="CreditCard">Carte bancaire</option>
+                    <option value="PayPal">PayPal</option>
+                </InputSelect>
+            </div>
+
+            <button type="submit" class="btn btn-success">Continuer</button>
+        </EditForm>
+    }
+</div>
+
+@code {
+    private CheckoutInfo checkoutInfo = new();
+    private PassengerInfo secondPassenger = new();
+    private bool isLoading = true;
+    private bool travelAlone = false;
+    private bool showSecondPassengerWarning = false;
+    private int CartItemCount = 0;
+    private bool IsLoggedIn = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await Auth.GetAuthenticationStateAsync();
+        var user = authState.User;
+        IsLoggedIn = user.Identity?.IsAuthenticated ?? false;
+
+        if (IsLoggedIn)
+        {
+            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var identityUser = await UserManager.FindByIdAsync(userId);
+                if (identityUser != null)
+                {
+                    checkoutInfo.Email = identityUser.Email;
+                }
+
+                CartItemCount = await CartService.GetCartItemCount(userId);
+            }
+        }
+
+        isLoading = false;
+    }
+
+    private void GoToCart()
+    {
+        Nav.NavigateTo("/cart");
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        bool secondPassengerComplete =
+            !string.IsNullOrWhiteSpace(secondPassenger.FirstName) &&
+            !string.IsNullOrWhiteSpace(secondPassenger.LastName) &&
+            secondPassenger.DateOfBirth != default &&
+            !string.IsNullOrWhiteSpace(secondPassenger.PassportNumber) &&
+            !string.IsNullOrWhiteSpace(secondPassenger.Email) &&
+            !string.IsNullOrWhiteSpace(secondPassenger.Phone);
+
+        if (!travelAlone && !secondPassengerComplete)
+        {
+            showSecondPassengerWarning = true;
+            return;
+        }
+
+        showSecondPassengerWarning = false;
+
+        var authState = await Auth.GetAuthenticationStateAsync();
+        var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (!string.IsNullOrEmpty(userId))
+        {
+            await UserProfileService.SaveUserProfile(userId, checkoutInfo);
+
+            if (!travelAlone)
+            {
+                await PassengerService.SavePassenger(userId, secondPassenger);
+            }
+        }
+
+        if (checkoutInfo.PaymentMethod == "CreditCard")
+        {
+            Nav.NavigateTo($"/creditcard?alone={travelAlone}");
+        }
+        else
+        {
+            Nav.NavigateTo("/confirmation");
+        }
+    }
+}

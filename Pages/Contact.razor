@@ -1,0 +1,198 @@
+﻿@page "/contact"
+@using LegendaryCruises.Interfaces
+@using System.Security.Claims
+@using System.ComponentModel.DataAnnotations
+
+@inject IEmailService EmailService
+@inject NavigationManager Nav
+@inject ICartService CartService
+@inject AuthenticationStateProvider Auth
+
+<nav class="navbar navbar-expand-md navbar-light px-1">
+
+    <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+    </a>
+
+    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
+        <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
+
+            <AuthorizeView Roles="Admin">
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/cruises-table">CRUISES</a>
+                </div>
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/add-cruise">ADD CRUISE</a>
+                </div>
+            </AuthorizeView>
+
+            <AuthorizeView>
+                <Authorized Context="authState">
+
+                    <button class="btn btn-primary rounded-pill px-3 py-1 d-flex align-items-center"
+                            @onclick="GoToCart">
+                        <i class="bi bi-cart me-2 icon-white"></i>
+                        <span>@CartItemCount</span>
+                    </button>
+
+
+                    <span class="me-2 login2">
+                            Bonjour @(authState.User.Identity?.Name ??
+                                                        authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                        </span>
+                
+
+                    <a class="btn btn-primary" href="/newcruises">✨ Nouvelles croisières</a>
+
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Logout">LOGOUT</a>
+                    </div>
+
+                </Authorized>
+
+                <NotAuthorized>
+                    <div class="nav-item px-1">
+                        <a class="btn login"
+                           href="/Identity/Account/Login?returnUrl=/@Nav.ToBaseRelativePath(Nav.Uri)">
+                            LOGIN
+                        </a>
+
+                    </div>
+
+                    <div class="nav-item px-1">
+                        <a class="custom-buy-btn mt-3" style="text-decoration: none!important" href="/newcruises">
+                            ✨ Nouvelles croisières
+                        </a>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+
+        </div>
+    </div>
+</nav>
+
+<div class="cruise-details-container">
+    <div class="cruise-card">
+
+        <h2 class="cruise-title">Formulaire de contact</h2>
+
+        <p class="cruise-description">
+            Vous pouvez nous écrire directement via ce formulaire.
+            Notre équipe vous répondra dans les plus brefs délais.
+        </p>
+
+        <EditForm Model="@contactModel" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="booking-section">
+
+                <div class="booking-block">
+                    <label>Nom complet</label>
+                    <InputText class="form-control" @bind-Value="contactModel.FullName" />
+                </div>
+
+                <div class="booking-block">
+                    <label>Email</label>
+                    <InputText class="form-control" @bind-Value="contactModel.Email" type="email" />
+                </div>
+
+                <div class="booking-block">
+                    <label>Téléphone</label>
+                    <InputText class="form-control" @bind-Value="contactModel.Phone" />
+                </div>
+
+                <div class="booking-block">
+                    <label>Message</label>
+                    <InputTextArea class="form-control" @bind-Value="contactModel.Message" rows="5" />
+                </div>
+
+                <button class="btn btn-primary custom-buy-btn" type="submit">
+                    Envoyer le message
+                </button>
+
+            </div>
+        </EditForm>
+
+        @if (sent)
+        {
+            <div class="alert alert-success mt-3">
+                Votre message a été envoyé. Merci !
+            </div>
+        }
+
+    </div>
+</div>
+
+@code {
+    private int CartItemCount = 0;
+    private bool IsLoggedIn = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await Auth.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        IsLoggedIn = user.Identity?.IsAuthenticated ?? false;
+
+        if (IsLoggedIn)
+        {
+            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                CartItemCount = await CartService.GetCartItemCount(userId);
+            }
+        }
+    }
+
+    private void GoToCart()
+    {
+        Nav.NavigateTo("/cart");
+    }
+
+    private ContactModel contactModel = new();
+    private bool sent = false;
+
+    public class ContactModel
+    {
+        [Required(ErrorMessage = "L'email est obligatoire.")]
+        [EmailAddress(ErrorMessage = "Format d'email invalide.")]
+        public string Email { get; set; } = "";
+
+        public string FullName { get; set; } = "";
+        public string Phone { get; set; } = "";
+        public string Message { get; set; } = "";
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (string.IsNullOrWhiteSpace(contactModel.Email))
+            return;
+
+        var email = contactModel.Email;
+
+        await EmailService.SendAsync(
+            "legendary.cruises.booking@gmail.com",
+            "Nouveau message du formulaire de contact",
+            $@"
+                <p><strong>Nom complet:</strong> {contactModel.FullName}</p>
+                <p><strong>Email:</strong> {contactModel.Email}</p>
+                <p><strong>Téléphone:</strong> {contactModel.Phone}</p>
+                <p><strong>Message:</strong><br/>{contactModel.Message}</p>
+            "
+        );
+
+        _ = EmailService.SendAutoReplyAsync(email);
+
+        sent = true;
+        contactModel = new ContactModel();
+
+        StateHasChanged();
+    }
+}

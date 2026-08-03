@@ -1,0 +1,282 @@
+﻿@page "/transatlantique"
+@using LegendaryCruises.Components
+@using LegendaryCruises.Interfaces
+@using System.Security.Claims
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject ICruiseService CruiseService
+@inject NavigationManager Nav
+
+<nav class="navbar navbar-expand-md navbar-light px-1">
+
+    <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+    </a>
+
+
+    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
+        <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
+
+
+
+            <AuthorizeView Roles="Admin">
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/cruises-table">
+                        CRUISES
+                    </a>
+                </div>
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/add-cruise">
+                        ADD CRUISE
+                    </a>
+                </div>
+            </AuthorizeView>
+
+            <!-- LOGGED IN -->
+            <AuthorizeView>
+                <Authorized Context="authState">
+
+                    <span class="me-2 login2">
+                            Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                        </span>
+
+              
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Logout">
+                            LOGOUT
+                        </a>
+                    </div>
+                  
+                </Authorized>
+
+                <!-- NOT LOGGED IN -->
+                <NotAuthorized>
+                    <div class="nav-item px-1">
+                        <a class="btn login"
+                           href="/Identity/Account/Login?returnUrl=/@Nav.ToBaseRelativePath(Nav.Uri)">
+                            LOGIN
+                        </a>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+
+        <ButtonBuy Slug="@cruiseSlug" />
+
+
+        </div>
+    </div>
+</nav>
+
+<div class="video-container">
+    <video autoplay muted loop playsinline id="bg-video">
+        <source src="/videos/Transatlantique.mp4" type="video/mp4">
+    </video>
+    <div id="video-overlay"></div>
+
+</div>
+
+
+
+<div class="video-nav-bar">
+    <a class="video-nav-link" href="#1">Southampton</a>
+    <a class="video-nav-link" href="#2">Détente</a>
+    <a class="video-nav-link" href="#3">Sport</a>
+    <a class="video-nav-link" href="#4">Culture</a>
+    <a class="video-nav-link" href="#5">Musique Théâtre</a>
+    <a class="video-nav-link" href="#6">Vie marine</a>
+    <a class="video-nav-link" href="#7">Dans la baie de New York</a>
+
+</div>
+
+
+
+
+<div class="row gy-4 mt-2">
+    <!-- Card 1 -->
+    <div class="col-md-4 animate-fadeInUp" id="1" style="animation-delay: 1.1s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/Transatlantic/southampton.jpg" class="card-img-top fixed-img" alt="Embarquement Southampton" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Embarquement à Southampton</h5>
+                <p class="card-text">
+                    Accueil à bord du légendaire Queen Mary 2.<br />
+                    Installation en cabine et découverte du navire.<br />
+                    Cocktail de bienvenue et dîner inaugural.<br />
+                    Départ en fin de journée vers l’Atlantique.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="col-md-4 animate-fadeInUp" id="2" style="animation-delay: 1.3s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/Transatlantic/aperitif.jpg" class="card-img-top fixed-img" alt="Atlantique en mer" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Atlantique – Jour en mer</h5>
+                <p class="card-text">
+                    Première journée de navigation.<br />
+                    Détente sur les ponts extérieurs.<br />
+                    Conférences culturelles et activités à bord.<br />
+                    L’immensité de l’océan à perte de vue.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="col-md-4 animate-fadeInUp" id="3" style="animation-delay: 1.5s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/Transatlantic/swim.jpg" class="card-img-top fixed-img" alt="Vie à bord" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Vie à bord</h5>
+                <p class="card-text">
+                    Journée rythmée par le confort Cunard.<br />
+                    Piscines intérieures, spa et fitness.<br />
+                    Afternoon Tea traditionnel servi en salle.<br />
+                    Élégance et art de vivre en mer.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row gy-4 mt-2">
+    <!-- Card 4 -->
+    <div class="col-md-4 animate-fadeInUp" id="4" style="animation-delay: 1.7s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/Transatlantic/sea3.jpg" class="card-img-top fixed-img" alt="Conférences à bord" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Navigation transatlantique</h5>
+                <p class="card-text">
+                    Journée dédiée à la culture et à la détente.<br />
+                    Conférences historiques et musicales.<br />
+                    Bibliothèque, salons panoramiques.<br />
+                    Temps suspendu au cœur de l’Atlantique.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="col-md-4 animate-fadeInUp" id="5" style="animation-delay: 1.9s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/Transatlantic/gala.jpg" class="card-img-top fixed-img" alt="Soirée de gala" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Soirée de gala</h5>
+                <p class="card-text">
+                    Journée suivie d’une soirée élégante.<br />
+                    Tenue de gala recommandée.<br />
+                    Dîner gastronomique et spectacle au théâtre.<br />
+                    L’âge d’or des traversées transatlantiques.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="col-md-4 animate-fadeInUp" id="6" style="animation-delay: 2.1s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/Transatlantic/sea4.jpg" class="card-img-top fixed-img" alt="Derniers jours en mer" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Derniers jours en mer</h5>
+                <p class="card-text">
+                    Navigation vers la côte américaine.<br />
+                    Activités, concerts et détente absolue.<br />
+                    Observation de la faune marine possible.<br />
+                    Derniers couchers de soleil atlantiques.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row gy-4 mt-2">
+    <!-- Card 7 -->
+    <div class="col-md-4 animate-fadeInUp" id="7" style="animation-delay: 0.5s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/Transatlantic/approach-ny.jpg" class="card-img-top fixed-img" alt="Approche New York" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Approche de New York</h5>
+                <p class="card-text">
+                    Dernière nuit en mer.<br />
+                    Préparatifs pour l’arrivée aux États-Unis.<br />
+                    Ambiance unique à bord.<br />
+
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 8 -->
+    <div class="col-md-4 animate-fadeInUp" style="animation-delay: 0.7s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/Transatlantic/newyork.jpg" class="card-img-top fixed-img" alt="Arrivée New York" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Arrivée à New York</h5>
+                <p class="card-text">
+                    Entrée spectaculaire dans la baie de New York.<br />
+                    Passage devant la Statue de la Liberté.<br />
+                    Vue iconique sur Manhattan.<br />
+                    Un moment inoubliable.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 9 -->
+    <div class="col-md-4 animate-fadeInUp" style="animation-delay: 0.9s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/Transatlantic/ny.jpg" class="card-img-top fixed-img" alt="Fin de croisière" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Débarquement à New York</h5>
+                <p class="card-text">
+                    Petit-déjeuner à bord.<br />
+                    Débarquement matinal à Manhattan.<br />
+                    Possibilité d’extension à New York.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()">
+    ↑
+</button>
+
+
+
+@code {
+   
+
+    private string cruiseSlug = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var cruise = await CruiseService.GetCruiseByName("Transatlantique");
+
+        if (cruise != null)
+            cruiseSlug = cruise.Slug;
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        
+        await JSRuntime.InvokeVoidAsync("initVideoNavScroll");
+
+        await Task.Delay(50); 
+        await JSRuntime.InvokeVoidAsync("scrollToHashIfAny");
+    }
+}
+
+
+
+
+
+

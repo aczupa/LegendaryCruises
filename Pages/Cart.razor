@@ -1,0 +1,235 @@
+﻿@page "/cart"
+@using System.Security.Claims
+@using LegendaryCruises.Models
+@using LegendaryCruises.Interfaces
+@inject ICartService CartService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+<nav class="navbar navbar-expand-md navbar-light px-1">
+
+    <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+    </a>
+
+    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
+        <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
+
+            <AuthorizeView Roles="Admin">
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/cruises-table">CRUISES</a>
+                </div>
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/add-cruise">ADD CRUISE</a>
+                </div>
+            </AuthorizeView>
+
+            <AuthorizeView>
+                <Authorized Context="authState">
+                    <span class="me-2 login2">
+                        Bonjour @(authState.User.Identity?.Name ??
+                                                authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                    </span>
+
+                    <a class="btn btn-primary" href="/newcruises">✨ Nouvelles croisières</a>
+
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Logout">LOGOUT</a>
+                    </div>
+                </Authorized>
+
+                <NotAuthorized>
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Login">LOGIN</a>
+                    </div>
+                    <div class="nav-item px-1">
+                        <a class="custom-buy-btn mt-3" style="text-decoration:none!important" href="/newcruises">
+                            ✨ Nouvelles croisières
+                        </a>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+
+        </div>
+    </div>
+</nav>
+
+<div class="card p-4 mt-4">
+
+    <h2 class="text-center mb-4">Votre panier</h2>
+
+    @if (CartItems == null)
+    {
+        <div class="text-center">
+            <p>Chargement du panier...</p>
+        </div>
+    }
+    else if (!CartItems.Any())
+    {
+        <div class="alert alert-info text-center">Votre panier est vide.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered cart-mobile-table">
+                <thead class="table-light">
+                    <tr>
+                        <th>Destination</th>
+                        <th>Cabine</th>
+                        <th>Date</th>
+                        <th>Quantité</th>
+                        <th>Prix unitaire</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in CartItems)
+                    {
+                        <tr>
+
+                            <td data-label="Destination">@item.Cruise.Title</td>
+
+                            <td data-label="Cabine">@item.CabinType</td>
+
+                            <td data-label="Date">
+                                @item.CruiseDate.DepartureDate.ToString("dd MMM yyyy")
+                                -
+                                @item.CruiseDate.ReturnDate.ToString("dd MMM yyyy")
+                            </td>
+
+                            <td data-label="Quantité">
+                                <input type="number"
+                                       class="form-control"
+                                       style="width: 70px;"
+                                       @bind="item.Quantity"
+                                       @bind:event="oninput"
+                                       @onchange="(e) => UpdateQuantity(item.Id, item.Quantity)"
+                                       min="0" />
+                            </td>
+
+                            <td data-label="Prix unitaire">
+                                @item.Price @item.Cruise.Currency
+                            </td>
+
+                            <td data-label="Total">
+                                @(item.Price* item.Quantity) @item.Cruise.Currency
+                            </td>
+
+                            <td data-label="Action">
+                                <button class="btn btn-danger"
+                                        @onclick="() => RemoveFromCart(item.Id)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4 text-center">
+            <h5>Total général : <strong>@TotalAmount @Currency</strong></h5>
+        </div>
+
+       
+        <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3 mt-4 cart-buttons">
+            <button class="btn btn-primary" @onclick="ProceedToCheckout">
+                Passer la commande
+            </button>
+
+            <a href="/" class="btn btn-secondary">
+                Continuer les achats
+            </a>
+        </div>
+    }
+</div>
+
+@code {
+    public List<CartItem> CartItems { get; private set; } = new();
+    public decimal TotalAmount { get; private set; }
+    public string Currency { get; private set; } = "€";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (!string.IsNullOrEmpty(userId))
+        {
+            var cart = await CartService.GetCart(userId);
+
+            if (cart?.Items?.Any() == true)
+            {
+                CartItems = cart.Items;
+                Currency = CartItems.First().Cruise.Currency;
+                TotalAmount = CartItems.Sum(ci => ci.Price * ci.Quantity);
+            }
+            else
+            {
+                CartItems = new List<CartItem>();
+                TotalAmount = 0;
+                Currency = "€";
+            }
+        }
+    }
+
+    private async Task UpdateQuantity(int cartItemId, int newQty)
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId)) return;
+
+        if (newQty == 0)
+        {
+            await RemoveFromCart(cartItemId);
+            return;
+        }
+
+        var response = await CartService.UpdateQuantity(userId, cartItemId, newQty);
+
+        if (response.Success)
+        {
+            var cart = await CartService.GetCart(userId);
+
+            CartItems = cart?.Items ?? new List<CartItem>();
+            TotalAmount = CartItems.Sum(ci => ci.Price * ci.Quantity);
+
+            StateHasChanged();
+        }
+    }
+
+    private async Task RemoveFromCart(int cartItemId)
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (!string.IsNullOrEmpty(userId))
+        {
+            var response = await CartService.RemoveFromCart(userId, cartItemId);
+
+            if (response.Success)
+            {
+                var cart = await CartService.GetCart(userId);
+
+                CartItems = cart?.Items ?? new List<CartItem>();
+                TotalAmount = CartItems.Sum(ci => ci.Price * ci.Quantity);
+
+                StateHasChanged();
+            }
+        }
+    }
+
+    private void ProceedToCheckout()
+    {
+        NavigationManager.NavigateTo("/personaldata");
+    }
+}

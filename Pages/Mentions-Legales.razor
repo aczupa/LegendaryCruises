@@ -1,0 +1,293 @@
+﻿@page "/mentions-legales"
+
+@using LegendaryCruises.Interfaces
+@using LegendaryCruises.Services
+@using System.Security.Claims
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Nav
+@inject AuthenticationStateProvider Auth
+@inject ICartService CartService
+
+<nav class="navbar navbar-expand-md navbar-light px-1">
+
+    <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+    </a>
+
+
+
+    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
+        <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
+
+            <AuthorizeView Roles="Admin">
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/cruises-table">
+                        CRUISES
+                    </a>
+                </div>
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/add-cruise">
+                        ADD CRUISE
+                    </a>
+                </div>
+            </AuthorizeView>
+
+            <!-- LOGGED IN -->
+            <AuthorizeView>
+                <Authorized Context="authState">
+                    <button class="btn btn-primary rounded-pill px-3 py-1 d-flex align-items-center"
+                            @onclick="GoToCart">
+                        <i class="bi bi-cart me-2 icon-white"></i>
+                        <span>@CartItemCount</span>
+                    </button>
+
+                         <span class="me-2 login2" >
+                            Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                        </span>
+
+             
+
+
+                    <a class="btn btn-primary" href="/newcruises">
+                        ✨ Nouvelles croisières
+                    </a>
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Logout">
+                            LOGOUT
+                        </a>
+                    </div>
+
+                </Authorized>
+
+                <!-- NOT LOGGED IN -->
+                <NotAuthorized>
+                    <div class="nav-item px-1">
+                        <a class="btn login"
+                           href="/Identity/Account/Login?returnUrl=/@Nav.ToBaseRelativePath(Nav.Uri)">
+                            LOGIN
+                        </a>
+                    </div>
+                    <div class="nav-item px-1">
+                        <a class="custom-buy-btn mt-3" style="text-decoration: none!important" href="/newcruises">
+                            ✨ Nouvelles croisières
+                        </a>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+
+        </div>
+    </div>
+</nav>
+
+<div class="cruise-details-container">
+    <div class="cruise-card">
+
+        <h1 class="cruise-title">Mentions légales</h1>
+
+        <div class="cruise-description">
+
+            <p>
+                <strong>1. Éditeur du site</strong><br />
+                Le présent site internet est édité par :
+            </p>
+
+            <p>
+                <strong>Legendary Cruises</strong><br />
+                Société spécialisée dans la conception et la réservation de voyages en croisière.<br />
+                Siège social : [adresse complète à compléter]<br />
+                Téléphone : [numéro à compléter]<br />
+                Adresse électronique : [email de contact à compléter]
+            </p>
+
+            <p>
+                Directeur de la publication : [Nom du responsable à compléter]
+            </p>
+
+
+            <p>
+                <strong>2. Activité du site</strong><br />
+                Legendary Cruises propose une plateforme permettant aux utilisateurs de
+                consulter des offres de croisières, créer un compte client, effectuer des
+                réservations et gérer leurs demandes liées aux voyages proposés.
+            </p>
+
+
+            <p>
+                <strong>3. Hébergement du site</strong><br />
+                Le site est hébergé par un prestataire d’hébergement professionnel assurant
+                la disponibilité, la sécurité et la maintenance de l’infrastructure technique.
+            </p>
+
+            <p>
+                Hébergeur :
+                <br />
+                Nom de l’hébergeur : [à compléter]
+                <br />
+                Adresse : [adresse de l’hébergeur]
+                <br />
+                Site internet : [adresse du prestataire]
+            </p>
+
+
+            <p>
+                <strong>4. Accès au site</strong><br />
+                Legendary Cruises met tout en œuvre afin de garantir un accès continu au site.
+                Toutefois, des interruptions temporaires peuvent intervenir notamment pour des
+                opérations de maintenance, de mise à jour ou pour des raisons indépendantes de
+                la volonté de l’éditeur.
+            </p>
+
+
+            <p>
+                <strong>5. Responsabilité</strong><br />
+                Les informations présentes sur le site sont fournies à titre informatif.
+                Legendary Cruises s’efforce d’assurer l’exactitude et la mise à jour des
+                contenus publiés.
+            </p>
+
+            <p>
+                Cependant, Legendary Cruises ne saurait être tenue responsable des erreurs,
+                omissions ou indisponibilités temporaires du service.
+            </p>
+
+            <p>
+                Les informations relatives aux itinéraires, horaires, escales et prestations
+                peuvent être modifiées par les compagnies maritimes ou les autorités
+                compétentes pour des raisons opérationnelles, météorologiques ou de sécurité.
+            </p>
+
+
+            <p>
+                <strong>6. Propriété intellectuelle</strong><br />
+                L’ensemble des éléments présents sur ce site, notamment les textes,
+                photographies, illustrations, logos, vidéos, graphismes, interfaces et
+                éléments logiciels, est protégé par les dispositions relatives à la propriété
+                intellectuelle.
+            </p>
+
+            <p>
+                Toute reproduction, représentation, modification ou utilisation totale ou
+                partielle des contenus du site sans autorisation préalable est interdite.
+            </p>
+
+
+            <p>
+                <strong>7. Protection des données personnelles</strong><br />
+                Legendary Cruises accorde une importance particulière à la protection des
+                données personnelles de ses utilisateurs.
+            </p>
+
+            <p>
+                Les informations collectées lors de la création d’un compte ou d’une
+                réservation sont utilisées uniquement pour :
+            </p>
+
+            <ul>
+                <li>La gestion des comptes clients ;</li>
+                <li>Le traitement des réservations ;</li>
+                <li>La communication avec les voyageurs ;</li>
+                <li>L’amélioration de nos services.</li>
+            </ul>
+
+            <p>
+                Conformément au Règlement Général sur la Protection des Données (RGPD),
+                chaque utilisateur dispose d’un droit d’accès, de rectification,
+                d’effacement et d’opposition concernant ses données personnelles.
+            </p>
+
+            <p>
+                Pour plus d’informations, consultez notre
+                <a href="/politique-confidentialite">
+                    Politique de confidentialité
+                </a>.
+            </p>
+
+
+            <p>
+                <strong>8. Cookies</strong><br />
+                Le site peut utiliser des cookies nécessaires à son fonctionnement,
+                notamment pour assurer l’authentification des utilisateurs, la sécurité
+                du compte client et l’amélioration de l’expérience de navigation.
+            </p>
+
+            <p>
+                L’utilisateur peut configurer son navigateur afin de contrôler ou limiter
+                l’utilisation des cookies.
+            </p>
+
+
+            <p>
+                <strong>9. Liens externes</strong><br />
+                Le site peut contenir des liens vers des sites partenaires ou externes.
+                Legendary Cruises ne peut être tenue responsable du contenu ou des pratiques
+                de confidentialité de ces sites tiers.
+            </p>
+
+
+            <p>
+                <strong>10. Droit applicable</strong><br />
+                Les présentes mentions légales sont régies par le droit français.
+            </p>
+
+            <p>
+                En cas de litige relatif à l’utilisation du site, les parties rechercheront
+                en priorité une solution amiable avant toute procédure judiciaire.
+            </p>
+
+
+            <p>
+                <strong>11. Contact</strong><br />
+                Pour toute question concernant le fonctionnement du site, les services proposés
+                ou les présentes mentions légales, vous pouvez contacter Legendary Cruises à
+                l’adresse suivante :
+            </p>
+
+            <p>
+                Email : [adresse email à compléter]
+            </p>
+
+        </div>
+
+    </div>
+</div>
+
+@code {
+    private int CartItemCount = 0;
+    private bool IsLoggedIn = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await Auth.GetAuthenticationStateAsync();
+
+        var user = authState.User;
+
+        IsLoggedIn = user.Identity?.IsAuthenticated ?? false;
+
+
+        if (IsLoggedIn)
+        {
+            var userId =
+                user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                CartItemCount =
+                    await CartService.GetCartItemCount(userId);
+            }
+        }
+    }
+
+    private void GoToCart()
+    {
+        Nav.NavigateTo("/cart");
+    }
+
+
+
+}

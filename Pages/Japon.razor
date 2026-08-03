@@ -1,0 +1,247 @@
+﻿@page "/japon"
+@using LegendaryCruises.Components
+@using LegendaryCruises.Interfaces
+@using System.Security.Claims
+@using LegendaryCruises.Services
+
+@inject ICruiseService CruiseService
+@inject NavigationManager Nav
+@inject AuthenticationStateProvider Auth
+@inject ICartService CartService
+
+<nav class="navbar navbar-expand-md navbar-light px-1">
+
+    <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+    </a>
+
+
+
+    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
+        <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
+
+            <AuthorizeView Roles="Admin">
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/cruises-table">
+                        CRUISES
+                    </a>
+                </div>
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/add-cruise">
+                        ADD CRUISE
+                    </a>
+                </div>
+            </AuthorizeView>
+
+            <!-- LOGGED IN -->
+            <AuthorizeView>
+                <Authorized Context="authState">
+                    <button class="btn btn-primary"
+                            @onclick="GoToCart">
+                        <i class="bi bi-cart me-2 icon-white"></i>
+                        <span>@CartItemCount</span>
+                    </button>
+
+                    <button class="btn btn-primary">
+                        <span class="me-2 ">
+                            Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                        </span>
+                    </button>
+
+
+                    <a class="btn btn-primary" href="/newcruises">
+                        ✨ Nouvelles croisières
+                    </a>
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Logout">
+                            LOGOUT
+                        </a>
+                    </div>
+
+                </Authorized>
+
+                <!-- NOT LOGGED IN -->
+                <NotAuthorized>
+                    <div class="nav-item px-1">
+                        <a class="btn login"
+                           href="/Identity/Account/Login?returnUrl=/@Nav.ToBaseRelativePath(Nav.Uri)">
+                            LOGIN
+                        </a>
+                    </div>
+                    <div class="nav-item px-1">
+                        <a class="custom-buy-btn mt-3" style="text-decoration: none!important" href="/newcruises">
+                            ✨ Nouvelles croisières
+                        </a>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+
+        </div>
+    </div>
+</nav>
+
+
+<div class="japan-grid">
+    <!-- Row 1 -->
+    <div class="col-intro">
+        <h3 class="title mt-5">Japon</h3>
+        <div class="mt-4">   <ButtonBuy Slug="@cruiseSlug" /> </div>
+         
+        
+
+    </div>
+    <div class="item">
+        <img src="Images/Japon/busan.jpg" alt="Busan" />
+        <p class="caption">JOUR 1 – Busan (Corée du Sud) temple Haedong Yonggungsa et soirée dans le quartier de Haeundae.</p>
+    </div>
+    <div class="item">
+        <img src="Images/Japon/karatsu.jpg" alt="Karatsu" />
+        <p class="caption">JOUR 2 – Karatsu château et plage de Nijinomatsubara.</p>
+    </div>
+    <div class="item">
+        <img src="Images/Japon/nagasaki.jpg" alt="Nagasaki" />
+        <p class="caption">JOUR 3 – Nagasaki visite du musée de la paix et quartier de Dejima.</p>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="col-intro">
+
+        <p class="poetry">
+            Une diversité incroyable en seulement 13 jours
+
+            Ce circuit vous fait découvrir le Japon spirituel et ancestral, mais aussi la modernité (Busan, Osaka).
+            Le rythme est intense, mais dans le bon sens : chaque étape apporte quelque chose de différent.
+
+        </p>
+    </div>
+    <div class="item">
+        <img src="Images/Japon/kagoshima.jpg" alt="Kagoshima" />
+        <p class="caption">JOUR 4 – Kagoshima volcan Sakurajima et bain onsen.</p>
+    </div>
+    <div class="item">
+        <img src="Images/Japon/miyazaki.jpg" alt="Miyazaki" />
+        <p class="caption">JOUR 5 – Miyazaki sanctuaire Udo-jingū et plages.</p>
+    </div>
+    <div class="item">
+        <img src="Images/Japon/miyajima.jpg" alt="Miyajima" />
+        <p class="caption">JOUR 6 – Miyajima torii flottant d’Itsukushima et randonnée sur le mont Misen.</p>
+    </div>
+
+    <!-- Row 3 -->
+    <div class="col-intro poetry">
+        Ce voyage est un ruban de lumière entre mers paisibles et sanctuaires anciens.
+        De Busan, où les temples touchent l’écume, vous glissez vers le Japon comme dans un rêve.
+    </div>
+    <div class="item">
+        <img src="Images/Japon/imabari.jpg" alt="Imabari" />
+        <p class="caption">JOUR 7 – Imabari ponts du Shimanami Kaidō et château d’Imabari.</p>
+    </div>
+    <div class="item">
+        <img src="Images/Japon/takamatsu.jpg" alt="Takamatsu" />
+        <p class="caption">JOUR 8 – Takamatsu jardin Ritsurin et musée d’art.</p>
+    </div>
+    <div class="item">
+        <img src="Images/Japon/himeji.jpg" alt="Himeji" />
+        <p class="caption">JOUR 9 – Himeji célèbre château et quartier historique.</p>
+    </div>
+
+    <!-- Row 4 -->
+    <div class="col-intro poetry">
+        Les jardins, les châteaux, les îles reliées par des ponts —
+        tout semble tracé d’un geste calme et sûr.
+    </div>
+    <div class="item">
+        <img src="Images/Japon/shingu.jpg" alt="Shingu" />
+        <p class="caption">JOUR 10 – Shingu sanctuaire Kumano Hayatama Taisha et rivière Kumano.</p>
+    </div>
+    <div class="item">
+        <img src="Images/Japon/kyoto.jpg" alt="Toba" />
+        <p class="caption">JOUR 11 – Toba îles Mikimoto et musée des perles.</p>
+    </div>
+    <div class="item">
+        <img src="Images/Japon/toba.jpg" alt="Kyoto" />
+        <p class="caption">JOUR 12 – Kyoto temples Kiyomizu-dera et soirée dans Gion.</p>
+    </div>
+
+    <!-- Row 5 (Tokyo) -->
+    <div class="col-intro poetry">
+        À Nagasaki, le silence parle encore.
+        À Kagoshima, le volcan veille, immobile et vibrant.
+        Miyazaki murmure la prière du vent,
+        et Miyajima vous accueille comme une île sacrée où le torii flotte entre deux mondes.
+
+
+    </div>
+    <div class="poetry">
+        Puis Kyoto, douce et intemporelle,
+        et Tokyo, vaste et lumineuse.
+
+
+        Ce voyage est une rencontre avec l’âme du Japon,
+        délicate, profonde, inoubliable.
+
+    </div>
+
+    <div class="item">
+        <img src="Images/Japon/KYOTO1.jpg" alt="Tokyo" />
+        <p class="caption">JOUR 13 – Tokyo temple Sensō-ji, quartier de Shibuya et soirée à Shinjuku.</p>
+    </div>
+    <div class="item">
+        <img src="Images/Japon/tokyo.jpg" alt="Tokyo" />
+        <p class="caption">JOUR 14 - Vol de retour en France</p>
+    </div>
+</div>
+
+<button id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()">
+    ↑
+</button>
+
+<button id="scrollDownBtn" class="scroll-down-btn" onclick="scrollDown()">
+    ↓
+</button>
+
+@code
+{
+    private int CartItemCount = 0;
+    private bool IsLoggedIn = false;
+    private string cruiseSlug = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+      
+        var authState = await Auth.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        IsLoggedIn = user.Identity?.IsAuthenticated ?? false;
+
+      
+        if (IsLoggedIn)
+        {
+            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                CartItemCount = await CartService.GetCartItemCount(userId);
+            }
+        }
+
+        
+        var cruise = await CruiseService.GetCruiseByName("Japon");
+
+        if (cruise != null)
+        {
+            cruiseSlug = cruise.Slug;
+        }
+    }
+
+    private void GoToCart()
+    {
+        Nav.NavigateTo("/cart");
+    }
+}
+  

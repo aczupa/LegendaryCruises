@@ -1,0 +1,342 @@
+﻿@page "/ilesgrecques"
+@using LegendaryCruises.Components
+@using LegendaryCruises.Interfaces
+@using System.Security.Claims
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Nav
+
+<nav class="navbar navbar-expand-md navbar-light px-1" style="background-color: rgba(255,255,255,0.25); backdrop-filter: blur(8px);">
+
+    <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+    </a>
+    <h3>Îles Grecques</h3>
+
+    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
+        <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
+
+
+
+            <AuthorizeView Roles="Admin">
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/cruises-table">
+                        CRUISES
+                    </a>
+                </div>
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/add-cruise">
+                        ADD CRUISE
+                    </a>
+                </div>
+            </AuthorizeView>
+
+            <!-- LOGGED IN -->
+            <AuthorizeView>
+                <Authorized Context="authState">
+
+                   
+                         <span class="me-2 login2" >
+                            Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                        </span>
+
+                
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Logout">
+                            LOGOUT
+                        </a>
+                    </div>
+                    
+                </Authorized>
+
+                <!-- NOT LOGGED IN -->
+                <NotAuthorized>
+                    <div class="nav-item px-1">
+                        <a class="btn login"
+                           href="/Identity/Account/Login?returnUrl=/@Nav.ToBaseRelativePath(Nav.Uri)">
+                            LOGIN
+                        </a>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+
+              <ButtonBuy Slug="@cruiseSlug" />
+
+        </div>
+    </div>
+</nav>
+
+<div class="video-container">
+    <video autoplay muted loop playsinline id="bg-video">
+        <source src="/videos/Bienvenue.mp4" type="video/mp4">
+    </video>
+    <div id="video-overlay"></div>
+
+</div>
+
+
+
+<div class="video-nav-bar">
+    <a class="video-nav-link" href="#athenes">Athènes</a>
+    <a class="video-nav-link" href="#mykonos">Mykonos</a>
+    <a class="video-nav-link" href="#santorin">Santorini</a>
+    <a class="video-nav-link" href="#crete">Crète</a>
+    <a class="video-nav-link" href="#rhodes">Rhodes</a>
+    <a class="video-nav-link" href="#patmos">Patmos</a>
+    <a class="video-nav-link" href="#kusadasi">Kusadasi</a>
+    <a class="video-nav-link" href="#mer">Mer Égée</a>
+    <a class="video-nav-link" href="#fin">Athènes</a>
+</div>
+
+
+
+
+<div class="row gy-4 mt-2">
+    <!-- Card 4 -->
+    <div class="col-md-4 animate-fadeInUp" id="athenes" style="animation-delay: 1.1s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/Greece/athenes.jpg" class="card-img-top fixed-img" alt="Croisière Antarctique" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Arrivée à Athènes.</h5>
+                <p class="card-text">
+                    Embarquement au port du Pirée en début d’après-midi.
+
+                    Vue sur l’Acropole depuis la mer
+
+                    Cocktail de bienvenue à bord
+
+                    Départ au coucher du soleil
+
+                    🌅 Première nuit en mer Égée.
+                </p>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="col-md-4 animate-fadeInUp" id="mykonos" style="animation-delay: 1.3s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/Greece/mykonos.jpg" class="card-img-top fixed-img" alt="Croisière sur le Nil" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Mykonos</h5>
+                <p class="card-text">
+                    Île mythique, vibrante et élégante.Quartier de Little Venice
+
+                    Moulins à vent emblématiques
+
+                    Plages de sable doré ou village d’Ano Mera
+
+                    🌙 Escale tardive pour profiter de l’ambiance nocturne
+                </p>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="col-md-4 animate-fadeInUp" id="santorin" style="animation-delay: 1.5s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/Greece/santorini2.jpg" class="card-img-top fixed-img" alt="Croisière Polynésie" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Santorini</h5>
+                <p class="card-text">
+                    La carte postale de la Grèce.
+
+                    Falaises volcaniques
+
+                    Villages d’Oia et Fira
+
+                    Dômes bleus et maisons blanches
+
+                    Dégustation de vins volcaniques (option)
+
+                    🌋 Un des plus beaux couchers de soleil au monde.
+                </p>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row gy-4 mt-2">
+    <!-- Card 7 -->
+    <div class="col-md-4 animate-fadeInUp" id="crete" style="animation-delay: 1.7s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/Greece/mykonos 3.jpg" class="card-img-top fixed-img" alt="Croisière Transatlantique" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Crète</h5>
+                <p class="card-text">
+                    Berceau de la civilisation minoenne.
+
+                    Palais de Knossos
+
+                    Vieille ville d’Héraklion
+
+                    Saveurs crétoises traditionnelles
+
+                    🏺 Histoire et gastronomie
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Card 8 -->
+    <div class="col-md-4 animate-fadeInUp" id="rhodes" style="animation-delay: 1.9s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/Greece/rhodes.jpg" class="card-img-top fixed-img" alt="Croisière Japon" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Rhodes</h5>
+                <p class="card-text">
+                    Île des chevaliers.
+
+                    Vieille ville médiévale (UNESCO)
+
+                    Palais du Grand Maître
+
+                    Port de Mandraki
+
+                    ⚔️ Mélange unique d’Orient et d’Occident.
+                </p>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 9 -->
+    <div class="col-md-4 animate-fadeInUp" id="patmos" style="animation-delay: 2.1s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/Greece/crète.jpg" class="card-img-top fixed-img" alt="Croisière Islande" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Patmos</h5>
+                <p class="card-text">
+                    Île spirituelle et paisible.
+
+                    Monastère de Saint-Jean
+
+                    Grotte de l’Apocalypse
+
+                    Chora aux ruelles blanches
+
+                    ⛪ Atmosphère contemplative et hors du temps
+                </p>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row gy-4 mt-2">
+    <!-- Card 1 -->
+    <div class="col-md-4 animate-fadeInUp" id="kusadasi" style="animation-delay: 0.5s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/Greece/paros.jpg" class="card-img-top fixed-img" alt="Tour du Monde" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Kusadasi</h5>
+                <p class="card-text">
+                    Excursion majeure.
+
+                    Site antique d’Éphèse
+
+                    Bibliothèque de Celsus
+
+                    Grand théâtre
+
+                    🏛️ L’une des cités antiques les mieux conservées du monde
+                </p>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Card 3 -->
+    <div class="col-md-4 animate-fadeInUp" id="mer" style="animation-delay: 0.9s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/Greece/mykonos2.jpg" class="card-img-top fixed-img" alt="Croisière Îles Grecques" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Mer Egée</h5>
+                <p class="card-text">
+                    Détente à bord.
+
+                    Piscine & spa
+
+                    Conférences culturelles
+
+                    Cuisine méditerranéenne raffinée
+
+                    🌊 Repos face à la mer infinie
+                </p>
+
+            </div>
+        </div>
+    </div>
+    <!-- Card 2 -->
+    <div class="col-md-4 animate-fadeInUp" style="animation-delay: 0.7s;">
+        <div class="card shadow-sm h-100">
+            <img src="/Images/Greece/athens.jpg" class="card-img-top fixed-img" id="fin" alt="Croisière Alaska" />
+            <div class="card-body text-center">
+                <h5 class="card-title">Athènes</h5>
+                <p class="card-text">
+                    Arrivée matinale.
+
+                    Fin de la croisière
+
+                    Possibilité d’extension à Athènes ou aux Météores
+                </p>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<button id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()">
+    ↑
+</button>
+
+
+
+
+
+
+@code {
+
+    [Inject] ICruiseService CruiseService { get; set; }
+
+    private string cruiseSlug = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var cruise = await CruiseService.GetCruiseByName("Îles Grecques");
+
+        if (cruise != null)
+            cruiseSlug = cruise.Slug;
+    }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        // przypnij eventy do linków
+        await JSRuntime.InvokeVoidAsync("initVideoNavScroll");
+
+        // 🔹 klucz: jeśli URL ma hash, przewiń do sekcji
+        await Task.Delay(50); // daj DOM czas na render
+        await JSRuntime.InvokeVoidAsync("scrollToHashIfAny");
+    }
+
+
+}
+
+
+
+
+

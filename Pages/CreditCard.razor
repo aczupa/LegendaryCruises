@@ -1,0 +1,226 @@
+﻿@page "/creditcard"
+@using System.ComponentModel.DataAnnotations
+@using LegendaryCruises.Interfaces
+@using LegendaryCruises.Models
+@using System.Security.Claims
+@using Microsoft.AspNetCore.WebUtilities
+@inject NavigationManager Nav
+@inject AuthenticationStateProvider Auth
+@inject ICartService CartService
+@inject IOrderService OrderService
+
+<nav class="navbar navbar-expand-md navbar-light px-1">
+    <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+    </a>
+
+    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
+        <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
+
+            <AuthorizeView Roles="Admin">
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/cruises-table">
+                        CRUISES
+                    </a>
+                </div>
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/add-cruise">
+                        ADD CRUISE
+                    </a>
+                </div>
+            </AuthorizeView>
+
+            <!-- LOGGED IN -->
+            <AuthorizeView>
+                <Authorized Context="authState">
+                    <button class="btn btn-primary rounded-pill px-3 py-1 d-flex align-items-center"
+                            @onclick="GoToCart">
+                        <i class="bi bi-cart me-2 icon-white"></i>
+                        <span>@CartItemCount</span>
+                    </button>
+
+
+                    <span class="me-2 login2">
+                            Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                        </span>
+                   
+
+                    <a class="btn btn-primary" href="/newcruises">
+                        ✨ Nouvelles croisières
+                    </a>
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Logout">
+                            LOGOUT
+                        </a>
+                    </div>
+                </Authorized>
+
+                <!-- NOT LOGGED IN -->
+                <NotAuthorized>
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Login">
+                            LOGIN
+                        </a>
+                    </div>
+                    <div class="nav-item px-1">
+                        <a class="custom-buy-btn mt-3" style="text-decoration: none!important" href="/newcruises">
+                            ✨ Nouvelles croisières
+                        </a>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+
+        </div>
+    </div>
+</nav>
+
+
+<div class="container mt-4">
+
+    <h2 class="text-center mb-4">Paiement par carte bancaire</h2>
+
+    <div class="border rounded p-3 mb-4" style="background-color:#f8f9fa;">
+        <h5 class="mb-3">Récapitulatif de la cabine</h5>
+
+        <p class="mb-1"><strong>Destination :</strong> @Destination</p>
+        <p class="mb-1"><strong>Dates :</strong> @DepartureDate → @ReturnDate</p>
+        <p class="mb-1"><strong>Type de cabine :</strong> @CabinType</p>
+
+        <hr />
+
+        <p class="mb-1"><strong>Prix total de la cabine :</strong> @TotalCabinPrice @Currency</p>
+
+        <p class="mb-0"><strong>Nombre de passagers :</strong> @PassengerCount</p>
+    </div>
+
+    <Card>
+        <h3 class="mt-4 mb-3 text-center">Informations de la carte bancaire</h3>
+
+        <EditForm Model="@cardInfo" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label class="form-label">Numéro de carte</label>
+                <InputText class="form-control" @bind-Value="cardInfo.CardNumber" />
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Date d'expiration (MM/AA)</label>
+                    <InputText class="form-control" @bind-Value="cardInfo.ExpiryDate" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">CVV</label>
+                    <InputText class="form-control" @bind-Value="cardInfo.CVV" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Nom du titulaire</label>
+                <InputText class="form-control" @bind-Value="cardInfo.CardHolder" />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Valider le paiement</button>
+        </EditForm>
+    </Card>
+</div>
+
+@code {
+    private CreditCardInfo cardInfo = new();
+    private string userId = string.Empty;
+    private int CartItemCount = 0;
+
+    private int PassengerCount = 2;
+
+    private string Destination = "";
+    private string CabinType = "";
+    private string Currency = "€";
+    private string DepartureDate = "";
+    private string ReturnDate = "";
+    private decimal TotalCabinPrice;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = Nav.ToAbsoluteUri(Nav.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("alone", out var aloneValue))
+        {
+            if (bool.TryParse(aloneValue, out bool isAlone) && isAlone)
+            {
+                PassengerCount = 1;
+            }
+        }
+
+        var authState = await Auth.GetAuthenticationStateAsync();
+        var user = authState.User;
+        userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+
+        if (string.IsNullOrEmpty(userId))
+            return;
+
+        CartItemCount = await CartService.GetCartItemCount(userId);
+
+        var cart = await CartService.GetCart(userId);
+
+        if (cart != null && cart.Items != null && cart.Items.Any())
+        {
+            var item = cart.Items.First();
+
+            Destination = item.Cruise?.Title ?? "";
+            CabinType = item.CabinType.ToString();
+            Currency = item.Cruise?.Currency ?? "€";
+
+            if (item.CruiseDate != null)
+            {
+                DepartureDate = item.CruiseDate.DepartureDate.ToString("dd MMM yyyy");
+                ReturnDate = item.CruiseDate.ReturnDate.ToString("dd MMM yyyy");
+            }
+
+            TotalCabinPrice = item.Price;
+        }
+    }
+
+    private void GoToCart()
+    {
+        Nav.NavigateTo("/cart");
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (string.IsNullOrEmpty(userId)) return;
+
+        try
+        {
+            var order = await OrderService.CreateOrder(userId);
+            await OrderService.MarkAsPaid(order.Id);
+            Nav.NavigateTo($"/confirmation/{order.Id}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erreur: {ex.Message}");
+        }
+    }
+
+    public class CreditCardInfo
+    {
+        [Required(ErrorMessage = "Le numéro de carte est requis.")]
+        [CreditCard(ErrorMessage = "Numéro de carte invalide.")]
+        public string CardNumber { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "La date d'expiration est requise.")]
+        [RegularExpression(@"^(0[1-9]|1[0-2])\/?([0-9]{2})$", ErrorMessage = "Format invalide. Utilisez MM/AA.")]
+        public string ExpiryDate { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Le CVV est requis.")]
+        [RegularExpression(@"^\d{3,4}$", ErrorMessage = "CVV invalide.")]
+        public string CVV { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Le nom du titulaire est requis.")]
+        public string CardHolder { get; set; } = string.Empty;
+    }
+}
