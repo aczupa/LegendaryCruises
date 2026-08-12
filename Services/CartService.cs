@@ -91,24 +91,23 @@ namespace LegendaryCruises.Services
             await using var context = _factory.CreateDbContext();
 
             return await context.Carts
-                .Include(c => c.Items)
-                    .ThenInclude(i => i.DateCabin)
-                .Include(c => c.Items)
-                    .ThenInclude(i => i.Cruise)
-                .Include(c => c.Items)
-                    .ThenInclude(i => i.CruiseDate)
-                .FirstOrDefaultAsync(c => c.UserId == userId);
+     .AsNoTracking()
+     .Include(c => c.Items)
+         .ThenInclude(i => i.DateCabin)
+     .Include(c => c.Items)
+         .ThenInclude(i => i.Cruise)
+     .Include(c => c.Items)
+         .ThenInclude(i => i.CruiseDate)
+     .FirstOrDefaultAsync(c => c.UserId == userId);
         }
 
         public async Task<int> GetCartItemCount(string userId)
         {
             await using var context = _factory.CreateDbContext();
 
-            var cart = await context.Carts
-                .Include(c => c.Items)
-                .FirstOrDefaultAsync(c => c.UserId == userId);
-
-            return cart?.Items.Sum(i => i.Quantity) ?? 0;
+            return await context.CartItems
+                .Where(ci => ci.Cart.UserId == userId)
+                .SumAsync(ci => ci.Quantity);
         }
 
         public async Task<GetCartItemResponse> RemoveFromCart(string userId, int cartItemId)

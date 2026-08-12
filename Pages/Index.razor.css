@@ -58,7 +58,7 @@ html, body {
 
 /* --- VIDEO SECTION --- */
 
-/* Desktop: pełne tło */
+
 .video-container {
     position: relative;
     width: 100%;
@@ -76,7 +76,7 @@ html, body {
     z-index: 0;
 }
 
-/* Tytuł na wideo */
+
 .video-title {
     position: absolute;
     top: 50%;
@@ -95,7 +95,7 @@ html, body {
     text-shadow: 0 4px 8px rgba(0,0,0,0.6);
 }
 
-/* Desktop: nav-bar jako overlay */
+
 .video-nav-bar {
     position: absolute;
     top: 22%;
@@ -167,4 +167,10 @@ html, body {
         padding: 0.5rem 0.8rem;
         font-size: 0.85rem;
     }
+
+    .custom-buy-btn {
+        margin-bottom: 1rem !important;
+        display: inline-block;
+    }
 }
+

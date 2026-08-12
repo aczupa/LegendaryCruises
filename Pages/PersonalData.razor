@@ -28,18 +28,13 @@
 
             <AuthorizeView Roles="Admin">
                 <div class="nav-item px-1">
-                    <a class="btn login" href="/admin/cruises-table">
-                        CRUISES
-                    </a>
+                    <a class="btn login" href="/admin/cruises-table">CRUISES</a>
                 </div>
                 <div class="nav-item px-1">
-                    <a class="btn login" href="/admin/add-cruise">
-                        ADD CRUISE
-                    </a>
+                    <a class="btn login" href="/admin/add-cruise">ADD CRUISE</a>
                 </div>
             </AuthorizeView>
 
-            <!-- LOGGED IN -->
             <AuthorizeView>
                 <Authorized Context="authState">
                     <button class="btn btn-primary rounded-pill px-3 py-1 d-flex align-items-center"
@@ -49,26 +44,19 @@
                     </button>
 
                     <span class="me-2 login2">
-                            Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
-                        </span>
-                    
+                        Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                    </span>
 
-                    <a class="btn btn-primary" href="/newcruises">
-                        ✨ Nouvelles croisières
-                    </a>
+                    <a class="btn btn-primary" href="/newcruises">✨ Nouvelles croisières</a>
+
                     <div class="nav-item px-1">
-                        <a class="btn login" href="/Identity/Account/Logout">
-                            LOGOUT
-                        </a>
+                        <a class="btn login" href="/Identity/Account/Logout">LOGOUT</a>
                     </div>
                 </Authorized>
 
-                <!-- NOT LOGGED IN -->
                 <NotAuthorized>
                     <div class="nav-item px-1">
-                        <a class="btn login" href="/Identity/Account/Login">
-                            LOGIN
-                        </a>
+                        <a class="btn login" href="/Identity/Account/Login">LOGIN</a>
                     </div>
                     <div class="nav-item px-1">
                         <a class="custom-buy-btn mt-3" style="text-decoration: none!important" href="/newcruises">
@@ -93,45 +81,53 @@
     {
         <EditForm Model="@checkoutInfo" OnValidSubmit="HandleValidSubmit">
             <DataAnnotationsValidator />
-            <ValidationSummary />
 
-            <!-- PASSAGER 1 (UTILISATEUR) -->
+            <!-- PASSAGER 1 -->
             <h4 class="mb-3">Passager principal</h4>
 
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label class="form-label">Prénom</label>
                     <InputText class="form-control" @bind-Value="checkoutInfo.FirstName" />
+                    <ValidationMessage For="@(() => checkoutInfo.FirstName)" />
                 </div>
+
                 <div class="col-md-6">
                     <label class="form-label">Nom</label>
                     <InputText class="form-control" @bind-Value="checkoutInfo.LastName" />
+                    <ValidationMessage For="@(() => checkoutInfo.LastName)" />
                 </div>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Adresse email</label>
                 <InputText class="form-control" @bind-Value="checkoutInfo.Email" disabled />
+                <ValidationMessage For="@(() => checkoutInfo.Email)" />
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Téléphone</label>
                 <InputText class="form-control" @bind-Value="checkoutInfo.Phone" />
+                <ValidationMessage For="@(() => checkoutInfo.Phone)" />
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Numéro de passeport</label>
                 <InputText class="form-control" @bind-Value="checkoutInfo.PassportNumber" />
+                <ValidationMessage For="@(() => checkoutInfo.PassportNumber)" />
             </div>
 
             <div class="row mb-3">
                 <div class="col-md-2">
                     <label class="form-label">Numéro</label>
                     <InputText class="form-control" @bind-Value="checkoutInfo.StreetNumber" />
+                    <ValidationMessage For="@(() => checkoutInfo.StreetNumber)" />
                 </div>
+
                 <div class="col-md-6">
                     <label class="form-label">Rue</label>
                     <InputText class="form-control" @bind-Value="checkoutInfo.Street" />
+                    <ValidationMessage For="@(() => checkoutInfo.Street)" />
                 </div>
             </div>
 
@@ -139,14 +135,19 @@
                 <div class="col-md-4">
                     <label class="form-label">Code postal</label>
                     <InputText class="form-control" @bind-Value="checkoutInfo.PostalCode" />
+                    <ValidationMessage For="@(() => checkoutInfo.PostalCode)" />
                 </div>
+
                 <div class="col-md-4">
                     <label class="form-label">Ville</label>
                     <InputText class="form-control" @bind-Value="checkoutInfo.City" />
+                    <ValidationMessage For="@(() => checkoutInfo.City)" />
                 </div>
+
                 <div class="col-md-4">
                     <label class="form-label">Pays</label>
                     <InputText class="form-control" @bind-Value="checkoutInfo.Country" />
+                    <ValidationMessage For="@(() => checkoutInfo.Country)" />
                 </div>
             </div>
 
@@ -156,7 +157,6 @@
                 <label class="form-check-label">Je voyage seul</label>
             </div>
 
-            <!-- MESSAGE D'AVERTISSEMENT -->
             @if (showSecondPassengerWarning)
             {
                 <div class="alert alert-danger">
@@ -172,31 +172,37 @@
                 <div class="col-md-6">
                     <label class="form-label">Prénom</label>
                     <InputText class="form-control" @bind-Value="secondPassenger.FirstName" />
+                    <ValidationMessage For="@(() => secondPassenger.FirstName)" />
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Nom</label>
                     <InputText class="form-control" @bind-Value="secondPassenger.LastName" />
+                    <ValidationMessage For="@(() => secondPassenger.LastName)" />
                 </div>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Date de naissance</label>
                 <InputDate class="form-control" @bind-Value="secondPassenger.DateOfBirth" />
+                <ValidationMessage For="@(() => secondPassenger.DateOfBirth)" />
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Numéro de passeport</label>
                 <InputText class="form-control" @bind-Value="secondPassenger.PassportNumber" />
+                <ValidationMessage For="@(() => secondPassenger.PassportNumber)" />
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Adresse email</label>
                 <InputText class="form-control" @bind-Value="secondPassenger.Email" />
+                <ValidationMessage For="@(() => secondPassenger.Email)" />
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Téléphone</label>
                 <InputText class="form-control" @bind-Value="secondPassenger.Phone" />
+                <ValidationMessage For="@(() => secondPassenger.Phone)" />
             </div>
 
             <!-- PAIEMENT -->
@@ -207,6 +213,7 @@
                     <option value="CreditCard">Carte bancaire</option>
                     <option value="PayPal">PayPal</option>
                 </InputSelect>
+                <ValidationMessage For="@(() => checkoutInfo.PaymentMethod)" />
             </div>
 
             <button type="submit" class="btn btn-success">Continuer</button>

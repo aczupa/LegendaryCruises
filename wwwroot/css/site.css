@@ -556,7 +556,7 @@ nav.navbar {
     font-size: 1rem;
     text-decoration: none;
     transition: all 0.3s ease;
-    padding: 0.3rem 0.8rem;
+ 
 }
 
 .login:hover {
@@ -589,3 +589,5 @@ nav.navbar {
     transition: all 0.3s ease;
     cursor: default;
 }
+
+
