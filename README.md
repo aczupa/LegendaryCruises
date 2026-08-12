@@ -69,8 +69,7 @@ Be scalable and production‑ready, built on clean architecture and EF Core.
 
 ## ⚙️ QR Codes
 
- 
-       QR codes in Legendary Cruises are generated automatically for every purchased ticket. Each code contains a unique, secure identifier that allows the system to verify the authenticity of the reservation. The process is fully automated and integrated with the checkout and email delivery flow.
+QR codes in Legendary Cruises are generated automatically for every purchased ticket. Each code contains a unique, secure identifier that allows the system to verify the authenticity of the reservation. The process is fully automated and integrated with the checkout and email delivery flow.
 
 🔐 Step-by-step flow
 Ticket creation — When a user completes a purchase, the system creates a ticket record in the database with a unique GUID.
