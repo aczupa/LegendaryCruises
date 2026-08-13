@@ -19,7 +19,7 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Publish
-        run: dotnet publish ./LegendaryCruises.Web/LegendaryCruises.Web.csproj -c Release -o ./publish
+        run: dotnet publish ./LegendaryCruises.csproj -c Release -o ./publish
 
       - name: Debug publish folder
         run: ls -R ./publish
