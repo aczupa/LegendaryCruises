@@ -1,0 +1,32 @@
+name: Deploy LegendaryCruises
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Publish
+        run: dotnet publish ./LegendaryCruises.Web/LegendaryCruises.Web.csproj -c Release -o ./publish
+
+      - name: Debug publish folder
+        run: ls -R ./publish
+
+      - name: Deploy to Azure WebApp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: worldcruises-e7c3fwhzdtfmamem
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          package: ./publish
