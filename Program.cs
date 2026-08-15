@@ -20,15 +20,28 @@ namespace LegendaryCruises
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-           
             builder.Services.AddDbContextFactory<DataContext>(options =>
-                options.UseSqlServer(connectionString));
+     options.UseSqlServer(connectionString, sqlOptions =>
+     {
+         sqlOptions.EnableRetryOnFailure(
+             maxRetryCount: 5,
+             maxRetryDelay: TimeSpan.FromSeconds(10),
+             errorNumbersToAdd: null);
+     })
+ );
 
-           
             builder.Services.AddDbContext<DataContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseSqlServer(connectionString, sqlOptions =>
+                {
+                    sqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(10),
+                        errorNumbersToAdd: null);
+                })
+            );
 
-          
+
+
             builder.Services.AddScoped<ICruiseService, CruiseService>();
             builder.Services.AddScoped<ICartService, CartService>();
             builder.Services.AddScoped<IUserProfileService, UserProfileService>();

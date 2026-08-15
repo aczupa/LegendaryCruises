@@ -1,0 +1,157 @@
+﻿@page "/paypal"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.WebUtilities
+@using LegendaryCruises.Interfaces
+@using LegendaryCruises.Models
+@inject NavigationManager Nav
+@inject AuthenticationStateProvider Auth
+@inject ICartService CartService
+@inject IOrderService OrderService
+
+<nav class="navbar navbar-expand-md navbar-light px-1">
+    <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+    </a>
+
+    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
+        <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
+
+            <AuthorizeView Roles="Admin">
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/cruises-table">CRUISES</a>
+                </div>
+                <div class="nav-item px-1">
+                    <a class="btn login" href="/admin/add-cruise">ADD CRUISE</a>
+                </div>
+            </AuthorizeView>
+
+            <AuthorizeView>
+                <Authorized Context="authState">
+                    <button class="btn btn-primary rounded-pill px-3 py-1 d-flex align-items-center"
+                            @onclick="GoToCart">
+                        <i class="bi bi-cart me-2 icon-white"></i>
+                        <span>@CartItemCount</span>
+                    </button>
+
+                    <span class="me-2 login2">
+                        Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                    </span>
+
+                    <a class="btn btn-primary" href="/newcruises">✨ Nouvelles croisières</a>
+
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Logout">LOGOUT</a>
+                    </div>
+                </Authorized>
+
+                <NotAuthorized>
+                    <div class="nav-item px-1">
+                        <a class="btn login" href="/Identity/Account/Login">LOGIN</a>
+                    </div>
+                    <div class="nav-item px-1">
+                        <a class="custom-buy-btn mt-3" href="/newcruises">
+                            ✨ Nouvelles croisières
+                        </a>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+
+    <h2 class="text-center mb-4">Paiement PayPal</h2>
+
+    @if (!paymentStarted)
+    {
+        <div class="text-center">
+            <p>Vous allez être redirigé vers PayPal pour effectuer votre paiement.</p>
+            <button class="btn btn-primary" @onclick="StartPayPal">
+                Continuer vers PayPal
+            </button>
+        </div>
+    }
+    else if (!paymentCompleted)
+    {
+        <div class="text-center">
+            <p>Traitement du paiement PayPal...</p>
+        </div>
+    }
+    else
+    {
+        <div class="text-center">
+            <p>Paiement validé, redirection...</p>
+        </div>
+    }
+
+</div>
+
+@code {
+    private string userId = "";
+    private int CartItemCount = 0;
+    private bool paymentStarted = false;
+    private bool paymentCompleted = false;
+    private bool travelAlone = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = Nav.ToAbsoluteUri(Nav.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("alone", out var aloneValue))
+        {
+            if (bool.TryParse(aloneValue, out bool isAlone))
+                travelAlone = isAlone;
+        }
+
+        var authState = await Auth.GetAuthenticationStateAsync();
+        var user = authState.User;
+        userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+
+        if (!string.IsNullOrEmpty(userId))
+        {
+            CartItemCount = await CartService.GetCartItemCount(userId);
+        }
+    }
+
+    private void GoToCart()
+    {
+        Nav.NavigateTo("/cart");
+    }
+
+    private void StartPayPal()
+    {
+        paymentStarted = true;
+
+       
+        ProcessPayPalSuccess();
+    }
+
+    private async void ProcessPayPalSuccess()
+    {
+        try
+        {
+            paymentCompleted = true;
+
+          
+            var order = await OrderService.CreateOrder(userId);
+
+           
+            await OrderService.MarkAsPaid(order.Id);
+
+            
+            await OrderService.ProcessOrderAfterPayment(order.Id);
+
+           
+            Nav.NavigateTo($"/confirmation/{order.Id}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erreur PayPal: {ex.Message}");
+        }
+    }
+}
