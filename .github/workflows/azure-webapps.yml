@@ -21,12 +21,12 @@ jobs:
       - name: Publish
         run: dotnet publish ./LegendaryCruises.csproj -c Release -o ./publish
 
-      - name: Debug publish folder
-        run: ls -R ./publish
+      - name: Create ZIP package
+        run: cd publish && zip -r ../publish.zip .
 
-      - name: Deploy to Azure WebApp
-        uses: azure/webapps-deploy@v3
+      - name: Deploy to Azure WebApp (ZIP Deploy)
+        uses: azure/webapps-deploy@v2
         with:
           app-name: worldcruises
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-          package: ./publish
+          package: publish.zip
