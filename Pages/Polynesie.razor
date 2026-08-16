@@ -4,65 +4,55 @@
 @inject IJSRuntime JS
 
 @{
-    
+    string baseUrl = "https://worldcruisesvideos.blob.core.windows.net/videos/";
+
     string[] videos = new[]
     {
-
-        "polynesie7.mp4",
-        "polynesie1.mp4",
-          "tahiti.mp4",
-
-        "polynesie3.mp4",
-        "polynesie4.mp4",
-
-        "polynesie8.mp4",
-
-        "polynesie6.mp4",
-        "polynesie2.mp4",
-
-        "polynesie5.mp4",
-        "polynesie9.mp4",
-
-
-
-
+        $"{baseUrl}polynesie7.mp4",
+        $"{baseUrl}polynesie1.mp4",
+        $"{baseUrl}tahiti.mp4",
+        $"{baseUrl}polynesie3.mp4",
+        $"{baseUrl}polynesie4.mp4",
+        $"{baseUrl}polynesie8.mp4",
+        $"{baseUrl}polynesie6.mp4",
+        $"{baseUrl}polynesie2.mp4",
+        $"{baseUrl}polynesie5.mp4",
+        $"{baseUrl}polynesie9.mp4"
     };
 }
+
 <div class="page">
 
     <div class="top-bar">
-
         <NavLink class="home-link" href="" Match="NavLinkMatch.All">
             <span class="oi oi-home" aria-hidden="true"></span>
         </NavLink>
+
         <h1 class="title">Polynésie Française</h1>
         <ButtonBuy Slug="@cruiseSlug" />
-
     </div>
-
 
     <div class="accordion-grid">
         @for (int i = 0; i < videos.Length; i++)
         {
             <div class="cell">
-                <video src="videos/@videos[i]"
+                <video src="@videos[i]"
                        autoplay
                        muted
                        loop
                        playsinline>
                 </video>
-
             </div>
         }
     </div>
 </div>
+
 <div id="overlay" class="overlay" onclick="closeOverlay()">
     <div class="overlay-content" onclick="event.stopPropagation()">
         <button class="close-btn" onclick="closeOverlay()">×</button>
         <div id="overlay-text"></div>
     </div>
 </div>
-
 
 @code {
     [Inject] ICruiseService CruiseService { get; set; }
@@ -76,6 +66,7 @@
         if (cruise != null)
             cruiseSlug = cruise.Slug;
     }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)

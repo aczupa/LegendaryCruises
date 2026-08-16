@@ -6,9 +6,7 @@
 @inject ICruiseService CruiseService
 @inject NavigationManager Nav
 
-
-<nav class="navbar navbar-expand-md navbar-light px-1" >
-
+<nav class="navbar navbar-expand-md navbar-light px-1">
     <a class="navbar-brand d-flex align-items-center" href="/">
         <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
     </a>
@@ -24,35 +22,23 @@
 
             <AuthorizeView Roles="Admin">
                 <div class="nav-item px-1">
-                    <a class="btn login" href="/admin/cruises-table">
-                        CRUISES
-                    </a>
+                    <a class="btn login" href="/admin/cruises-table">CRUISES</a>
                 </div>
                 <div class="nav-item px-1">
-                    <a class="btn login" href="/admin/add-cruise">
-                        ADD CRUISE
-                    </a>
+                    <a class="btn login" href="/admin/add-cruise">ADD CRUISE</a>
                 </div>
             </AuthorizeView>
 
-            <!-- LOGGED IN -->
             <AuthorizeView>
                 <Authorized Context="authState">
-                     <span class="me-2 login2" >
-                    
-                            Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
-                        </span>
-
-                
+                    <span class="me-2 login2">
+                        Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                    </span>
                     <div class="nav-item px-1">
-                        <a class="btn login" href="/Identity/Account/Logout">
-                            LOGOUT
-                        </a>
+                        <a class="btn login" href="/Identity/Account/Logout">LOGOUT</a>
                     </div>
-                   
                 </Authorized>
 
-                <!-- NOT LOGGED IN -->
                 <NotAuthorized>
                     <div class="nav-item px-1">
                         <a class="btn login"
@@ -62,23 +48,27 @@
                     </div>
                 </NotAuthorized>
             </AuthorizeView>
-         
-  
-        <ButtonBuy Slug="@cruiseSlug" />
 
-          
-
+            <ButtonBuy Slug="@cruiseSlug" />
         </div>
     </div>
 </nav>
 
-
 @{
+    string baseUrl = "https://worldcruisesvideos.blob.core.windows.net/videos/alaska/";
+
     string[] videos = new[]
     {
-        "alaska2.mp4", "alaska10.mp4", "alaska4.mp4", "alaska1.mp4",
-        "alaska3.mp4", "alaska6.mp4", "alaska13.mp4", "alaska8.mp4",
-        "alaska7.mp4", "alaska9.mp4",
+        $"{baseUrl}alaska2.mp4",
+        $"{baseUrl}alaska10.mp4",
+        $"{baseUrl}alaska4.mp4",
+        $"{baseUrl}alaska1.mp4",
+        $"{baseUrl}alaska3.mp4",
+        $"{baseUrl}alaska6.mp4",
+        $"{baseUrl}alaska13.mp4",
+        $"{baseUrl}alaska8.mp4",
+        $"{baseUrl}alaska5.mp4",
+        $"{baseUrl}alaska9.mp4"
     };
 }
 
@@ -87,7 +77,7 @@
         @foreach (var video in videos)
         {
             <div class="cell">
-                <video src="@($"/videos/alaska/{video}")"
+                <video src="@video"
                        autoplay muted loop playsinline preload="auto">
                 </video>
             </div>
@@ -96,7 +86,7 @@
 </div>
 
 <div id="overlay" class="overlay" onclick="closeOverlay()">
-    <div class="overlay-content" onclick="stopPropagation(event)">
+    <div class="overlay-content" onclick="event.stopPropagation()">
         <button class="close-btn" onclick="closeOverlay()">×</button>
         <div id="overlay-text"></div>
     </div>
