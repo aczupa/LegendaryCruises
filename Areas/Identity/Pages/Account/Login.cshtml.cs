@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+ï»¿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
@@ -30,7 +30,7 @@ namespace LegendaryCruises.Areas.Identity.Pages.Account
 
             if (message == "login-required")
             {
-                InfoMessage = "Pour ajouter une croisière, vous devez d'abord vous connecter.";
+                InfoMessage = "Pour ajouter une croisiÃ¨re, vous devez d'abord vous connecter.";
             }
         }
 
@@ -44,7 +44,7 @@ namespace LegendaryCruises.Areas.Identity.Pages.Account
 
                 if (user == null)
                 {
-                    ModelState.AddModelError(string.Empty, "Aucun compte n'est associé à cet e-mail. Veuillez d'abord vous inscrire.");
+                    ModelState.AddModelError(string.Empty, "Aucun compte n'est associÃ© Ã  cet e-mail. Veuillez d'abord vous inscrire.");
                     return Page();
                 }
 
@@ -60,7 +60,7 @@ namespace LegendaryCruises.Areas.Identity.Pages.Account
                     return LocalRedirect(ReturnUrl);
                 }
 
-                ModelState.AddModelError(string.Empty, "Tentative de connexion invalide. Vérifiez votre e-mail et mot de passe.");
+                ModelState.AddModelError(string.Empty, "Tentative de connexion invalide. VÃ©rifiez votre e-mail et mot de passe.");
             }
 
             return Page();
