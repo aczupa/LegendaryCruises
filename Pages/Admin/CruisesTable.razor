@@ -82,7 +82,7 @@
 
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="floatingInput"
-                           placeholder="Destination here" value="@searchTerm"  @oninput="FilterCruises" />
+                           placeholder="Destination here" value="@searchTerm" @oninput="FilterCruises" />
                     <label for="floatingInput">Filter by destination</label>
                 </div>
 
@@ -131,8 +131,8 @@
 
                                                 <button class="btn btn-sm btn-outline-primary w-100 text-start"
                                                         @onclick="() => ToggleDate(key)">
-                                                    📅 @d.DepartureDate:yyyy-MM-dd →
-                                                    @d.ReturnDate:yyyy-MM-dd
+                                                    📅 @d.DepartureDate.ToString("yyyy-MM-dd") →
+                                                    @d.ReturnDate.ToString("yyyy-MM-dd")
                                                     <span class="float-end">
                                                         @(expandedDates.Contains(key) ? "▲" : "▼")
                                                     </span>
@@ -222,7 +222,6 @@
 
     private HashSet<string> expandedDates = new();
 
-    // 1. Pobieranie danych z bazy TYLKO RAZ przy inicjalizacji
     protected override async Task OnInitializedAsync()
     {
         var result = await CruiseService.GetCruises();
@@ -230,7 +229,6 @@
         ApplyFilter();
     }
 
-    // 2. Obsługa stanu logowania/koszyka przy zmianie parametrów
     protected override async Task OnParametersSetAsync()
     {
         var authState = await Auth.GetAuthenticationStateAsync();
@@ -266,11 +264,18 @@
         }
         else
         {
-            // Przeszukujemy Destination oraz Title (opcjonalnie również przystanki w Itinerary)
             cruises = allCruises
-                .Where(x => (!string.IsNullOrEmpty(x.Destination) && x.Destination.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
-                         || (!string.IsNullOrEmpty(x.Title) && x.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
-                         || (x.Itinerary != null && x.Itinerary.Any(i => i.Location != null && i.Location.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))))
+                .Where(x =>
+                    (!string.IsNullOrEmpty(x.Destination) &&
+                     x.Destination.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                    ||
+                    (!string.IsNullOrEmpty(x.Title) &&
+                     x.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                    ||
+                    (x.Itinerary != null &&
+                     x.Itinerary.Any(i => i.Location != null &&
+                                          i.Location.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
+                )
                 .ToList();
         }
     }
