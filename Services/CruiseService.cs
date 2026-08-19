@@ -5,6 +5,8 @@ using LegendaryCruises.Models.DTOs;
 using LegendaryCruises.Models.Responses;
 using Microsoft.EntityFrameworkCore;
 
+namespace LegendaryCruises.Services;
+
 public class CruiseService : ICruiseService
 {
     private readonly IDbContextFactory<DataContext> _factory;
@@ -148,7 +150,7 @@ public class CruiseService : ICruiseService
             if (existing == null)
                 return new BaseResponse { StatusCode = 404, Message = "Cruise not found." };
 
-            // Update all scalar properties
+            // 1. Update scalar properties
             existing.Title = cruise.Title;
             existing.Description = cruise.Description;
             existing.Destination = cruise.Destination;
@@ -162,8 +164,11 @@ public class CruiseService : ICruiseService
             existing.IsFeatured = cruise.IsFeatured;
             existing.Slug = GenerateSlug(cruise.Destination);
 
-            // Synchronize Itinerary
-            context.ItineraryDays.RemoveRange(existing.Itinerary.Where(ei => !cruise.Itinerary.Any(i => i.Id == ei.Id && ei.Id != 0)));
+            // 2. Synchronize Itinerary
+            var incomingItineraryIds = cruise.Itinerary.Where(i => i.Id != 0).Select(i => i.Id).ToList();
+            var itineraryToRemove = existing.Itinerary.Where(ei => !incomingItineraryIds.Contains(ei.Id)).ToList();
+            context.ItineraryDays.RemoveRange(itineraryToRemove);
+
             foreach (var day in cruise.Itinerary)
             {
                 var existingDay = existing.Itinerary.FirstOrDefault(ei => ei.Id == day.Id && ei.Id != 0);
@@ -184,6 +189,65 @@ public class CruiseService : ICruiseService
                 }
             }
 
+            // 3. Synchronize CruiseDates & Cabins
+            var incomingDateIds = cruise.CruiseDates.Where(d => d.Id != 0).Select(d => d.Id).ToList();
+            var datesToRemove = existing.CruiseDates.Where(ed => !incomingDateIds.Contains(ed.Id)).ToList();
+            context.CruiseDates.RemoveRange(datesToRemove);
+
+            foreach (var date in cruise.CruiseDates)
+            {
+                var existingDate = existing.CruiseDates.FirstOrDefault(ed => ed.Id == date.Id && ed.Id != 0);
+                if (existingDate == null)
+                {
+                    // New date with cabins
+                    existing.CruiseDates.Add(new CruiseDate
+                    {
+                        DepartureDate = date.DepartureDate,
+                        ReturnDate = date.ReturnDate,
+                        Cabins = date.Cabins?.Select(c => new DateCabin
+                        {
+                            CabinType = c.CabinType,
+                            Price = c.Price,
+                            Capacity = c.Capacity,
+                            Reserved = c.Reserved
+                        }).ToList() ?? new List<DateCabin>()
+                    });
+                }
+                else
+                {
+                    // Update existing date
+                    existingDate.DepartureDate = date.DepartureDate;
+                    existingDate.ReturnDate = date.ReturnDate;
+
+                    // Synchronize Cabins for existing date
+                    var incomingCabinIds = date.Cabins.Where(c => c.Id != 0).Select(c => c.Id).ToList();
+                    var cabinsToRemove = existingDate.Cabins.Where(ec => !incomingCabinIds.Contains(ec.Id)).ToList();
+                    context.DateCabins.RemoveRange(cabinsToRemove);
+
+                    foreach (var cabin in date.Cabins)
+                    {
+                        var existingCabin = existingDate.Cabins.FirstOrDefault(ec => ec.Id == cabin.Id && ec.Id != 0);
+                        if (existingCabin == null)
+                        {
+                            existingDate.Cabins.Add(new DateCabin
+                            {
+                                CabinType = cabin.CabinType,
+                                Price = cabin.Price,
+                                Capacity = cabin.Capacity,
+                                Reserved = cabin.Reserved
+                            });
+                        }
+                        else
+                        {
+                            existingCabin.CabinType = cabin.CabinType;
+                            existingCabin.Price = cabin.Price;
+                            existingCabin.Capacity = cabin.Capacity;
+                            existingCabin.Reserved = cabin.Reserved;
+                        }
+                    }
+                }
+            }
+
             await context.SaveChangesAsync();
             return new BaseResponse { StatusCode = 200, Message = "Updated successfully." };
         }
@@ -192,6 +256,7 @@ public class CruiseService : ICruiseService
             return new BaseResponse { StatusCode = 500, Message = ex.Message };
         }
     }
+
     // ============================================================
     // GET SINGLE
     // ============================================================

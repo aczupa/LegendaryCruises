@@ -30,11 +30,7 @@
 
                 <AuthorizeView>
                     <Authorized Context="authState">
-                        <button class="btn btn-primary rounded-pill px-3 py-1 d-flex align-items-center"
-                                @onclick="GoToCart">
-                            <i class="bi bi-cart me-2 icon-white"></i>
-                            <span>@CartItemCount</span>
-                        </button>
+                       
 
                         <span class="me-2 login2">
                             Bonjour @(authState.User.Identity?.Name ??
@@ -236,7 +232,6 @@
     private string? errorMessage;
     private AddCruiseForm addCruiseForm = new();
 
-    private int CartItemCount = 0;
     private bool IsLoggedIn = false;
 
     protected override async Task OnInitializedAsync()
@@ -246,15 +241,7 @@
 
         IsLoggedIn = user.Identity?.IsAuthenticated ?? false;
 
-        if (IsLoggedIn)
-        {
-            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (!string.IsNullOrEmpty(userId))
-            {
-                CartItemCount = await CartService.GetCartItemCount(userId);
-            }
-        }
+      
 
         AddDate();
     }
