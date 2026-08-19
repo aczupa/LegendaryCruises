@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 public class CruiseService : ICruiseService
 {
-    private readonly DataContext _context;
+    private readonly IDbContextFactory<DataContext> _factory;
 
-    public CruiseService(DataContext context)
+    public CruiseService(IDbContextFactory<DataContext> factory)
     {
-        _context = context;
+        _factory = factory;
     }
 
     // ============================================================
@@ -19,6 +19,8 @@ public class CruiseService : ICruiseService
     // ============================================================
     public async Task<BaseResponse> AddCruise(AddCruiseForm form)
     {
+        await using var context = _factory.CreateDbContext();
+
         try
         {
             if (form.Dates == null || !form.Dates.Any())
@@ -66,8 +68,8 @@ public class CruiseService : ICruiseService
                 }).ToList()
             };
 
-            _context.Cruises.Add(cruise);
-            await _context.SaveChangesAsync();
+            context.Cruises.Add(cruise);
+            await context.SaveChangesAsync();
 
             return new BaseResponse
             {
@@ -90,9 +92,11 @@ public class CruiseService : ICruiseService
     // ============================================================
     public async Task<BaseResponse> DeleteCruise(int id)
     {
+        await using var context = _factory.CreateDbContext();
+
         try
         {
-            var cruise = await _context.Cruises
+            var cruise = await context.Cruises
                 .Include(c => c.CruiseDates)
                     .ThenInclude(cd => cd.Cabins)
                 .Include(c => c.Itinerary)
@@ -107,8 +111,8 @@ public class CruiseService : ICruiseService
                 };
             }
 
-            _context.Cruises.Remove(cruise);
-            await _context.SaveChangesAsync();
+            context.Cruises.Remove(cruise);
+            await context.SaveChangesAsync();
 
             return new BaseResponse
             {
@@ -126,177 +130,78 @@ public class CruiseService : ICruiseService
         }
     }
 
-
+    // ============================================================
+    // EDIT CRUISE
+    // ============================================================
     public async Task<BaseResponse> EditCruise(Cruise cruise)
     {
+        await using var context = _factory.CreateDbContext();
+
         try
         {
-            var existing = await _context.Cruises
+            var existing = await context.Cruises
                 .Include(c => c.CruiseDates)
                     .ThenInclude(cd => cd.Cabins)
                 .Include(c => c.Itinerary)
                 .FirstOrDefaultAsync(c => c.Id == cruise.Id);
 
             if (existing == null)
-            {
-                return new BaseResponse
-                {
-                    StatusCode = 404,
-                    Message = "Cruise not found"
-                };
-            }
+                return new BaseResponse { StatusCode = 404, Message = "Cruise not found." };
 
-            // =====================================================
-            // SCALAR FIELDS
-            // =====================================================
+            // Update all scalar properties
             existing.Title = cruise.Title;
             existing.Description = cruise.Description;
             existing.Destination = cruise.Destination;
             existing.DeparturePort = cruise.DeparturePort;
             existing.ArrivalPort = cruise.ArrivalPort;
             existing.Currency = cruise.Currency;
+            existing.ImageUrl = cruise.ImageUrl;
+            existing.VideoUrl = cruise.VideoUrl;
+            existing.MaxPassengers = cruise.MaxPassengers;
             existing.IsActive = cruise.IsActive;
             existing.IsFeatured = cruise.IsFeatured;
             existing.Slug = GenerateSlug(cruise.Destination);
 
-            // =====================================================
-            // ITINERARY (SAFE SYNC - NO LOSS)
-            // =====================================================
-
-            // remove missing
-            var itineraryToRemove = existing.Itinerary
-                .Where(ei => !cruise.Itinerary.Any(i =>
-                    i.DayNumber == ei.DayNumber))
-                .ToList();
-
-            _context.ItineraryDays.RemoveRange(itineraryToRemove);
-
-            // update or add
-            foreach (var i in cruise.Itinerary)
+            // Synchronize Itinerary
+            context.ItineraryDays.RemoveRange(existing.Itinerary.Where(ei => !cruise.Itinerary.Any(i => i.Id == ei.Id && ei.Id != 0)));
+            foreach (var day in cruise.Itinerary)
             {
-                var existingDay = existing.Itinerary
-                    .FirstOrDefault(ei => ei.DayNumber == i.DayNumber);
-
+                var existingDay = existing.Itinerary.FirstOrDefault(ei => ei.Id == day.Id && ei.Id != 0);
                 if (existingDay == null)
                 {
                     existing.Itinerary.Add(new ItineraryDay
                     {
-                        DayNumber = i.DayNumber,
-                        Location = i.Location,
-                        Description = i.Description
+                        DayNumber = day.DayNumber,
+                        Location = day.Location,
+                        Description = day.Description
                     });
                 }
                 else
                 {
-                    existingDay.Location = i.Location;
-                    existingDay.Description = i.Description;
+                    existingDay.DayNumber = day.DayNumber;
+                    existingDay.Location = day.Location;
+                    existingDay.Description = day.Description;
                 }
             }
 
-            // =====================================================
-            // CRUISE DATES (SAFE SYNC)
-            // =====================================================
-
-            var incomingDates = cruise.CruiseDates.ToList();
-
-            var datesToRemove = existing.CruiseDates
-                .Where(ed => !incomingDates.Any(d =>
-                    d.DepartureDate == ed.DepartureDate &&
-                    d.ReturnDate == ed.ReturnDate))
-                .ToList();
-
-            _context.CruiseDates.RemoveRange(datesToRemove);
-
-            foreach (var d in incomingDates)
-            {
-                var existingDate = existing.CruiseDates.FirstOrDefault(ed =>
-                    ed.DepartureDate == d.DepartureDate &&
-                    ed.ReturnDate == d.ReturnDate);
-
-                if (existingDate == null)
-                {
-                    // NEW DATE
-                    var newDate = new CruiseDate
-                    {
-                        DepartureDate = d.DepartureDate,
-                        ReturnDate = d.ReturnDate,
-                        Cabins = d.Cabins.Select(c => new DateCabin
-                        {
-                            CabinType = c.CabinType,
-                            Price = c.Price,
-                            Capacity = c.Capacity,
-                            Reserved = 0
-                        }).ToList()
-                    };
-
-                    existing.CruiseDates.Add(newDate);
-                }
-                else
-                {
-                    // =================================================
-                    // CABINS UPDATE (NO LOSS OF RESERVED)
-                    // =================================================
-
-                    foreach (var cabinDto in d.Cabins)
-                    {
-                        var existingCabin = existingDate.Cabins
-                            .FirstOrDefault(c => c.CabinType == cabinDto.CabinType);
-
-                        if (existingCabin == null)
-                        {
-                            existingDate.Cabins.Add(new DateCabin
-                            {
-                                CabinType = cabinDto.CabinType,
-                                Price = cabinDto.Price,
-                                Capacity = cabinDto.Capacity,
-                                Reserved = 0
-                            });
-                        }
-                        else
-                        {
-                            existingCabin.Price = cabinDto.Price;
-                            existingCabin.Capacity = cabinDto.Capacity;
-                        }
-                    }
-
-                    // remove missing cabins safely
-                    var cabinsToRemove = existingDate.Cabins
-                        .Where(ec => !d.Cabins.Any(dc => dc.CabinType == ec.CabinType))
-                        .ToList();
-
-                    _context.DateCabins.RemoveRange(cabinsToRemove);
-                }
-            }
-
-            // =====================================================
-            // SAVE
-            // =====================================================
-            await _context.SaveChangesAsync();
-
-            return new BaseResponse
-            {
-                StatusCode = 200,
-                Message = "Updated successfully"
-            };
+            await context.SaveChangesAsync();
+            return new BaseResponse { StatusCode = 200, Message = "Updated successfully." };
         }
         catch (Exception ex)
         {
-            return new BaseResponse
-            {
-                StatusCode = 500,
-                Message = ex.Message
-            };
+            return new BaseResponse { StatusCode = 500, Message = ex.Message };
         }
     }
-
     // ============================================================
     // GET SINGLE
     // ============================================================
     public async Task<GetCruiseResponse> GetCruise(int id)
     {
+        await using var context = _factory.CreateDbContext();
+
         try
         {
-            var cruise = await _context.Cruises
+            var cruise = await context.Cruises
                 .Include(c => c.CruiseDates)
                     .ThenInclude(cd => cd.Cabins)
                 .Include(c => c.Itinerary)
@@ -335,14 +240,16 @@ public class CruiseService : ICruiseService
     // ============================================================
     public async Task<GetCruisesResponse> GetCruises()
     {
+        await using var context = _factory.CreateDbContext();
+
         try
         {
-            var cruises = await _context.Cruises
-    .Include(c => c.CruiseDates)
-        .ThenInclude(cd => cd.Cabins)
-    .Include(c => c.Itinerary)
-    .AsSplitQuery()
-    .ToListAsync();
+            var cruises = await context.Cruises
+                .Include(c => c.CruiseDates)
+                    .ThenInclude(cd => cd.Cabins)
+                .Include(c => c.Itinerary)
+                .AsSplitQuery()
+                .ToListAsync();
 
             return new GetCruisesResponse
             {
@@ -382,7 +289,9 @@ public class CruiseService : ICruiseService
     // ============================================================
     public async Task<Cruise?> GetCruiseBySlug(string slug)
     {
-        return await _context.Cruises
+        await using var context = _factory.CreateDbContext();
+
+        return await context.Cruises
             .Include(c => c.CruiseDates)
                 .ThenInclude(cd => cd.Cabins)
             .Include(c => c.Itinerary)
@@ -391,7 +300,9 @@ public class CruiseService : ICruiseService
 
     public async Task<Cruise?> GetCruiseByName(string name)
     {
-        return await _context.Cruises
+        await using var context = _factory.CreateDbContext();
+
+        return await context.Cruises
             .Include(c => c.CruiseDates)
                 .ThenInclude(cd => cd.Cabins)
             .Include(c => c.Itinerary)
@@ -400,9 +311,11 @@ public class CruiseService : ICruiseService
 
     public async Task<GetCruisesResponse> GetNewCruises()
     {
+        await using var context = _factory.CreateDbContext();
+
         try
         {
-            var cruises = await _context.Cruises
+            var cruises = await context.Cruises
                 .Where(c => c.Id >= 10 && c.IsActive)
                 .Include(c => c.CruiseDates)
                     .ThenInclude(cd => cd.Cabins)
@@ -428,6 +341,4 @@ public class CruiseService : ICruiseService
             };
         }
     }
-
-    
 }

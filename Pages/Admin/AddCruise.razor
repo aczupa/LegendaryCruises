@@ -8,19 +8,14 @@
 @inject ICartService CartService
 @inject NavigationManager Nav
 
-
-
 <LegendaryCruises.Components.Card>
-    <nav class="navbar navbar-expand-md navbar-light px-1">
 
+    <nav class="navbar navbar-expand-md navbar-light px-1">
         <a class="navbar-brand d-flex align-items-center" href="/">
             <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
         </a>
 
-
-
-        <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-                aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -29,14 +24,10 @@
 
                 <AuthorizeView Roles="Admin">
                     <div class="nav-item px-1">
-                        <a class="btn login" href="/admin/cruises-table">
-                            CRUISES
-                        </a>
+                        <a class="btn login" href="/admin/cruises-table">CRUISES</a>
                     </div>
-                  
                 </AuthorizeView>
 
-                <!-- LOGGED IN -->
                 <AuthorizeView>
                     <Authorized Context="authState">
                         <button class="btn btn-primary rounded-pill px-3 py-1 d-flex align-items-center"
@@ -46,34 +37,20 @@
                         </button>
 
                         <span class="me-2 login2">
-                            Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                            Bonjour @(authState.User.Identity?.Name ??
+                                                        authState.User.FindFirst(ClaimTypes.Email)?.Value)
                         </span>
 
+                        <a class="btn btn-primary" href="/newcruises">✨ Nouvelles croisières</a>
 
-
-
-                        <a class="btn btn-primary" href="/newcruises">
-                            ✨ Nouvelles croisières
-                        </a>
                         <div class="nav-item px-1">
-                            <a class="btn login" href="/Identity/Account/Logout">
-                                LOGOUT
-                            </a>
+                            <a class="btn login" href="/Identity/Account/Logout">LOGOUT</a>
                         </div>
-
                     </Authorized>
 
-                    <!-- NOT LOGGED IN -->
                     <NotAuthorized>
                         <div class="nav-item px-1">
-                            <a class="btn login" href="/Identity/Account/Login">
-                                LOGIN
-                            </a>
-                        </div>
-                        <div class="nav-item px-1">
-                            <a class="custom-buy-btn mt-3" style="text-decoration: none!important" href="/newcruises">
-                                ✨ Nouvelles croisières
-                            </a>
+                            <a class="btn login" href="/Identity/Account/Login">LOGIN</a>
                         </div>
                     </NotAuthorized>
                 </AuthorizeView>
@@ -81,13 +58,19 @@
             </div>
         </div>
     </nav>
+
     <h3>Add New Cruise</h3>
 
     <EditForm Model="@addCruiseForm" OnValidSubmit="AddNewCruise">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
-      
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger">@errorMessage</div>
+        }
+
+        <!-- BASIC INFO -->
         <label>Title</label>
         <InputText @bind-Value="addCruiseForm.Title" class="form-control mb-2" />
 
@@ -108,8 +91,6 @@
             </div>
         </div>
 
-     
-
         <label>Image URL</label>
         <InputText @bind-Value="addCruiseForm.ImageUrl" class="form-control mb-2" />
 
@@ -129,24 +110,14 @@
             <label class="form-check-label">Active</label>
         </div>
 
-        <!-- ===================== -->
         <!-- DATES & CABINS -->
-        <!-- ===================== -->
-
         <LegendaryCruises.Components.Card>
             <h5>Dates & Cabins</h5>
-            @if (!string.IsNullOrEmpty(errorMessage))
-            {
-                <div class="alert alert-danger">
-                    @errorMessage
-                </div>
-            }
 
             @foreach (var date in addCruiseForm.Dates)
             {
                 <div class="border p-3 mb-3">
 
-                    <!-- DATE -->
                     <div class="row mb-2">
                         <div class="col">
                             <label>Departure date</label>
@@ -159,13 +130,11 @@
                         </div>
                     </div>
 
-                    <button type="button"
-                            class="btn btn-danger btn-sm mb-2"
+                    <button type="button" class="btn btn-danger btn-sm mb-2"
                             @onclick="() => addCruiseForm.Dates.Remove(date)">
                         Remove date
                     </button>
 
-                    <!-- CABINS -->
                     <h6>Cabins for this date</h6>
 
                     @foreach (var cabin in date.Cabins)
@@ -193,8 +162,7 @@
                             </div>
 
                             <div class="col-auto">
-                                <button type="button"
-                                        class="btn btn-outline-danger btn-sm"
+                                <button type="button" class="btn btn-outline-danger btn-sm"
                                         @onclick="() => date.Cabins.Remove(cabin)">
                                     X
                                 </button>
@@ -203,8 +171,7 @@
                         </div>
                     }
 
-                    <button type="button"
-                            class="btn btn-outline-primary btn-sm"
+                    <button type="button" class="btn btn-outline-primary btn-sm"
                             @onclick="() => AddCabin(date)">
                         + Add cabin
                     </button>
@@ -212,18 +179,13 @@
                 </div>
             }
 
-            <button type="button"
-                    class="btn btn-primary"
-                    @onclick="AddDate">
+            <button type="button" class="btn btn-primary" @onclick="AddDate">
                 + Add date
             </button>
 
         </LegendaryCruises.Components.Card>
 
-        <!-- ===================== -->
         <!-- ITINERARY -->
-        <!-- ===================== -->
-
         <LegendaryCruises.Components.Card>
             <h5>Itinerary</h5>
 
@@ -247,8 +209,7 @@
                     </div>
 
                     <div class="col-auto">
-                        <button type="button"
-                                class="btn btn-outline-danger btn-sm"
+                        <button type="button" class="btn btn-outline-danger btn-sm"
                                 @onclick="() => addCruiseForm.Itinerary.Remove(day)">
                             X
                         </button>
@@ -257,25 +218,22 @@
                 </div>
             }
 
-            <button type="button"
-                    class="btn btn-outline-primary"
-                    @onclick="AddItineraryDay">
+            <button type="button" class="btn btn-outline-primary" @onclick="AddItineraryDay">
                 + Add day
             </button>
         </LegendaryCruises.Components.Card>
 
-        <button type="submit" class="btn btn-success mt-3">
-            Save
-        </button>
+        <button type="submit" class="btn btn-success mt-3">Save</button>
 
     </EditForm>
+
 </LegendaryCruises.Components.Card>
 
 @code {
     [Inject] private ICruiseService CruiseService { get; set; }
     [Inject] private NavigationManager NavigationManager { get; set; }
-    private string? errorMessage;
 
+    private string? errorMessage;
     private AddCruiseForm addCruiseForm = new();
 
     private int CartItemCount = 0;
@@ -284,30 +242,24 @@
     protected override async Task OnInitializedAsync()
     {
         var authState = await Auth.GetAuthenticationStateAsync();
-
         var user = authState.User;
 
         IsLoggedIn = user.Identity?.IsAuthenticated ?? false;
 
-
         if (IsLoggedIn)
         {
-            var userId =
-                user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
+            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (!string.IsNullOrEmpty(userId))
             {
-                CartItemCount =
-                    await CartService.GetCartItemCount(userId);
+                CartItemCount = await CartService.GetCartItemCount(userId);
             }
         }
+
+        AddDate();
     }
 
-    private void GoToCart()
-    {
-        Nav.NavigateTo("/cart");
-    }
+    private void GoToCart() => Nav.NavigateTo("/cart");
 
     private void AddDate()
     {
@@ -339,11 +291,36 @@
     {
         errorMessage = null;
 
-        if (!addCruiseForm.Dates.Any())
+        // VALIDATION
+        if (string.IsNullOrWhiteSpace(addCruiseForm.Title))
+        {
+            errorMessage = "Title is required.";
             return;
+        }
+
+        if (string.IsNullOrWhiteSpace(addCruiseForm.Description))
+        {
+            errorMessage = "Description is required.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(addCruiseForm.Destination))
+        {
+            errorMessage = "Destination is required.";
+            return;
+        }
+
+        if (!addCruiseForm.Dates.Any())
+        {
+            errorMessage = "At least one date is required.";
+            return;
+        }
 
         if (addCruiseForm.Dates.Any(d => !d.Cabins.Any()))
+        {
+            errorMessage = "Each date must have at least one cabin.";
             return;
+        }
 
         if (addCruiseForm.Dates.Any(d => d.ReturnDate <= d.DepartureDate))
         {
@@ -354,11 +331,12 @@
         var response = await CruiseService.AddCruise(addCruiseForm);
 
         if (response.StatusCode == 201)
+        {
             NavigationManager.NavigateTo("/admin/cruises-table");
-    }
-
-    protected override void OnInitialized()
-    {
-        AddDate();
+        }
+        else
+        {
+            errorMessage = response.Message;
+        }
     }
 }

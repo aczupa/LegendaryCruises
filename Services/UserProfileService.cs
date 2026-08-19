@@ -1,21 +1,23 @@
 ﻿using LegendaryCruises.Data;
 using LegendaryCruises.Interfaces;
 using LegendaryCruises.Models;
-using LegendaryCruises.Pages;
+using Microsoft.EntityFrameworkCore;
 
 namespace LegendaryCruises.Services
 {
     public class UserProfileService : IUserProfileService
     {
-        private readonly DataContext _context;
+        private readonly IDbContextFactory<DataContext> _factory;
 
-        public UserProfileService(DataContext context)
+        public UserProfileService(IDbContextFactory<DataContext> factory)
         {
-            _context = context;
+            _factory = factory;
         }
 
         public async Task SaveUserProfile(string userId, CheckoutInfo info)
         {
+            await using var context = _factory.CreateDbContext();
+
             var userProfile = new UserProfile
             {
                 UserId = userId,
@@ -31,9 +33,8 @@ namespace LegendaryCruises.Services
                 PassportNumber = info.PassportNumber
             };
 
-
-            _context.UserProfiles.Add(userProfile);
-            await _context.SaveChangesAsync();
+            context.UserProfiles.Add(userProfile);
+            await context.SaveChangesAsync();
         }
     }
 }

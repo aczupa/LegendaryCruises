@@ -7,25 +7,30 @@ namespace LegendaryCruises.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly DataContext _context;
+        private readonly IDbContextFactory<DataContext> _factory;
         private readonly ICartService _cartService;
         private readonly IEmailService _emailService;
         private readonly IQRCodeService _qrService;
 
         public OrderService(
-            DataContext context,
+            IDbContextFactory<DataContext> factory,
             ICartService cartService,
             IEmailService emailService,
             IQRCodeService qrService)
         {
-            _context = context;
+            _factory = factory;
             _cartService = cartService;
             _emailService = emailService;
             _qrService = qrService;
         }
 
+        // ============================================================
+        // CREATE ORDER
+        // ============================================================
         public async Task<Order> CreateOrder(string userId)
         {
+            await using var context = _factory.CreateDbContext();
+
             var cart = await _cartService.GetCart(userId);
 
             if (cart == null || !cart.Items.Any())
@@ -39,10 +44,11 @@ namespace LegendaryCruises.Services
                 IsPaid = false
             };
 
-            _context.Orders.Add(order);
+            context.Orders.Add(order);
 
             var cabinIds = cart.Items.Select(i => i.DateCabinId).Distinct().ToList();
-            var cabins = await _context.DateCabins
+
+            var cabins = await context.DateCabins
                 .Where(c => cabinIds.Contains(c.Id))
                 .ToDictionaryAsync(c => c.Id);
 
@@ -67,38 +73,53 @@ namespace LegendaryCruises.Services
                     Quantity = item.Quantity
                 };
 
-                _context.OrderItems.Add(orderItem);
+                context.OrderItems.Add(orderItem);
             }
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             await _cartService.ClearCart(userId);
 
             return order;
         }
 
+        // ============================================================
+        // MARK AS PAID
+        // ============================================================
         public async Task MarkAsPaid(int orderId)
         {
-            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
+            await using var context = _factory.CreateDbContext();
+
+            var order = await context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
 
             if (order == null)
                 throw new Exception("Commande introuvable.");
 
             order.IsPaid = true;
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
 
+        // ============================================================
+        // GET ORDER BY ID
+        // ============================================================
         public async Task<Order?> GetOrderById(int orderId)
         {
-            return await _context.Orders
+            await using var context = _factory.CreateDbContext();
+
+            return await context.Orders
                 .Include(o => o.Items).ThenInclude(i => i.Cruise)
                 .Include(o => o.Items).ThenInclude(i => i.CruiseDate)
                 .Include(o => o.Items).ThenInclude(i => i.DateCabin)
                 .FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
+        // ============================================================
+        // PROCESS ORDER AFTER PAYMENT
+        // ============================================================
         public async Task ProcessOrderAfterPayment(int orderId)
         {
-            var order = await _context.Orders
+            await using var context = _factory.CreateDbContext();
+
+            var order = await context.Orders
                 .Include(o => o.Items)
                 .FirstOrDefaultAsync(o => o.Id == orderId);
 
@@ -106,17 +127,19 @@ namespace LegendaryCruises.Services
                 throw new Exception("Commande introuvable.");
 
             order.IsPaid = true;
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == order.UserId);
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Id == order.UserId);
             if (user == null)
                 throw new Exception("Utilisateur introuvable.");
 
-            var profile = await _context.UserProfiles.FirstOrDefaultAsync(p => p.UserId == order.UserId);
+            var profile = await context.UserProfiles.FirstOrDefaultAsync(p => p.UserId == order.UserId);
             if (profile == null)
                 throw new Exception("Profil utilisateur introuvable.");
 
-            // GENERATE QR
+            // ============================================================
+            // GENERATE QR CODE
+            // ============================================================
             var (base64, bytes) = _qrService.GenerateQRCodeWithBytes($"ORDER-{order.Id}");
 
             var qrEntity = new QRCodeModel
@@ -129,10 +152,12 @@ namespace LegendaryCruises.Services
                 DateScan = null
             };
 
-            _context.QRCodeModels.Add(qrEntity);
-            await _context.SaveChangesAsync();
+            context.QRCodeModels.Add(qrEntity);
+            await context.SaveChangesAsync();
 
-            // SEND EMAIL
+            // ============================================================
+            // EMAIL CONTENT
+            // ============================================================
             string html = $@"
 <div style='font-family:Arial, sans-serif; color:#333; line-height:1.6;'>
     <h2 style='color:#003366;'>Confirmation de votre réservation</h2>
@@ -192,7 +217,9 @@ namespace LegendaryCruises.Services
 </div>
 ";
 
-
+            // ============================================================
+            // SEND EMAIL
+            // ============================================================
             await _emailService.SendEmailWithAttachmentAsync(
                 user.Email!,
                 "Votre billet de croisière",

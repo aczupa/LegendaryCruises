@@ -8,22 +8,27 @@ namespace LegendaryCruises.Services
 {
     public class QRCodeService : IQRCodeService
     {
-        private readonly DataContext _context;
+        private readonly IDbContextFactory<DataContext> _factory;
 
-        public QRCodeService(DataContext context)
+        public QRCodeService(IDbContextFactory<DataContext> factory)
         {
-            _context = context;
+            _factory = factory;
         }
 
+        // ============================================================
+        // GENERATE QR CODE AND SAVE TO DATABASE
+        // ============================================================
         public string GenerateQRCode(int userProfileId, string data)
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
 
-            // Wygeneruj unikalny kod GUID
+            using var context = _factory.CreateDbContext();
+
+            // Generate unique GUID for QR code
             string uniqueCode = Guid.NewGuid().ToString();
 
-            var (base64, _) = GenerateQRCodeWithBytes(uniqueCode); // ← używamy GUID w kodzie QR
+            var (base64, _) = GenerateQRCodeWithBytes(uniqueCode);
 
             var qrCode = new QRCodeModel
             {
@@ -35,12 +40,15 @@ namespace LegendaryCruises.Services
                 DateScan = null
             };
 
-            _context.QRCodeModels.Add(qrCode);
-            _context.SaveChanges();
+            context.QRCodeModels.Add(qrCode);
+            context.SaveChanges();
 
             return base64;
         }
 
+        // ============================================================
+        // GENERATE QR CODE (RETURN BASE64 + BYTES)
+        // ============================================================
         public (string Base64, byte[] Bytes) GenerateQRCodeWithBytes(string data)
         {
             if (data == null)
@@ -52,17 +60,22 @@ namespace LegendaryCruises.Services
 
             var qrBytes = qrCode.GetGraphic(5);
             var base64 = $"data:image/png;base64,{Convert.ToBase64String(qrBytes)}";
+
             return (base64, qrBytes);
         }
 
+        // ============================================================
+        // VALIDATE QR CODE
+        // ============================================================
         public async Task<QRCodeValidationResult> ValidateQRCodeAsync(string qrCode)
         {
             if (string.IsNullOrEmpty(qrCode))
                 return QRCodeValidationResult.NotFound;
 
+            await using var context = _factory.CreateDbContext();
 
-            var qrCodeEntity = await _context.QRCodeModels
-                 .FirstOrDefaultAsync(q => q.UniqueCode == qrCode);
+            var qrCodeEntity = await context.QRCodeModels
+                .FirstOrDefaultAsync(q => q.UniqueCode == qrCode);
 
             if (qrCodeEntity == null)
                 return QRCodeValidationResult.NotFound;
@@ -73,10 +86,9 @@ namespace LegendaryCruises.Services
             qrCodeEntity.QRCodeScanned = true;
             qrCodeEntity.DateScan = DateTime.UtcNow;
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
             return QRCodeValidationResult.Valid;
         }
     }
-
 }

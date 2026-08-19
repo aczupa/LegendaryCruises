@@ -1,24 +1,27 @@
 ﻿using LegendaryCruises.Data;
 using LegendaryCruises.Interfaces;
 using LegendaryCruises.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace LegendaryCruises.Services
 {
     public class PassengerService : IPassengerService
     {
-        private readonly DataContext _context;
+        private readonly IDbContextFactory<DataContext> _factory;
 
-        public PassengerService(DataContext context)
+        public PassengerService(IDbContextFactory<DataContext> factory)
         {
-            _context = context;
+            _factory = factory;
         }
 
         public async Task SavePassenger(string userId, PassengerInfo passenger)
         {
+            await using var context = _factory.CreateDbContext();
+
             passenger.UserId = userId;
 
-            _context.PassengerInfos.Add(passenger);
-            await _context.SaveChangesAsync();
+            context.PassengerInfos.Add(passenger);
+            await context.SaveChangesAsync();
         }
     }
 }
