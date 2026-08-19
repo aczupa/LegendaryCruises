@@ -6,6 +6,14 @@
 @using static LegendaryCruises.Components.Warning
 
 
+<div class="d-flex align-items-center mb-3">
+
+    <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+    </a>
+</div>
+
+
 @if (ShowWarning)
 {
     <Warning OnClickCallback="DismissWarning" Type=@Warning_Type Message="@Warning_Message" />
@@ -57,6 +65,36 @@ else
                     <label>Arrival Port</label>
                     <InputText @bind-Value="cruise.ArrivalPort" class="form-control" />
                 </div>
+
+                <!-- IMAGE URL -->
+                <div class="mb-3">
+                    <label>Image URL</label>
+                    <InputText @bind-Value="cruise.ImageUrl" class="form-control" />
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(cruise.ImageUrl))
+                {
+                    <div class="mb-3">
+                        <img src="@cruise.ImageUrl" alt="Cruise image" class="img-fluid rounded shadow-sm" style="max-height: 250px;" />
+                    </div>
+                }
+
+                <!-- VIDEO URL -->
+                <div class="mb-3">
+                    <label>Video URL</label>
+                    <InputText @bind-Value="cruise.VideoUrl" class="form-control" />
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(cruise.VideoUrl))
+                {
+                    <div class="mb-3">
+                        <video controls class="w-100 rounded shadow-sm" style="max-height: 300px;">
+                            <source src="@cruise.VideoUrl" type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                }
+
 
                 <!-- PRICE -->
                 
