@@ -9,7 +9,8 @@
 <nav class="navbar navbar-expand-md navbar-light px-1" style="background-color: rgba(255,255,255,0.25); backdrop-filter: blur(8px);">
 
     <a class="navbar-brand d-flex align-items-center" href="/">
-        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+        <img src="https://worldcruisesvideos.blob.core.windows.net/images/logo-world-cruises.png"
+             alt="World Cruises Logo" style="height:70px;" />
     </a>
 
     <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
@@ -20,40 +21,26 @@
     <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
         <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
 
-
-
             <AuthorizeView Roles="Admin">
                 <div class="nav-item px-1">
-                    <a class="btn login" href="/admin/cruises-table">
-                        CRUISES
-                    </a>
+                    <a class="btn login" href="/admin/cruises-table">CRUISES</a>
                 </div>
                 <div class="nav-item px-1">
-                    <a class="btn login" href="/admin/add-cruise">
-                        ADD CRUISE
-                    </a>
+                    <a class="btn login" href="/admin/add-cruise">ADD CRUISE</a>
                 </div>
             </AuthorizeView>
 
-            <!-- LOGGED IN -->
             <AuthorizeView>
                 <Authorized Context="authState">
+                    <span class="me-2 login2">
+                        Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                    </span>
 
-                   <span class="me-2 login2" >
-                        
-                            Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
-                        </span>
-
-                    
                     <div class="nav-item px-1">
-                        <a class="btn login" href="/Identity/Account/Logout">
-                            LOGOUT
-                        </a>
+                        <a class="btn login" href="/Identity/Account/Logout">LOGOUT</a>
                     </div>
-                   
                 </Authorized>
 
-                <!-- NOT LOGGED IN -->
                 <NotAuthorized>
                     <div class="nav-item px-1">
                         <a class="btn login"
@@ -64,8 +51,7 @@
                 </NotAuthorized>
             </AuthorizeView>
 
-                <ButtonBuy Slug="@cruiseSlug" />
-
+            <ButtonBuy Slug="@cruiseSlug" />
 
         </div>
     </div>
@@ -75,8 +61,6 @@
 
     <!-- TOP BAR -->
     <div class="top-bar">
-
-
         <h1 class="title">Antarctique</h1>
     </div>
 
@@ -93,63 +77,63 @@
     <div class="antarctica-grid">
 
         <div class="item">
-            <img src="Images/Antarctica/ushuaia.jpg" alt="Départ d’Ushuaia" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Antarctica/ushuaia.jpg" alt="Départ d’Ushuaia" />
             <p class="caption">
                 Jour 1 – Embarquement à Ushuaia, Argentine, et départ vers le passage de Drake.
             </p>
         </div>
 
         <div class="item">
-            <img src="Images/Antarctica/drake.jpg" alt="Passage de Drake" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Antarctica/drake.jpg" alt="Passage de Drake" />
             <p class="caption">
                 Jour 2 – Traversée du passage de Drake, navigation en haute mer australe.
             </p>
         </div>
 
         <div class="item">
-            <img src="Images/Antarctica/iceberg.jpg" alt="Mer australe" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Antarctica/iceberg.jpg" alt="Mer australe" />
             <p class="caption">
                 Jour 3 – Fin de la traversée du Drake, premiers icebergs et approche de l’Antarctique.
             </p>
         </div>
 
         <div class="item">
-            <img src="Images/Antarctica/antarctica1.jpg" alt="Colonie de manchots" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Antarctica/antarctica1.jpg" alt="Colonie de manchots" />
             <p class="caption">
                 Jour 4 – Débarquement sur la péninsule antarctique et rencontre avec les colonies de manchots.
             </p>
         </div>
 
         <div class="item">
-            <img src="Images/Antarctica/antarctica4.jpg" alt="Baleines" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Antarctica/antarctica4.jpg" alt="Baleines" />
             <p class="caption">
                 Jour 5 – Navigation côtière et observation des baleines dans les fjords antarctiques.
             </p>
         </div>
 
         <div class="item">
-            <img src="Images/Antarctica/antarctica2.jpg" alt="Banquise" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Antarctica/antarctica2.jpg" alt="Banquise" />
             <p class="caption">
                 Jour 6 – Explorations polaires : banquise, glaciers et paysages vierges.
             </p>
         </div>
 
         <div class="item">
-            <img src="Images/Antarctica/excursions.jpg" alt="Excursions polaires" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Antarctica/excursions.jpg" alt="Excursions polaires" />
             <p class="caption">
                 Jour 7 – Dernières excursions à terre et adieux au continent antarctique.
             </p>
         </div>
 
         <div class="item">
-            <img src="Images/Antarctica/antarctica5.jpg" alt="Retour Drake" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Antarctica/antarctica5.jpg" alt="Retour Drake" />
             <p class="caption">
                 Jour 8 – Traversée du passage de Drake vers l’Amérique du Sud.
             </p>
         </div>
 
         <div class="item">
-            <img src="Images/Antarctica/ushuaia2.jpg" alt="Retour Ushuaia" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Antarctica/ushuaia2.jpg" alt="Retour Ushuaia" />
             <p class="caption">
                 Jour 9 – Arrivée à Ushuaia et débarquement.
             </p>
@@ -157,19 +141,12 @@
 
     </div>
 
-
 </div>
 
-<button id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()">
-    ↑
-</button>
+<button id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()">↑</button>
+<button id="scrollDownBtn" class="scroll-down-btn" onclick="scrollDown()">↓</button>
 
-<button id="scrollDownBtn" class="scroll-down-btn" onclick="scrollDown()">
-    ↓
-</button>
-
-@code
-{
+@code {
     [Inject] ICruiseService CruiseService { get; set; }
 
     private string cruiseSlug = "";

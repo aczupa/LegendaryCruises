@@ -7,11 +7,11 @@
 @inject IJSRuntime JS
 @inject NavigationManager Nav
 
-<nav class="navbar navbar-expand-md navbar-light px-1"
-    >
+<nav class="navbar navbar-expand-md navbar-light px-1">
 
     <a class="navbar-brand d-flex align-items-center" href="/">
-        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+        <img src="https://worldcruisesvideos.blob.core.windows.net/images/logo-world-cruises.png"
+             alt="World Cruises Logo" style="height:70px;" />
     </a>
 
     <h3 class="ms-3">Le Nil</h3>
@@ -23,37 +23,27 @@
 
     <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
         <div class="d-flex flex-column flex-md-row gap-3 align-items-center">
+
             <AuthorizeView Roles="Admin">
                 <div class="nav-item px-1">
-                    <a class="btn login" href="/admin/cruises-table">
-                        CRUISES
-                    </a>
+                    <a class="btn login" href="/admin/cruises-table">CRUISES</a>
                 </div>
                 <div class="nav-item px-1">
-                    <a class="btn login" href="/admin/add-cruise">
-                        ADD CRUISE
-                    </a>
+                    <a class="btn login" href="/admin/add-cruise">ADD CRUISE</a>
                 </div>
             </AuthorizeView>
 
-            <!-- LOGGED IN -->
             <AuthorizeView>
                 <Authorized Context="authState">
-
-
                     <span class="me-2 login2">
-                            Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
-                        </span>
+                        Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                    </span>
 
                     <div class="nav-item px-1">
-                        <a class="btn login" href="/Identity/Account/Logout">
-                            LOGOUT
-                        </a>
+                        <a class="btn login" href="/Identity/Account/Logout">LOGOUT</a>
                     </div>
-                   
                 </Authorized>
 
-                <!-- NOT LOGGED IN -->
                 <NotAuthorized>
                     <div class="nav-item px-1">
                         <a class="btn login"
@@ -65,6 +55,7 @@
             </AuthorizeView>
 
             <ButtonBuy Slug="@cruiseSlug" />
+
         </div>
     </div>
 </nav>
@@ -73,28 +64,39 @@
 
 <div class="nil-container">
     <div class="nil-program">
-        <h2>Croisière sur le Nil – 6 jours </h2>
+        <h2>Croisière sur le Nil – 6 jours</h2>
 
         <ul>
             <li>
                 <strong>Jour 1 – Louxor</strong>
-                <p>Temple de Karnak :  Immense complexe dédié à Amon, célèbre pour sa salle hypostyle et ses obélisques.<br>Temple de Louxor: Temple élégant en plein cœur de la ville, particulièrement magique au coucher du soleil.</p>
+                <p>
+                    Temple de Karnak : Immense complexe dédié à Amon, célèbre pour sa salle hypostyle et ses obélisques.<br>
+                    Temple de Louxor : Temple élégant en plein cœur de la ville, particulièrement magique au coucher du soleil.
+                </p>
             </li>
 
             <li>
                 <strong>Jour 2 – Louxor → Edfou</strong>
-                <p>Vallée des Rois: Tombes des pharaons du Nouvel Empire, décorées de scènes mythologiques. Hatchepsout et Colosses de Memnon</p>
+                <p>
+                    Vallée des Rois : Tombes des pharaons du Nouvel Empire, décorées de scènes mythologiques.<br>
+                    Hatchepsout et Colosses de Memnon.
+                </p>
             </li>
 
             <li>
                 <strong>Jour 3 – Edfou → Kom Ombo</strong>
-                <p>Temple d’Horus: L’un des temples les mieux conservés, dédié au dieu faucon<br>Temple de Kom Ombo: Temple double consacré à Sobek et Horus, avec un petit musée de crocodiles momifiés.</p>
+                <p>
+                    Temple d’Horus : L’un des temples les mieux conservés, dédié au dieu faucon.<br>
+                    Temple de Kom Ombo : Temple double consacré à Sobek et Horus, avec un petit musée de crocodiles momifiés.
+                </p>
             </li>
         </ul>
     </div>
 
     <div class="nil-film">
-        <img id="nilFrame" src="/images/nil/nile1.jpg" alt="Le Nil">
+        <img id="nilFrame"
+             src="https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile1.jpg"
+             alt="Le Nil">
     </div>
 </div>
 
@@ -102,41 +104,47 @@
 
 <div class="nil-container2">
     <div class="nil-film2">
-        <img id="nilFrame2" src="/images/nil/egypt1.jpg" alt="Le Nil">
+        <img id="nilFrame2"
+             src="https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt1.jpg"
+             alt="Le Nil">
     </div>
 
     <div class="nil-program">
-
-
         <ul>
             <li>
                 <strong>Jour 4 – Kom Ombo → Assouan</strong>
-                <p>Haut barrage: Ouvrage moderne majeur, il régule les crues du Nil et alimente l’Égypte en électricité. Depuis le sommet, la vue sur le lac Nasser est impressionnante.<br>Obélisque inachevé<br>Philae: Dédié à Isis, ce temple sauvé des eaux a été déplacé sur l’île d’Agilkia. Ses colonnades élégantes et son cadre insulaire en font l’un des sites les plus romantiques d’Égypte.</p>
+                <p>
+                    Haut barrage : Ouvrage moderne majeur, il régule les crues du Nil et alimente l’Égypte en électricité.<br>
+                    Obélisque inachevé.<br>
+                    Philae : Dédié à Isis, ce temple sauvé des eaux a été déplacé sur l’île d’Agilkia.
+                </p>
             </li>
 
             <li>
                 <strong>Jour 5 – Assouan</strong>
-                <p>Abou Simbel : Excursion vers les temples monumentaux de Ramsès II et Néfertari, taillés dans la falaise. Leur sauvetage lors de la construction du barrage est une prouesse archéologique.<br>Felouque : Navigation paisible sur le Nil à bord d’un voilier traditionnel. Un moment idéal pour admirer les dunes, les îles verdoyantes et la douceur d’Assouan.<br>Village nubien : Découverte d’un village coloré aux maisons peintes, où l’accueil chaleureux et les traditions nubiennes offrent un aperçu authentique de la culture locale.</p>
+                <p>
+                    Abou Simbel : Temples monumentaux de Ramsès II et Néfertari, taillés dans la falaise.<br>
+                    Felouque : Navigation paisible sur le Nil à bord d’un voilier traditionnel.<br>
+                    Village nubien : Découverte d’un village coloré aux maisons peintes.
+                </p>
             </li>
 
             <li>
                 <strong>Jour 6 – Débarquement</strong>
-                <p>Petit-déjeuner<br>Transfert</p>
+                <p>
+                    Petit-déjeuner.<br>
+                    Transfert.
+                </p>
             </li>
         </ul>
     </div>
 </div>
 
-<button id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()">
-    ↑
-</button>
-
-<button id="scrollDownBtn" class="scroll-down-btn" onclick="scrollDown()">
-    ↓
-</button>
+<button id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()">↑</button>
+<button id="scrollDownBtn" class="scroll-down-btn" onclick="scrollDown()">↓</button>
 
 @code {
-    
+
     [Inject] ICruiseService CruiseService { get; set; }
 
     private string cruiseSlug = "";
@@ -148,7 +156,6 @@
         if (cruise != null)
             cruiseSlug = cruise.Slug;
     }
-
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

@@ -1,6 +1,6 @@
 ﻿
 (function () {
-    // inicjalizator — podłącza eventy do linków
+    
     function initVideoNavScroll() {
         const links = document.querySelectorAll('.video-nav-bar a[href^="#"]');
         if (!links.length) return;
@@ -22,7 +22,7 @@
         }
 
         links.forEach(link => {
-            // 🔥 usuń stary handler, jeśli istnieje
+           
             link.onclick = null;
 
             link.addEventListener('click', function (ev) {
@@ -35,35 +35,34 @@
 
                 ev.preventDefault();
 
-                // scroll
                 smoothScrollToElement(target);
 
-                // update hash bez skoku
+               
                 history.replaceState(null, '', `#${id}`);
 
-                // zamknij mobilny collapse
+               
                 const bsCollapse = document.querySelector('.navbar-collapse.show');
                 if (bsCollapse && window.bootstrap?.Collapse) {
                     bootstrap.Collapse.getOrCreateInstance(bsCollapse).hide();
                 }
 
-                // highlight
+             
                 target.classList.add('scroll-target-highlight');
                 setTimeout(() => target.classList.remove('scroll-target-highlight'), 1200);
             });
         });
 
-        // prefer CSS smooth jeśli wspierane
+        
         try { document.documentElement.style.scrollBehavior = 'smooth'; } catch (e) { }
     }
 
-    // expose do Blazor
+  
     window.initVideoNavScroll = initVideoNavScroll;
 
-    // scroll to top helper
+
     window.scrollToTop = () => window.scrollTo(0, 0);
 
-    // 🔹 nowa funkcja do scroll po hashie (po renderze)
+   
     window.scrollToHashIfAny = () => {
         const hash = window.location.hash;
         if (!hash) return;
@@ -302,8 +301,6 @@ document.addEventListener('click', function (e) {
         }
 
 })();
-
-
 (function () {
 
     let nilFilmInterval1 = null;
@@ -322,18 +319,18 @@ document.addEventListener('click', function (e) {
         if (nilFilmInterval1 !== null) return;
 
         const frames = preload([
-            "/images/nil/nile1.jpg",
-            "/images/nil/luxor1.jpg",
-            "/images/nil/nile2.jpg",
-            "/images/nil/nile3.jpg",
-            "/images/nil/nile4.jpg",
-            "/images/nil/nile11.jpg",
-            "/images/nil/nile5.jpg",
-            "/images/nil/nile6.jpg",
-            "/images/nil/nile7.jpg",
-            "/images/nil/nile8.jpg",
-            "/images/nil/nile9.jpg",
-            "/images/nil/nile10.jpg"
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile1.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/luxor1.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile2.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile3.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile4.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile11.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile5.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile6.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile7.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile8.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile9.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile10.jpg"
         ]);
 
         let i = 0;
@@ -357,19 +354,19 @@ document.addEventListener('click', function (e) {
         if (nilFilmInterval2 !== null) return;
 
         const frames = preload([
-            "/images/nil/egypt1.jpg",
-            "/images/nil/egypt13.jpg",
-            "/images/nil/egypt2.jpg",
-            "/images/nil/egypt3.jpg",
-            "/images/nil/egypt4.jpg",
-            "/images/nil/egypt5.jpg",
-            "/images/nil/egypt12.jpg",
-            "/images/nil/egypt6.jpg",
-            "/images/nil/egypt7.jpg",
-            "/images/nil/egypt8.jpg",
-            "/images/nil/egypt9.jpg",
-            "/images/nil/egypt10.jpg",
-            "/images/nil/egypt11.jpg"
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt1.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt13.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt2.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt3.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt4.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt5.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt12.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt6.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt7.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt8.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt9.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt10.jpg",
+            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt11.jpg"
         ]);
 
         let i = 0;

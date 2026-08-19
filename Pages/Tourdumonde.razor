@@ -3,19 +3,19 @@
 @using LegendaryCruises.Interfaces
 @using System.Security.Claims
 @inject NavigationManager Nav
-
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 
-<nav class="navbar navbar-expand-md navbar-light px-1" >
+<nav class="navbar navbar-expand-md navbar-light px-1">
 
     <a class="navbar-brand d-flex align-items-center" href="/">
-        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+        <img src="https://worldcruisesvideos.blob.core.windows.net/images/logo-world-cruises.png"
+             alt="World Cruises Logo" style="height:70px;" />
     </a>
     <h3>Tour du monde</h3>
 
-    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse"
+            data-bs-target="#mainNavbar">
         <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -24,35 +24,24 @@
 
             <AuthorizeView Roles="Admin">
                 <div class="nav-item px-1">
-                    <a class="btn login" href="/admin/cruises-table">
-                        CRUISES
-                    </a>
+                    <a class="btn login" href="/admin/cruises-table">CRUISES</a>
                 </div>
                 <div class="nav-item px-1">
-                    <a class="btn login" href="/admin/add-cruise">
-                        ADD CRUISE
-                    </a>
+                    <a class="btn login" href="/admin/add-cruise">ADD CRUISE</a>
                 </div>
             </AuthorizeView>
 
-            <!-- LOGGED IN -->
             <AuthorizeView>
                 <Authorized Context="authState">
-
                     <span class="me-2 login2">
-                            Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
-                        </span>
+                        Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                    </span>
 
-             
                     <div class="nav-item px-1">
-                        <a class="btn login" href="/Identity/Account/Logout">
-                            LOGOUT
-                        </a>
+                        <a class="btn login" href="/Identity/Account/Logout">LOGOUT</a>
                     </div>
-                 
                 </Authorized>
 
-                <!-- NOT LOGGED IN -->
                 <NotAuthorized>
                     <div class="nav-item px-1">
                         <a class="btn login"
@@ -63,7 +52,7 @@
                 </NotAuthorized>
             </AuthorizeView>
 
-           <ButtonBuy Slug="@cruiseSlug" />
+            <ButtonBuy Slug="@cruiseSlug" />
 
         </div>
     </div>
@@ -86,12 +75,13 @@
     <a class="video-nav-link" href="#australie">Australie et Nouvelle Zélande</a>
 </div>
 
-
 <!-- ROW 1 -->
 <div class="row gy-4 mt-2">
+
     <div class="col-md-4 animate-fadeInUp" id="barcelone" style="animation-delay: 1.1s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/barcelone.jpg" class="card-img-top fixed-img" alt="Barcelone" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/barcelone.jpg"
+                 class="card-img-top fixed-img" alt="Barcelone" />
             <div class="card-body text-center">
                 <h5 class="card-title">Barcelone</h5>
                 <p class="card-text">
@@ -107,15 +97,15 @@
 
     <div class="col-md-4 animate-fadeInUp" style="animation-delay: 1.1s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/gibraltar.jpg" class="card-img-top fixed-img" alt="Gibraltar" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/gibraltar.jpg"
+                 class="card-img-top fixed-img" alt="Gibraltar" />
             <div class="card-body text-center">
                 <h5 class="card-title">Gibraltar</h5>
                 <p class="card-text">
                     Jour 2 – Escale à Gibraltar<br>
                     • Montée au Rocher, panorama Europe–Afrique<br>
                     • Observation des singes de Barbarie<br>
-                    • Grottes de Saint-Michel et tunnels militaires<br>
-                    Avant : navigation depuis Barcelone<br>
+                    • Grottes de Saint-Michel<br>
                     Après : 1 jour de mer vers Casablanca
                 </p>
             </div>
@@ -124,36 +114,35 @@
 
     <div class="col-md-4 animate-fadeInUp" style="animation-delay: 1.1s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/whales.jpg" class="card-img-top fixed-img" alt="Cétacés" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/whales.jpg"
+                 class="card-img-top fixed-img" alt="Cétacés" />
             <div class="card-body text-center">
                 <h5 class="card-title">Baleines, dauphins, orques</h5>
                 <p class="card-text">
                     Jour 2 – Détroit de Gibraltar<br>
                     • Passage réputé pour la faune marine<br>
-                    • Possibilité d’apercevoir orques, dauphins, globicéphales<br>
                     • Observation depuis le pont du navire<br>
-                    Avant : Barcelone → Gibraltar<br>
                     Après : route vers Casablanca
                 </p>
             </div>
         </div>
     </div>
 </div>
-<!-- ROW 1 -->
+
+<!-- ROW 2 -->
 <div class="row gy-4 mt-2">
+
     <div class="col-md-4 animate-fadeInUp" id="afrique" style="animation-delay: 1.1s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/casablanca.jpg" class="card-img-top fixed-img" alt="Barcelone" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/casablanca.jpg"
+                 class="card-img-top fixed-img" alt="Casablanca" />
             <div class="card-body text-center">
                 <h5 class="card-title">Casablanca</h5>
                 <p class="card-text">
                     Jour 4 – Casablanca<br>
-                    • Mosquée Hassan II, chef-d’œuvre de l’architecture islamique au bord de l’océan<br>
-                    • Corniche d’Aïn Diab, promenade maritime animée<br>
-                    • Découverte de la vie marocaine moderne entre tradition et modernité<br>
-                    Avant : 1 jour de mer depuis Gibraltar<br>
+                    • Mosquée Hassan II<br>
+                    • Corniche d’Aïn Diab<br>
                     Après : 1 jour de mer vers Las Palmas
-
                 </p>
             </div>
         </div>
@@ -161,17 +150,15 @@
 
     <div class="col-md-4 animate-fadeInUp" style="animation-delay: 1.1s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/laspalmasdegrancanaria.jpg" class="card-img-top fixed-img" alt="Gibraltar" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/laspalmasdegrancanaria.jpg"
+                 class="card-img-top fixed-img" alt="Las Palmas" />
             <div class="card-body text-center">
                 <h5 class="card-title">Las Palmas de Gran Canaria</h5>
                 <p class="card-text">
-                    Jour 6 – Las Palmas de Gran Canaria<br>
-                    • Quartier historique de Vegueta et cathédrale Santa Ana<br>
-                    • Plage de Las Canteras, l’une des plus belles plages urbaines d’Europe<br>
-                    • Atmosphère subtropicale et héritage colonial espagnol<br>
-                    Avant : 1 jour de mer depuis Casablanca<br>
+                    Jour 6 – Las Palmas<br>
+                    • Vegueta, cathédrale Santa Ana<br>
+                    • Plage de Las Canteras<br>
                     Après : 2 jours de mer vers Mindelo
-
                 </p>
             </div>
         </div>
@@ -179,35 +166,34 @@
 
     <div class="col-md-4 animate-fadeInUp" style="animation-delay: 1.1s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/mindelo.jpg" class="card-img-top fixed-img" alt="Cétacés" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/mindelo.jpg"
+                 class="card-img-top fixed-img" alt="Mindelo" />
             <div class="card-body text-center">
                 <h5 class="card-title">Mindelo</h5>
                 <p class="card-text">
-                    Jour 9 – Mindelo (Cap-Vert)<br>
-                    • Ville créole animée, berceau de la morna capverdienne<br>
-                    • Architecture coloniale et ambiance musicale unique<br>
-                    • Port stratégique avant la traversée de l’Atlantique<br>
-                    Avant : 2 jours de mer depuis Las Palmas<br>
+                    Jour 9 – Mindelo<br>
+                    • Ville créole animée<br>
                     Après : 5 jours de mer vers Salvador de Bahia
-
                 </p>
             </div>
         </div>
     </div>
 </div>
+
+<!-- ROW 3 -->
 <div class="row gy-4 mt-2">
+
     <div class="col-md-4 animate-fadeInUp" id="ameriquedusud" style="animation-delay: 1.7s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/rio.jpg" class="card-img-top fixed-img" alt="Brésil" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/rio.jpg"
+                 class="card-img-top fixed-img" alt="Brésil" />
             <div class="card-body text-center">
                 <h5 class="card-title">Salvador, Rio de Janeiro</h5>
                 <p class="card-text">
                     <strong>Salvador – Jour 15</strong><br>
-                    • Pelourinho, culture afro-brésilienne<br>
-                    Avant : 5 jours de mer depuis Mindelo<br><br>
-                    <strong>Rio de Janeiro – Jours 18–19</strong><br>
+                    • Pelourinho<br><br>
+                    <strong>Rio – Jours 18–19</strong><br>
                     • Christ Rédempteur, Pain de Sucre<br>
-                    • Copacabana & Ipanema<br>
                     Après : 2 jours de mer vers Buenos Aires
                 </p>
             </div>
@@ -216,13 +202,13 @@
 
     <div class="col-md-4 animate-fadeInUp" style="animation-delay: 1.9s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/rio1.jpg" class="card-img-top fixed-img" alt="Buenos Aires" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/rio1.jpg"
+                 class="card-img-top fixed-img" alt="Buenos Aires" />
             <div class="card-body text-center">
                 <h5 class="card-title">Buenos Aires</h5>
                 <p class="card-text">
                     Jours 22–23 – Buenos Aires<br>
                     • La Boca, San Telmo, tango<br>
-                    Avant : 2 jours de mer depuis Rio<br>
                     Après : 3 jours de mer vers Ushuaia
                 </p>
             </div>
@@ -231,32 +217,34 @@
 
     <div class="col-md-4 animate-fadeInUp" style="animation-delay: 2.1s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/ushuaia.jpg" class="card-img-top fixed-img" alt="Ushuaïa" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/ushuaia.jpg"
+                 class="card-img-top fixed-img" alt="Ushuaïa" />
             <div class="card-body text-center">
                 <h5 class="card-title">Ushuaïa, Îles Falkland</h5>
                 <p class="card-text">
                     <strong>Ushuaïa – Jour 27</strong><br>
-                    • Ville du bout du monde, parc national<br>
-                    Avant : 3 jours de mer depuis Buenos Aires<br><br>
+                    • Ville du bout du monde<br><br>
                     <strong>Falkland – Jour 29</strong><br>
-                    • Faune subantarctique, manchots<br>
+                    • Faune subantarctique<br>
                     Après : 2 jours de mer vers Punta Arenas
                 </p>
             </div>
         </div>
     </div>
 </div>
+
+<!-- ROW 4 -->
 <div class="row gy-4 mt-2">
+
     <div class="col-md-4 animate-fadeInUp" id="pacifique" style="animation-delay: 0.5s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/puntarenas.jpg" class="card-img-top fixed-img" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/puntarenas.jpg"
+                 class="card-img-top fixed-img" alt="Punta Arenas" />
             <div class="card-body text-center">
                 <h5 class="card-title">Punta Arenas – Détroit de Magellan</h5>
                 <p class="card-text">
                     Jour 32 – Punta Arenas<br>
-                    • Navigation dans le mythique détroit de Magellan<br>
-                    • Paysages sauvages, colonies de manchots<br>
-                    Avant : 2 jours de mer depuis les Falkland<br>
+                    • Détroit de Magellan<br>
                     Après : 2 jours de mer vers Puerto Montt
                 </p>
             </div>
@@ -265,14 +253,13 @@
 
     <div class="col-md-4 animate-fadeInUp" style="animation-delay: 0.9s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/puertomontt.jpg" class="card-img-top fixed-img" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/puertomontt.jpg"
+                 class="card-img-top fixed-img" alt="Puerto Montt" />
             <div class="card-body text-center">
                 <h5 class="card-title">Puerto Montt</h5>
                 <p class="card-text">
                     Jour 35 – Puerto Montt<br>
-                    • Région des lacs, volcans enneigés<br>
-                    • Marchés traditionnels et fjords<br>
-                    Avant : 2 jours de mer depuis Punta Arenas<br>
+                    • Région des lacs<br>
                     Après : 1 jour de mer vers Valparaíso
                 </p>
             </div>
@@ -281,31 +268,32 @@
 
     <div class="col-md-4 animate-fadeInUp" style="animation-delay: 0.7s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/valparaiso1.jpg" class="card-img-top fixed-img" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/valparaiso1.jpg"
+                 class="card-img-top fixed-img" alt="Valparaíso" />
             <div class="card-body text-center">
                 <h5 class="card-title">Valparaíso</h5>
                 <p class="card-text">
                     Jours 37–38 – Valparaíso<br>
-                    • Ville colorée classée à l’UNESCO<br>
-                    • Funiculaires historiques, ambiance bohème<br>
-                    Avant : 1 jour de mer depuis Puerto Montt<br>
-                    Après : 5 jours de mer vers Puntarenas (Costa Rica)
+                    • Ville colorée UNESCO<br>
+                    Après : 5 jours de mer vers Puntarenas
                 </p>
             </div>
         </div>
     </div>
 </div>
+
+<!-- ROW 5 -->
 <div class="row gy-4 mt-2">
+
     <div class="col-md-4 animate-fadeInUp" id="ameriquedunord" style="animation-delay: 0.5s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/panama.jpg" class="card-img-top fixed-img" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/panama.jpg"
+                 class="card-img-top fixed-img" alt="Panama" />
             <div class="card-body text-center">
                 <h5 class="card-title">Traversée du canal de Panama</h5>
                 <p class="card-text">
                     Jour 46 – Canal de Panama<br>
                     • Passage entre Atlantique et Pacifique<br>
-                    • Observation des écluses et du transit<br>
-                    Avant : 1 jour de mer depuis Puntarenas<br>
                     Après : 1 jour de mer vers la Jamaïque
                 </p>
             </div>
@@ -314,15 +302,15 @@
 
     <div class="col-md-4 animate-fadeInUp" style="animation-delay: 0.9s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/jamaique.jpg" class="card-img-top fixed-img" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/jamaique.jpg"
+                 class="card-img-top fixed-img" alt="Jamaïque" />
             <div class="card-body text-center">
                 <h5 class="card-title">Jamaïque / Saint-Martin</h5>
                 <p class="card-text">
-                    <strong>Jamaïque – Jour 48</strong><br>
-                    • Plages tropicales, culture reggae<br>
-                    Avant : 1 jour de mer depuis Panama<br><br>
-                    <strong>Saint-Martin – Jour 51</strong><br>
-                    • Île franco-néerlandaise, lagons turquoise<br>
+                    Jour 48 – Jamaïque<br>
+                    • Plages tropicales<br><br>
+                    Jour 51 – Saint-Martin<br>
+                    • Lagons turquoise<br>
                     Après : 5 jours de mer vers Los Angeles
                 </p>
             </div>
@@ -331,31 +319,34 @@
 
     <div class="col-md-4 animate-fadeInUp" style="animation-delay: 0.7s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/hollywood.jpg" class="card-img-top fixed-img" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/hollywood.jpg"
+                 class="card-img-top fixed-img" alt="Los Angeles" />
             <div class="card-body text-center">
                 <h5 class="card-title">Hollywood / Los Angeles / Cabo San Lucas</h5>
                 <p class="card-text">
-                    <strong>Los Angeles – Jours 57–58</strong><br>
-                    • Hollywood, Santa Monica, lifestyle californien<br>
-                    Avant : 5 jours de mer depuis Saint-Martin<br><br>
-                    <strong>Cabo San Lucas – Jour 60</strong><br>
-                    • Arches rocheuses, mer de Cortez<br>
+                    Jours 57–58 – Los Angeles<br>
+                    • Hollywood, Santa Monica<br><br>
+                    Jour 60 – Cabo San Lucas<br>
+                    • Arches rocheuses<br>
                     Après : 4 jours de mer vers Honolulu
                 </p>
             </div>
         </div>
     </div>
 </div>
+
+<!-- ROW 6 -->
 <div class="row gy-4 mt-2">
+
     <div class="col-md-4 animate-fadeInUp" id="iles" style="animation-delay: 0.5s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/honolulu.jpg" class="card-img-top fixed-img" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/honolulu.jpg"
+                 class="card-img-top fixed-img" alt="Honolulu" />
             <div class="card-body text-center">
                 <h5 class="card-title">Honolulu – Hawaï</h5>
                 <p class="card-text">
                     Jours 65–66 – Honolulu<br>
-                    • Waikiki, volcans, culture polynésienne<br>
-                    Avant : 4 jours de mer depuis Cabo San Lucas<br>
+                    • Waikiki, volcans<br>
                     Après : 4 jours de mer vers les îles Cook
                 </p>
             </div>
@@ -364,15 +355,15 @@
 
     <div class="col-md-4 animate-fadeInUp" style="animation-delay: 0.9s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/iles.jpg" class="card-img-top fixed-img" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/iles.jpg"
+                 class="card-img-top fixed-img" alt="Îles Cook" />
             <div class="card-body text-center">
                 <h5 class="card-title">Îles Cook / Vanuatu</h5>
                 <p class="card-text">
-                    <strong>Îles Cook – Jour 71</strong><br>
-                    • Lagons turquoise, plages paradisiaques<br>
-                    Avant : 4 jours de mer depuis Honolulu<br><br>
-                    <strong>Vanuatu – Jour 75</strong><br>
-                    • Culture mélanésienne, nature tropicale<br>
+                    Jour 71 – Îles Cook<br>
+                    • Lagons turquoise<br><br>
+                    Jour 75 – Vanuatu<br>
+                    • Culture mélanésienne<br>
                     Après : 1 jour de mer vers Nouméa
                 </p>
             </div>
@@ -381,7 +372,8 @@
 
     <div class="col-md-4 animate-fadeInUp" style="animation-delay: 0.7s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/noumea.jpg" class="card-img-top fixed-img" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/noumea.jpg"
+                 class="card-img-top fixed-img" alt="Nouméa" />
             <div class="card-body text-center">
                 <h5 class="card-title">Nouméa – Nouvelle-Calédonie</h5>
                 <p class="card-text">
@@ -397,7 +389,7 @@
 <div class="row gy-4 mt-2">
     <div class="col-md-4 animate-fadeInUp" id="australie" style="animation-delay: 0.5s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/sydney.jpg" class="card-img-top fixed-img" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/sydney.jpg" class="card-img-top fixed-img" />
             <div class="card-body text-center">
                 <h5 class="card-title">Sydney</h5>
                 <p class="card-text">
@@ -412,7 +404,7 @@
 
     <div class="col-md-4 animate-fadeInUp" style="animation-delay: 0.9s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/hobart.jpg" class="card-img-top fixed-img" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/hobart.jpg" class="card-img-top fixed-img" />
             <div class="card-body text-center">
                 <h5 class="card-title">Hobart – Tasmanie</h5>
                 <p class="card-text">
@@ -427,7 +419,7 @@
 
     <div class="col-md-4 animate-fadeInUp" style="animation-delay: 0.7s;">
         <div class="card shadow-sm h-100">
-            <img src="/Images/Tour/new-zealand.jpg" class="card-img-top fixed-img" />
+            <img src="https://worldcruisesvideos.blob.core.windows.net/images/Tour/new-zealand.jpg" class="card-img-top fixed-img" />
             <div class="card-body text-center">
                 <h5 class="card-title">Nouvelle Zélande</h5>
                 <p class="card-text">
