@@ -319,18 +319,18 @@ document.addEventListener('click', function (e) {
         if (nilFilmInterval1 !== null) return;
 
         const frames = preload([
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile1.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/luxor1.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile2.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile3.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile4.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile11.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile5.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile6.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile7.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile8.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile9.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/nile10.jpg"
+            "https://worldcruises.blob.core.windows.net/images/Nil/nile1.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/luxor1.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/nile2.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/nile3.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/nile4.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/nile11.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/nile5.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/nile6.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/nile7.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/nile8.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/nile9.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/nile10.jpg"
         ]);
 
         let i = 0;
@@ -354,19 +354,19 @@ document.addEventListener('click', function (e) {
         if (nilFilmInterval2 !== null) return;
 
         const frames = preload([
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt1.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt13.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt2.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt3.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt4.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt5.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt12.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt6.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt7.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt8.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt9.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt10.jpg",
-            "https://worldcruisesvideos.blob.core.windows.net/images/Nil/egypt11.jpg"
+            "https://worldcruises.blob.core.windows.net/images/Nil/egypt1.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/egypt13.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/egypt2.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/egypt3.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/egypt4.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/egypt5.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/egypt12.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/egypt6.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/egypt7.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/egypt8.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/egypt9.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/egypt10.jpg",
+            "https://worldcruises.blob.core.windows.net/images/Nil/egypt11.jpg"
         ]);
 
         let i = 0;

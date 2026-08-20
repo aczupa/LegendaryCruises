@@ -16,8 +16,6 @@
         <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
     </a>
 
-
-
     <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
             aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -51,9 +49,6 @@
                     <span class="me-2 login2">
                         Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
                     </span>
-
-
-
 
                     <a class="btn btn-primary" href="/newcruises">
                         ✨ Nouvelles croisières
@@ -161,7 +156,6 @@
                     Total: @CalculateTotal() @cruise.Currency
                 </div>
 
-                <!-- BUTTON -->
                 <!-- ERROR MESSAGE -->
                 @if (!string.IsNullOrEmpty(errorMessage))
                 {
@@ -197,7 +191,7 @@
         <div class="gallery-item gallery-large">
             <div class="gallery-image-wrapper">
                 <video autoplay muted loop playsinline>
-                    <source src="https://worldcruisesvideos.blob.core.windows.net/videos/bg.mp4" type="video/mp4">
+                    <source src="https://worldcruises.blob.core.windows.net/videos/bg.mp4" type="video/mp4">
                 </video>
             </div>
             <div class="gallery-caption"> Un navire moderne et luxueux, conçu pour offrir une expérience exceptionnelle dès l’embarquement. Son architecture contemporaine associe lignes épurées, matériaux nobles et technologies de pointe pour garantir un confort optimal à chaque instant. Les espaces communs sont vastes, lumineux, décorés avec raffinement, et invitent à la détente comme à la découverte.</div>
@@ -206,7 +200,7 @@
         <!-- BALCONY -->
         <div class="gallery-item gallery-clickable">
             <div class="gallery-image-wrapper">
-                <img src="/Images/Cabins/balcony.jpg" />
+                <img src="https://worldcruises.blob.core.windows.net/images/Cabins/balcony.jpg" />
             </div>
             <div class="gallery-caption">
                 La Cabine Balcony est l’un des espaces les plus prisés du navire, pensée pour offrir une expérience intime et raffinée. Son balcon privé devient une véritable extension de la cabine : un lieu exclusif où l’on peut savourer un café au lever du soleil, admirer les reflets dorés de l’océan ou profiter d’un moment de calme sous le ciel étoilé..
@@ -247,7 +241,7 @@
         <div class="gallery-item">
             <div class="gallery-image-wrapper">
                 <video autoplay muted loop playsinline>
-                    <source src="https://worldcruisesvideos.blob.core.windows.net/videos/Ship.mp4" type="video/mp4">
+                    <source src="https://worldcruises.blob.core.windows.net/videos/Ship.mp4" type="video/mp4">
                 </video>
             </div>
             <div class="gallery-caption">Notre navire – technologie moderne et élégance.</div>
@@ -276,8 +270,6 @@
     </div>
 </div>
 
-
-
 @code {
 
     [Inject] public ICruiseService CruiseService { get; set; } = default!;
@@ -291,8 +283,8 @@
 
     private bool IsLoggedIn = false;
     private int CartItemCount = 0;
-   
-  private bool cartRestored = false;
+
+    private bool cartRestored = false;
     private string? errorMessage;
     private string? successMessage;
 
@@ -304,17 +296,13 @@
 
         IsLoggedIn = user.Identity?.IsAuthenticated ?? false;
 
-
         if (IsLoggedIn)
         {
-            var userId =
-                user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
+            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (!string.IsNullOrEmpty(userId))
             {
-                CartItemCount =
-                    await CartService.GetCartItemCount(userId);
+                CartItemCount = await CartService.GetCartItemCount(userId);
             }
         }
     }
@@ -355,13 +343,11 @@
             return;
         }
 
-
         var selectedCabins = cabinSelections
             .Where(x => x.Value > 0)
             .ToDictionary(
                 x => x.Key,
                 x => x.Value);
-
 
         if (!selectedCabins.Any())
         {
@@ -374,7 +360,6 @@
 
         var user = authState.User;
 
-
         if (!(user.Identity?.IsAuthenticated ?? false))
         {
             var pending = new PendingCart
@@ -385,24 +370,18 @@
                 Cabins = selectedCabins
             };
 
-
             await SessionStorage.SetAsync(
                 "PendingCart",
                 pending);
 
-
             Nav.NavigateTo(
-    $"/Identity/Account/Login?returnUrl={Uri.EscapeDataString($"/cruises/{Slug}")}&message=login-required",
-    true);
+                $"/Identity/Account/Login?returnUrl={Uri.EscapeDataString($"/cruises/{Slug}")}&message=login-required",
+                true);
 
             return;
         }
 
-
-      
-        var userId =
-            user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
+        var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         foreach (var cabin in selectedCabins)
         {
@@ -414,7 +393,6 @@
                 cabin.Value);
         }
 
-
         Nav.NavigateTo("/cart");
     }
 
@@ -422,9 +400,6 @@
     {
         Nav.NavigateTo("/cart");
     }
-
-    
-
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -458,10 +433,8 @@
                     CartItemCount = await CartService.GetCartItemCount(userId);
                     successMessage = "Votre croisière a été ajoutée au panier !";
                     StateHasChanged();
-
                 }
             }
         }
     }
-
 }
