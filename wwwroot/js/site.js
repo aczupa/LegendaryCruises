@@ -395,12 +395,15 @@ window.stopPropagation = function (e) {
 
 window.addEventListener("scroll", function () {
     const btn = document.getElementById("backToTopBtn");
+    if (!btn) return;
+
     if (window.scrollY > 250) {
         btn.classList.add("show");
     } else {
         btn.classList.remove("show");
     }
 });
+
 
 function scrollToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -414,6 +417,7 @@ function scrollDown() {
 
 window.addEventListener("scroll", () => {
     const btn = document.getElementById("scrollDownBtn");
+    if (!btn) return; 
 
     if (window.scrollY > 100) {
         btn.style.opacity = "0";
@@ -423,6 +427,7 @@ window.addEventListener("scroll", () => {
         btn.style.pointerEvents = "auto";
     }
 });
+
 
 window.initCabinsOverlay = function () {
 
@@ -483,6 +488,7 @@ window.initCabinsOverlay = function () {
         });
     });
 };
+
 
 
 
