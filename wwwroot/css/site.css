@@ -590,4 +590,6 @@ nav.navbar {
     cursor: default;
 }
 
-
+html {
+    scroll-behavior: smooth;
+}

@@ -1,5 +1,4 @@
-﻿
-html, body {
+﻿html, body {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -9,8 +8,6 @@ html, body {
     color: rgb(7,45,79);
 }
 
-
-
 .page {
     min-height: 100vh;
     display: grid;
@@ -18,27 +15,18 @@ html, body {
     background: white;
 }
 
-
 .accordion-grid {
-    width: 66vw; 
-    height: 66vh; 
+    width: 66vw;
+    height: 66vh;
     max-width: 140vmin;
     max-height: 140vmin;
     display: grid;
-    grid-template-columns: 3fr 2fr 1fr 2fr 3fr; 
-    grid-auto-rows: 1fr; 
+    grid-template-columns: 3fr 2fr 1fr 2fr 3fr;
+    grid-auto-rows: 1fr;
     gap: 1rem;
     padding: 1rem;
     box-sizing: border-box;
 }
-
-
-.cell {
-    background: transparent;
-    border-radius: 10px;
-    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.08), 0 2px 6px rgba(255, 255, 255, 0.06);
-}
-
 
 @media (max-width: 480px) {
     .accordion-grid {
@@ -49,7 +37,6 @@ html, body {
         padding: 0.75rem;
     }
 }
-
 
 @keyframes slideInRight {
     from {
@@ -75,44 +62,31 @@ html, body {
     }
 }
 
-
 .cell {
+    position: relative;
+    overflow: hidden;
+    background: transparent;
+    border-radius: 10px;
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.08), 0 2px 6px rgba(255, 255, 255, 0.06);
     opacity: 0;
 }
 
-   
+    .cell video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+        display: block;
+    }
+
     .cell:nth-child(-n+5) {
         animation: slideInRight 1.6s ease forwards;
     }
 
     .cell:nth-child(n+6):nth-child(-n+10) {
         animation: slideInLeft 1.8s ease forwards;
-        animation-delay: 0.2s; 
+        animation-delay: 0.2s;
     }
-
-    
-    .cell:nth-child(n+11):nth-child(-n+15) {
-        animation: slideInRight 0.8s ease forwards;
-        animation-delay: 0.4s;
-    }
-
-
-
-.cell {
-    position: relative;
-    overflow: hidden; 
-}
-
-    .cell video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover; 
-        border-radius: 10px;
-        display: block;
-    }
-
-
-
 
 /* =========================
    MOBILE RESPONSIVE LAYOUT
@@ -131,18 +105,16 @@ html, body {
         max-height: none;
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        grid-auto-rows: 35vw; 
+        grid-auto-rows: 35vw;
         gap: 0.75rem;
         padding: 0.75rem;
     }
 
-  
     .cell {
         animation: none !important;
         opacity: 1;
     }
 
-       
         .cell:nth-child(5n) {
             grid-column: 1 / -1;
             grid-auto-rows: 45vw;
@@ -161,31 +133,14 @@ html, body {
    TOP BAR / HOME ICON
    ===================== */
 
-
-
-
-
-
-
-.home-link:hover {
-    opacity: 0.7;
-}
-
-
-.home-link .oi {
-    color: white;
-}
-
-
 .top-bar {
     position: relative;
     width: 100%;
     padding: 0.75rem 1rem;
     display: flex;
-    justify-content: center; 
+    justify-content: center;
     align-items: center;
 }
-
 
 .home-link {
     position: absolute;
@@ -198,6 +153,13 @@ html, body {
     z-index: 10;
 }
 
+    .home-link:hover {
+        opacity: 0.7;
+    }
+
+    .home-link .oi {
+        color: white;
+    }
 
 .title {
     margin: 0;
@@ -208,8 +170,9 @@ html, body {
     letter-spacing: 1px;
     font-size: 2rem;
     text-align: center;
-    width: 100%; 
+    width: 100%;
 }
+
 /* =====================
    OVERLAY DESCRIPTION
    ===================== */
@@ -217,7 +180,7 @@ html, body {
 .overlay {
     position: fixed;
     inset: 0;
-    background: linear-gradient( 120deg, rgba(255,255,255,0.35), rgba(240,245,250,0.55) );
+    background: linear-gradient(120deg, rgba(255,255,255,0.35), rgba(240,245,250,0.55));
     backdrop-filter: blur(14px) saturate(120%);
     -webkit-backdrop-filter: blur(14px) saturate(120%);
     display: flex;
@@ -234,10 +197,8 @@ html, body {
         pointer-events: all;
     }
 
-
-
 .overlay-content {
-    background: linear-gradient( 145deg, rgba(255,255,255,0.75), rgba(255,255,255,0.45) );
+    background: linear-gradient(145deg, rgba(255,255,255,0.75), rgba(255,255,255,0.45));
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
     border-radius: 18px;
@@ -268,14 +229,6 @@ html, body {
         opacity: 1;
     }
 
-
-    .close-btn:hover {
-        opacity: 1;
-    }
-
-
-
-
 @keyframes glassIn {
     from {
         opacity: 0;
@@ -287,5 +240,3 @@ html, body {
         transform: scale(1) translateY(0);
     }
 }
-
-
