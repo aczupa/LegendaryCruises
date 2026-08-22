@@ -429,6 +429,10 @@
                     }
 
                     await SessionStorage.DeleteAsync("PendingCart");
+                    if (string.IsNullOrEmpty(userId))
+                    {
+                        return;
+                    }
 
                     CartItemCount = await CartService.GetCartItemCount(userId);
                     successMessage = "Votre croisière a été ajoutée au panier !";

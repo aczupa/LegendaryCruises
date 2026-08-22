@@ -13,7 +13,7 @@
             if (!el) return;
             const rect = el.getBoundingClientRect();
             const offset = getHeaderOffset();
-            const top = window.pageYOffset + rect.top - offset;
+            const top = window.scrollY + rect.top - offset;
             window.scrollTo({
                 top: Math.max(0, Math.floor(top)),
                 behavior: 'smooth'
@@ -65,7 +65,7 @@
         const offset = nav ? Math.ceil(nav.getBoundingClientRect().height) + 12 : 12;
 
         const rect = target.getBoundingClientRect();
-        const top = window.pageYOffset + rect.top - offset;
+        const top = window.scrollY + rect.top - offset;
 
         window.scrollTo({
             top: Math.max(0, Math.floor(top)),
