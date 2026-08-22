@@ -1,77 +1,101 @@
 ﻿@page "/polynesie"
 @using LegendaryCruises.Components
 @using LegendaryCruises.Interfaces
-@inject IJSRuntime JS
-
-@{
-    string baseUrl = "https://worldcruises.blob.core.windows.net/videos/";
-
-    string[] videos = new[]
-    {
-        $"{baseUrl}Polynesie7.mp4",
-        $"{baseUrl}Polynesie1.mp4",
-        $"{baseUrl}tahiti.mp4",
-        $"{baseUrl}Polynesie3.mp4",
-        $"{baseUrl}Polynesie4.mp4",
-        $"{baseUrl}polynesie8.mp4",
-        $"{baseUrl}Polynesie6.mp4",
-        $"{baseUrl}Polynesie2.mp4",
-        $"{baseUrl}Polynesie5.mp4",
-        $"{baseUrl}Polynesie9.mp4"
-    };
-}
+@inject ICruiseService CruiseService
 
 <div class="page">
-
     <div class="top-bar">
         <NavLink class="home-link" href="" Match="NavLinkMatch.All">
             <span class="oi oi-home" aria-hidden="true"></span>
         </NavLink>
-
         <h1 class="title">Polynésie Française</h1>
         <ButtonBuy Slug="@cruiseSlug" />
     </div>
-
     <div class="accordion-grid">
         @for (int i = 0; i < videos.Length; i++)
         {
-            <div class="cell">
-                <video src="@videos[i]"
-                       autoplay
-                       muted
-                       loop
-                       playsinline>
+            var index = i;
+            <div class="cell" @onclick="() => OpenOverlay(index)">
+                <video src="@videos[index]"
+                       autoplay muted loop playsinline preload="metadata">
                 </video>
             </div>
         }
     </div>
 </div>
 
-<div id="overlay" class="overlay" onclick="closeOverlay()">
-    <div class="overlay-content" onclick="event.stopPropagation()">
-        <button class="close-btn" onclick="closeOverlay()">×</button>
-        <div id="overlay-text"></div>
+<div class="overlay @(showOverlay ? "active" : "")" @onclick="CloseOverlay">
+    <div class="overlay-content" @onclick:stopPropagation="true">
+        <button class="close-btn" @onclick="CloseOverlay">×</button>
+        <div>
+            <strong>@days[selectedIndex].Title</strong><br /><br />
+            @((MarkupString)days[selectedIndex].Content)
+        </div>
     </div>
 </div>
 
 @code {
-    [Inject] ICruiseService CruiseService { get; set; }
-
     private string cruiseSlug = "";
+    private bool showOverlay = false;
+    private int selectedIndex = 0;
+
+    private static readonly string BaseUrl = "https://worldcruises.blob.core.windows.net/videos/";
+
+    private string[] videos = new[]
+    {
+        $"{BaseUrl}Polynesie7.mp4",
+        $"{BaseUrl}Polynesie1.mp4",
+        $"{BaseUrl}tahiti.mp4",
+        $"{BaseUrl}Polynesie3.mp4",
+        $"{BaseUrl}Polynesie4.mp4",
+        $"{BaseUrl}polynesie8.mp4",
+        $"{BaseUrl}Polynesie6.mp4",
+        $"{BaseUrl}Polynesie2.mp4",
+        $"{BaseUrl}Polynesie5.mp4",
+        $"{BaseUrl}Polynesie9.mp4"
+    };
+
+    private record DayInfo(string Title, string Content);
+
+    private List<DayInfo> days = new()
+    {
+        new("✨ Jour 1 — Tahiti : L'aube du voyage",
+            "Accueil chaleureux avec colliers de fleurs.<br>Installation à bord et cocktail au coucher du soleil.<br>Dîner avec spectacle de danse tahitienne traditionnelle (<em>ʻOri Tahiti</em>)."),
+        new("🏝️ Jour 2 — Moorea : L'île magique",
+            "Navigation au lever du soleil, face aux majestueux pics volcaniques.<br><strong>Excursion :</strong><br>– Tour du lagon en pirogue polynésienne<br>– Nage avec raies et requins pointe noire<br>Après-midi : détente sur plage privée et dégustation de jus de fruits locaux.<br>Soirée : cinéma en plein air sous les étoiles."),
+        new("🌊 Jour 3 — Moorea : Nature et traditions",
+            "Randonnée légère au Belvédère pour admirer la vue panoramique.<br>Atelier de monoi et tressage de feuilles de pandanus.<br>Dîner gastronomique avec produits locaux : mahi-mahi, vanille, taro."),
+        new("🏖️ Jour 4 — Huahine : L'île sauvage",
+            "Matin : visite des marae, anciens temples polynésiens.<br>Après-midi : découverte des fermes perlières.<br>Apéritif sur le pont accompagné de musique traditionnelle à l'ukulélé."),
+        new("🌺 Jour 5 — Raiatea : Le cœur sacré de la Polynésie",
+            "Découverte du marae Taputapuatea (site UNESCO).<br>Sortie en kayak sur la seule rivière navigable de Polynésie.<br>Cours de danse polynésienne à bord."),
+        new("💎 Jour 6 — Tahaa : L'île vanille",
+            "Visite d'une plantation de vanille.<br>Snorkeling dans un jardin de corail coloré.<br>Dîner sur un motu privé éclairé par des torches polynésiennes."),
+        new("🏝️ Jour 7 — Bora Bora : Le lagon des lagons",
+            "Entrée dans le lagon turquoise — un moment magique.<br>Tour du lagon avec arrêt pour baignade dans les eaux translucides.<br>Option : survol en hélicoptère du mont Otemanu.<br>Dîner romantique sur le pont."),
+        new("🌅 Jour 8 — Bora Bora : Journée détente",
+            "Journée libre pour profiter de :<br>– Spa polynésien<br>– Paddle, kayak, snorkeling<br>– Plage sur un motu privé<br>Soirée : concert d'ukulélé et feu de joie."),
+        new("🌊 Jour 9 — Rangiroa : Le royaume des plongeurs",
+            "Exploration du lagon immense.<br>Plongée ou snorkeling dans la passe de Tiputa.<br>Dégustation des vins locaux du vignoble de Rangiroa."),
+        new("🌞 Jour 10 — Retour à Tahiti",
+            "Dernier lever de soleil sur le Pacifique.<br>Débarquement en douceur au rythme des tambours.<br>Souvenirs : colliers de fleurs séchées, vanille et perles.")
+    };
 
     protected override async Task OnInitializedAsync()
     {
         var cruise = await CruiseService.GetCruiseByName("Polynésie");
-
         if (cruise != null)
             cruiseSlug = cruise.Slug;
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private void OpenOverlay(int index)
     {
-        if (firstRender)
-        {
-            await JS.InvokeVoidAsync("initPolynesieOverlay");
-        }
+        selectedIndex = index;
+        showOverlay = true;
+    }
+
+    private void CloseOverlay()
+    {
+        showOverlay = false;
     }
 }

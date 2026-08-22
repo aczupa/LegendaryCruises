@@ -87,7 +87,7 @@ document.addEventListener('click', function (e) {
 });
 
 
-// ===== Funkcja pomocnicza wspólna dla overlayów opartych o #overlay / #overlay-text =====
+
 function initDayOverlay(descriptions) {
     const cells = document.querySelectorAll(".cell");
     const overlay = document.getElementById("overlay");
@@ -112,88 +112,8 @@ window.stopPropagation = function (e) {
 };
 
 
-// ===== POLYNÉSIE =====
-window.initPolynesieOverlay = function () {
-    const descriptions = [
-        `
-        ✨ <strong>Jour 1 — Tahiti : L’aube du voyage</strong><br><br>
-        Accueil chaleureux avec colliers de fleurs.<br>
-        Installation à bord et cocktail au coucher du soleil.<br>
-        Dîner avec spectacle de danse tahitienne traditionnelle (<em>ʻOri Tahiti</em>).
-        `,
-        `
-        🏝️ <strong>Jour 2 — Moorea : L’île magique</strong><br><br>
-        Navigation au lever du soleil, face aux majestueux pics volcaniques.<br>
-        <strong>Excursion :</strong><br>
-        – Tour du lagon en pirogue polynésienne<br>
-        – Nage avec raies et requins pointe noire<br>
-        Après-midi : détente sur plage privée et dégustation de jus de fruits locaux.<br>
-        Soirée : cinéma en plein air sous les étoiles.
-        `,
-        `
-        🌊 <strong>Jour 3 — Moorea : Nature et traditions</strong><br><br>
-        Randonnée légère au Belvédère pour admirer la vue panoramique.<br>
-        Atelier de monoi et tressage de feuilles de pandanus.<br>
-        Dîner gastronomique avec produits locaux : mahi-mahi, vanille, taro.
-        `,
-        `
-        🏖️ <strong>Jour 4 — Huahine : L’île sauvage</strong><br><br>
-        Matin : visite des marae, anciens temples polynésiens.<br>
-        Après-midi : découverte des fermes perlières.<br>
-        Apéritif sur le pont accompagné de musique traditionnelle à l’ukulélé.
-        `,
-        `
-        🌺 <strong>Jour 5 — Raiatea : Le cœur sacré de la Polynésie</strong><br><br>
-        Découverte du marae Taputapuatea (site UNESCO).<br>
-        Sortie en kayak sur la seule rivière navigable de Polynésie.<br>
-        Cours de danse polynésienne à bord.
-        `,
-        `
-        💎 <strong>Jour 6 — Tahaa : L’île vanille</strong><br><br>
-        Visite d’une plantation de vanille.<br>
-        Snorkeling dans un jardin de corail coloré.<br>
-        Dîner sur un motu privé éclairé par des torches polynésiennes.
-        `,
-        `
-        🏝️ <strong>Jour 7 — Bora Bora : Le lagon des lagons</strong><br><br>
-        Entrée dans le lagon turquoise — un moment magique.<br>
-        Tour du lagon avec arrêt pour baignade dans les eaux translucides.<br>
-        Option : survol en hélicoptère du mont Otemanu.<br>
-        Dîner romantique sur le pont.
-        `,
-        `
-        🌅 <strong>Jour 8 — Bora Bora : Journée détente</strong><br><br>
-        Journée libre pour profiter de :<br>
-        – Spa polynésien<br>
-        – Paddle, kayak, snorkeling<br>
-        – Plage sur un motu privé<br>
-        Soirée : concert d’ukulélé et feu de joie.
-        `,
-        `
-        🌊 <strong>Jour 9 — Rangiroa : Le royaume des plongeurs</strong><br><br>
-        Exploration du lagon immense.<br>
-        Plongée ou snorkeling dans la passe de Tiputa.<br>
-        Dégustation des vins locaux du vignoble de Rangiroa.
-        `,
-        `
-        🌞 <strong>Jour 10 — Retour à Tahiti</strong><br><br>
-        Dernier lever de soleil sur le Pacifique.<br>
-        Débarquement en douceur au rythme des tambours.<br>
-        Souvenirs : colliers de fleurs séchées, vanille et perles.
-        `
-    ];
-
-    initDayOverlay(descriptions);
-};
-
-
-
-
 // ===== NIL =====
 (function () {
-
-    let nilFilmInterval1 = null;
-    let nilFilmInterval2 = null;
 
     function preload(frames) {
         return frames.map(src => {
@@ -203,74 +123,66 @@ window.initPolynesieOverlay = function () {
         });
     }
 
-    window.startNilFilm = function () {
-        if (nilFilmInterval1 !== null) return;
-
-        const frames = preload([
-            "https://worldcruises.blob.core.windows.net/images/Nil/nile1.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/luxor1.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/nile2.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/nile3.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/nile4.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/nile11.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/nile5.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/nile6.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/nile7.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/nile8.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/nile9.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/nile10.jpg"
-        ]);
-
+    function createFilmPlayer(frameElementId, urls) {
+        const frames = preload(urls);
+        let interval = null;
         let i = 0;
 
-        nilFilmInterval1 = setInterval(() => {
-            const img = document.getElementById("nilFrame");
-            if (!img) return;
+        return {
+            start() {
+                if (interval !== null) return;
 
-            i = (i + 1) % frames.length;
-            img.src = frames[i].src;
-        }, 1000);
-    };
+                interval = setInterval(() => {
+                    const img = document.getElementById(frameElementId);
+                    if (!img) return;
 
-    window.stopNilFilm = function () {
-        clearInterval(nilFilmInterval1);
-        nilFilmInterval1 = null;
-    };
+                    i = (i + 1) % frames.length;
+                    img.src = frames[i].src;
+                }, 1000);
+            },
+            stop() {
+                clearInterval(interval);
+                interval = null;
+            }
+        };
+    }
 
-    window.startNilFilm2 = function () {
-        if (nilFilmInterval2 !== null) return;
+    const nilPlayer1 = createFilmPlayer("nilFrame", [
+        "https://worldcruises.blob.core.windows.net/images/Nil/nile1.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/luxor1.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/nile2.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/nile3.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/nile4.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/nile11.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/nile5.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/nile6.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/nile7.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/nile8.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/nile9.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/nile10.jpg"
+    ]);
 
-        const frames = preload([
-            "https://worldcruises.blob.core.windows.net/images/Nil/egypt1.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/egypt13.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/egypt2.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/egypt3.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/egypt4.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/egypt5.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/egypt12.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/egypt6.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/egypt7.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/egypt8.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/egypt9.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/egypt10.jpg",
-            "https://worldcruises.blob.core.windows.net/images/Nil/egypt11.jpg"
-        ]);
+    const nilPlayer2 = createFilmPlayer("nilFrame2", [
+        "https://worldcruises.blob.core.windows.net/images/Nil/egypt1.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/egypt13.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/egypt2.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/egypt3.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/egypt4.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/egypt5.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/egypt12.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/egypt6.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/egypt7.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/egypt8.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/egypt9.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/egypt10.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/egypt11.jpg"
+    ]);
 
-        let i = 0;
+    window.startNilFilm = () => nilPlayer1.start();
+    window.stopNilFilm = () => nilPlayer1.stop();
 
-        nilFilmInterval2 = setInterval(() => {
-            const img = document.getElementById("nilFrame2");
-            if (!img) return;
-
-            i = (i + 1) % frames.length;
-            img.src = frames[i].src;
-        }, 1000);
-    };
-
-    window.stopNilFilm2 = function () {
-        clearInterval(nilFilmInterval2);
-        nilFilmInterval2 = null;
-    };
+    window.startNilFilm2 = () => nilPlayer2.start();
+    window.stopNilFilm2 = () => nilPlayer2.stop();
 
 })();
 
@@ -308,53 +220,3 @@ window.addEventListener("scroll", () => {
     }
 });
 
-
-// ===== CABINES =====
-window.initCabinsOverlay = function () {
-    const items = document.querySelectorAll(".gallery-clickable");
-    const overlay = document.getElementById("gallery-overlay");
-    const overlayText = document.getElementById("gallery-overlay-text");
-
-    if (!items.length || !overlay || !overlayText) return;
-
-    const descriptions = [
-        `
-        <strong>Cabine avec balcon</strong><br><br>
-        Profitez d'un balcon privé avec vue sur l'océan.
-        Idéal pour admirer les levers et couchers de soleil.
-        `,
-        `
-        <strong>Cabine intérieure</strong><br><br>
-        Confortable et élégante.
-        Le choix parfait pour les voyageurs recherchant
-        un excellent rapport qualité-prix.
-        `,
-        `
-        <strong>Cabine vue mer</strong><br><br>
-        Grande fenêtre panoramique donnant sur l'océan.
-        Lumière naturelle et vue permanente.
-        `,
-        `
-        <strong>Suite de luxe</strong><br><br>
-        Espace généreux, salon privé,
-        services premium et prestations haut de gamme.
-        `,
-        `
-        <strong>Le navire au port</strong><br><br>
-        Embarquement dans les plus beaux ports du monde.
-        Le début de votre aventure maritime.
-        `,
-        `
-        <strong>Ponts extérieurs</strong><br><br>
-        Promenades, détente et panoramas spectaculaires.
-        L'océan à perte de vue.
-        `
-    ];
-
-    items.forEach((item, index) => {
-        item.addEventListener("click", () => {
-            overlayText.innerHTML = descriptions[index % descriptions.length];
-            overlay.classList.add("active");
-        });
-    });
-};

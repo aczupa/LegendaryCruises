@@ -96,7 +96,7 @@ namespace LegendaryCruises.Services
             };
 
             var senderEmail = fromEmail ?? _smtp.From;
-            var senderName = fromName ?? _smtp.FromName ?? "Paris 2024";
+            var senderName = fromName ?? _smtp.FromName ?? "World Cruises";
 
             var mailMessage = new MailMessage
             {

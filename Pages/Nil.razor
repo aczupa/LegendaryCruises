@@ -4,6 +4,7 @@
 @using LegendaryCruises.Models
 @using Microsoft.AspNetCore.Components.Routing
 @using System.Security.Claims
+@implements IAsyncDisposable
 @inject IJSRuntime JS
 @inject NavigationManager Nav
 
@@ -86,7 +87,7 @@
             <li>
                 <strong>Jour 3 – Edfou → Kom Ombo</strong>
                 <p>
-                    Temple d’Horus : L’un des temples les mieux conservés, dédié au dieu faucon.<br>
+                    Temple d'Horus : L'un des temples les mieux conservés, dédié au dieu faucon.<br>
                     Temple de Kom Ombo : Temple double consacré à Sobek et Horus, avec un petit musée de crocodiles momifiés.
                 </p>
             </li>
@@ -114,9 +115,9 @@
             <li>
                 <strong>Jour 4 – Kom Ombo → Assouan</strong>
                 <p>
-                    Haut barrage : Ouvrage moderne majeur, il régule les crues du Nil et alimente l’Égypte en électricité.<br>
+                    Haut barrage : Ouvrage moderne majeur, il régule les crues du Nil et alimente l'Égypte en électricité.<br>
                     Obélisque inachevé.<br>
-                    Philae : Dédié à Isis, ce temple sauvé des eaux a été déplacé sur l’île d’Agilkia.
+                    Philae : Dédié à Isis, ce temple sauvé des eaux a été déplacé sur l'île d'Agilkia.
                 </p>
             </li>
 
@@ -124,8 +125,8 @@
                 <strong>Jour 5 – Assouan</strong>
                 <p>
                     Abou Simbel : Temples monumentaux de Ramsès II et Néfertari, taillés dans la falaise.<br>
-                    Felouque : Navigation paisible sur le Nil à bord d’un voilier traditionnel.<br>
-                    Village nubien : Découverte d’un village coloré aux maisons peintes.
+                    Felouque : Navigation paisible sur le Nil à bord d'un voilier traditionnel.<br>
+                    Village nubien : Découverte d'un village coloré aux maisons peintes.
                 </p>
             </li>
 
@@ -148,6 +149,7 @@
     [Inject] ICruiseService CruiseService { get; set; }
 
     private string cruiseSlug = "";
+    private bool jsInitialized = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -163,5 +165,21 @@
 
         await JS.InvokeVoidAsync("startNilFilm");
         await JS.InvokeVoidAsync("startNilFilm2");
+        jsInitialized = true;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (!jsInitialized) return;
+
+        try
+        {
+            await JS.InvokeVoidAsync("stopNilFilm");
+            await JS.InvokeVoidAsync("stopNilFilm2");
+        }
+        catch (JSDisconnectedException)
+        {
+            // Obwód SignalR już zamknięty (np. odświeżenie strony) — nic do zrobienia
+        }
     }
 }
