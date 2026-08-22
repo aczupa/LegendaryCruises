@@ -40,25 +40,21 @@
 
 @keyframes slideInRight {
     from {
-        transform: translateX(100%);
-        opacity: 0;
+        transform: translateX(60px);
     }
 
     to {
         transform: translateX(0);
-        opacity: 1;
     }
 }
 
 @keyframes slideInLeft {
     from {
-        transform: translateX(-100%);
-        opacity: 0;
+        transform: translateX(-60px);
     }
 
     to {
         transform: translateX(0);
-        opacity: 1;
     }
 }
 
@@ -68,7 +64,8 @@
     background: transparent;
     border-radius: 10px;
     box-shadow: 0 6px 16px rgba(255, 255, 255, 0.08), 0 2px 6px rgba(255, 255, 255, 0.06);
-    opacity: 0;
+    opacity: 1;
+    will-change: transform;
 }
 
     .cell video {
@@ -77,6 +74,8 @@
         object-fit: cover;
         border-radius: 10px;
         display: block;
+        transform: translateZ(0);
+        backface-visibility: hidden;
     }
 
     .cell:nth-child(-n+5) {
