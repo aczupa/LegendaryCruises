@@ -5,6 +5,7 @@
 @inject NavigationManager Nav
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
+@inject ILogger<Tourdumonde> Logger
 
 <nav class="navbar navbar-expand-md navbar-light px-1">
 
@@ -52,7 +53,7 @@
                 </NotAuthorized>
             </AuthorizeView>
 
-            <ButtonBuy Slug="@cruiseSlug" />
+            <ButtonBuy Slug="@cruiseSlug" IsLoading="@isLoadingSlug" />
 
         </div>
     </div>
@@ -441,16 +442,27 @@
 </button>
 
 @code {
-    [Inject] ICruiseService CruiseService { get; set; }
+    [Inject] ICruiseService CruiseService { get; set; } = default!;
 
     private string cruiseSlug = "";
+    private bool isLoadingSlug = true;
 
     protected override async Task OnInitializedAsync()
     {
-        var cruise = await CruiseService.GetCruiseByName("Tour du Monde");
-
-        if (cruise != null)
-            cruiseSlug = cruise.Slug;
+        try
+        {
+            var cruise = await CruiseService.GetCruiseByName("Tour du Monde");
+            if (cruise != null)
+                cruiseSlug = cruise.Slug;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error fetching cruise data for 'Tourdumonde'");
+        }
+        finally
+        {
+            isLoadingSlug = false;
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

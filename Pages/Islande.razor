@@ -50,7 +50,7 @@
                 </NotAuthorized>
             </AuthorizeView>
 
-            <ButtonBuy Slug="@cruiseSlug" />
+            <ButtonBuy Slug="@cruiseSlug" IsLoading="@isLoadingSlug" />
 
         </div>
     </div>
@@ -140,6 +140,7 @@
     private ICruiseService CruiseService { get; set; } = default!;
 
     private string cruiseSlug = "";
+    private bool isLoadingSlug = true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -154,6 +155,10 @@
         catch (Exception ex)
         {
             Logger.LogError(ex, "Błąd podczas pobierania rejsu dla Islandii");
+        }
+        finally
+        {
+            isLoadingSlug = false;
         }
     }
 }

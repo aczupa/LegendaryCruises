@@ -55,7 +55,7 @@
                 </NotAuthorized>
             </AuthorizeView>
 
-            <ButtonBuy Slug="@cruiseSlug" />
+            <ButtonBuy Slug="@cruiseSlug" IsLoading="@isLoadingSlug" />
 
         </div>
     </div>
@@ -243,6 +243,7 @@
 
 @code {
     private string cruiseSlug = "";
+    private bool isLoadingSlug = true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -258,6 +259,10 @@
         catch (Exception ex)
         {
             Logger.LogError(ex, "Error fetching cruise data for Îles Grecques");
+        }
+        finally
+        {
+            isLoadingSlug = false;
         }
     }
 

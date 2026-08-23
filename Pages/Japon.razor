@@ -80,7 +80,7 @@
     <!-- Row 1 -->
     <div class="col-intro">
         <h3 class="title mt-5">Japon</h3>
-        <div class="mt-4"><ButtonBuy Slug="@cruiseSlug" /></div>
+        <div class="mt-4"><ButtonBuy Slug="@cruiseSlug" IsLoading="@isLoadingSlug" /></div>
     </div>
 
     <div class="item">
@@ -198,6 +198,7 @@
     private int CartItemCount = 0;
     private bool IsLoggedIn = false;
     private string cruiseSlug = "";
+    private bool isLoadingSlug = true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -228,6 +229,10 @@
         catch (Exception ex)
         {
             Logger.LogError(ex, "Error fetching cruise data for Japon.");
+        }
+        finally
+        {
+            isLoadingSlug = false;
         }
     }
 

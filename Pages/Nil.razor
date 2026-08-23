@@ -4,9 +4,11 @@
 @using LegendaryCruises.Models
 @using Microsoft.AspNetCore.Components.Routing
 @using System.Security.Claims
+@using Microsoft.Extensions.Logging
 @implements IAsyncDisposable
 @inject IJSRuntime JS
 @inject NavigationManager Nav
+@inject ILogger<Nil> Logger
 
 <nav class="navbar navbar-expand-md navbar-light px-1">
 
@@ -55,7 +57,7 @@
                 </NotAuthorized>
             </AuthorizeView>
 
-            <ButtonBuy Slug="@cruiseSlug" />
+            <ButtonBuy Slug="@cruiseSlug" IsLoading="@isLoadingSlug" />
 
         </div>
     </div>
@@ -146,17 +148,28 @@
 
 @code {
 
-    [Inject] ICruiseService CruiseService { get; set; }
+    [Inject] ICruiseService CruiseService { get; set; } = default!;
 
     private string cruiseSlug = "";
     private bool jsInitialized = false;
+    private bool isLoadingSlug = true;
 
     protected override async Task OnInitializedAsync()
     {
-        var cruise = await CruiseService.GetCruiseByName("Le Nil");
-
-        if (cruise != null)
-            cruiseSlug = cruise.Slug;
+        try
+        {
+            var cruise = await CruiseService.GetCruiseByName("Le Nil");
+            if (cruise != null)
+                cruiseSlug = cruise.Slug;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error fetching cruise data for 'Nil'");
+        }
+        finally
+        {
+            isLoadingSlug = false;
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
