@@ -21,27 +21,26 @@ namespace LegendaryCruises
                 options.DetailedErrors = true;
             });
 
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            var connectionString =
+    builder.Configuration.GetConnectionString("DefaultConnection");
 
             builder.Services.AddDbContextFactory<DataContext>(options =>
-     options.UseSqlServer(connectionString, sqlOptions =>
-     {
-         sqlOptions.EnableRetryOnFailure(
-             maxRetryCount: 5,
-             maxRetryDelay: TimeSpan.FromSeconds(15),
-             errorNumbersToAdd: null);
-     })
- );
+                options.UseSqlServer(connectionString, sqlOptions =>
+                {
+                    sqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(15),
+                        errorNumbersToAdd: null);
+                }));
 
             builder.Services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(connectionString, sqlOptions =>
                 {
                     sqlOptions.EnableRetryOnFailure(
                         maxRetryCount: 5,
-                        maxRetryDelay: TimeSpan.FromSeconds(10),
+                        maxRetryDelay: TimeSpan.FromSeconds(15),
                         errorNumbersToAdd: null);
-                })
-            );
+                }));
 
 
 
