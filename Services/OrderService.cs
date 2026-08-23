@@ -175,7 +175,8 @@ namespace LegendaryCruises.Services
         {string.Join("", order.Items.Select(item => $@"
             <div style='margin-bottom:20px;'>
                 <p style='margin:0; font-size:16px;'>
-                    <strong>Destination :</strong> {item.Cruise?.Title}
+                    <strong>Destination :</strong> {item.Cruise?.Destination}
+
                 </p>
 
                 {(item.CruiseDate != null ? $@"

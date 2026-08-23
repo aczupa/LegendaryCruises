@@ -1,4 +1,17 @@
-﻿.new-cruise-card {
+﻿/* LISTA — jeden element pod drugim */
+.new-cruise-list {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+/* Każdy element ma pełną szerokość */
+.new-cruise-item {
+    width: 100%;
+}
+
+/* KARTA */
+.new-cruise-card {
     border: none;
     border-radius: 20px;
     overflow: hidden;
@@ -12,19 +25,20 @@
         box-shadow: 0 18px 45px rgba(0,0,0,.15);
     }
 
+/* ZDJĘCIE */
 .new-cruise-img {
     width: 100%;
     height: 260px;
     object-fit: cover;
 }
 
+/* TYTUŁ */
 .new-cruise-title {
     color: #072d4f;
     font-weight: 600;
 }
 
-
-
+/* MOBILE */
 @media (max-width:768px) {
 
     .new-cruise-img {
@@ -34,4 +48,73 @@
     .display-5 {
         font-size: 2rem;
     }
+    /* LISTA — jeden element pod drugim */
+    .new-cruise-list {
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    /* Każdy element ma pełną szerokość */
+    .new-cruise-item {
+        width: 100%;
+    }
+
+    /* KARTA — wyśrodkowana, premium */
+    .new-cruise-card {
+        max-width: 900px; /* elegancka szerokość */
+        margin: 0 auto; /* wyśrodkowanie */
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 12px 35px rgba(0,0,0,.08);
+        transition: all .3s ease;
+        background: white;
+    }
+
+        .new-cruise-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 45px rgba(0,0,0,.15);
+        }
+
+    /* ZDJĘCIE — wyśrodkowane, proporcje premium */
+    .new-cruise-img {
+        width: 100%;
+        max-width: 900px; /* nie rozciąga się za bardzo */
+        height: auto; /* zachowuje proporcje */
+        display: block;
+        margin: 0 auto; /* wyśrodkowanie */
+        border-radius: 18px;
+        object-fit: cover;
+    }
+
+    /* TYTUŁ */
+    .new-cruise-title {
+        color: #072d4f;
+        font-weight: 600;
+    }
+
+    /* BUTTON — normalny rozmiar, wyśrodkowany */
+    .new-cruise-btn {
+        display: block;
+        width: auto; /* nie 100% */
+        padding: 10px 28px;
+        margin: 20px auto 0 auto; /* wyśrodkowanie */
+        font-size: 1rem;
+        border-radius: 30px;
+    }
+
+    /* MOBILE */
+    @media (max-width:768px) {
+
+        .new-cruise-img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .display-5 {
+            font-size: 2rem;
+        }
+    }
+
 }

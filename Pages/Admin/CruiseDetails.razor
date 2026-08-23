@@ -79,22 +79,6 @@ else
                     </div>
                 }
 
-                <!-- VIDEO URL -->
-                <div class="mb-3">
-                    <label>Video URL</label>
-                    <InputText @bind-Value="cruise.VideoUrl" class="form-control" />
-                </div>
-
-                @if (!string.IsNullOrWhiteSpace(cruise.VideoUrl))
-                {
-                    <div class="mb-3">
-                        <video controls class="w-100 rounded shadow-sm" style="max-height: 300px;">
-                            <source src="@cruise.VideoUrl" type="video/mp4" />
-                            Your browser does not support the video tag.
-                        </video>
-                    </div>
-                }
-
 
                 <!-- PRICE -->
                 

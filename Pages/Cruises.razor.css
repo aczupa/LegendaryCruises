@@ -300,6 +300,16 @@ CRUISE GALLERY
     .gallery-title {
         font-size: 1.8rem;
     }
+
+    .gallery-item {
+        will-change: auto;
+    }
+
+        .gallery-item video {
+            transform: none;
+            backface-visibility: visible;
+            will-change: auto;
+        }
 }
 
 .gallery-item video {
@@ -376,4 +386,16 @@ CRUISE GALLERY
     font-size: 0.9rem;
     text-align: center;
     color: #444;
+}
+
+.booking-video-block {
+    margin-top: 20px;
+}
+
+.booking-video {
+    width: 100%;
+    max-height: 400px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    display: block;
 }

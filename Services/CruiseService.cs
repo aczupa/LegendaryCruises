@@ -43,7 +43,7 @@ public class CruiseService : ICruiseService
                 ArrivalPort = form.ArrivalPort,
                 Currency = form.Currency,
                 ImageUrl = form.ImageUrl,
-                VideoUrl = form.VideoUrl,
+              
                 MaxPassengers = form.MaxPassengers,
                 IsFeatured = form.IsFeatured,
                 IsActive = form.IsActive,
@@ -158,7 +158,7 @@ public class CruiseService : ICruiseService
             existing.ArrivalPort = cruise.ArrivalPort;
             existing.Currency = cruise.Currency;
             existing.ImageUrl = cruise.ImageUrl;
-            existing.VideoUrl = cruise.VideoUrl;
+           
             existing.MaxPassengers = cruise.MaxPassengers;
             existing.IsActive = cruise.IsActive;
             existing.IsFeatured = cruise.IsFeatured;

@@ -25,18 +25,13 @@
 
             <AuthorizeView Roles="Admin">
                 <div class="nav-item px-1">
-                    <a class="btn login" href="/admin/cruises-table">
-                        CRUISES
-                    </a>
+                    <a class="btn login" href="/admin/cruises-table">CRUISES</a>
                 </div>
                 <div class="nav-item px-1">
-                    <a class="btn login" href="/admin/add-cruise">
-                        ADD CRUISE
-                    </a>
+                    <a class="btn login" href="/admin/add-cruise">ADD CRUISE</a>
                 </div>
             </AuthorizeView>
 
-            <!-- LOGGED IN -->
             <AuthorizeView>
                 <Authorized Context="authState">
                     <button class="btn btn-primary rounded-pill px-3 py-1 d-flex align-items-center"
@@ -45,21 +40,15 @@
                         <span>@CartItemCount</span>
                     </button>
 
-
                     <span class="me-2 login2">
-                            Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
-                        </span>
-              
+                        Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                    </span>
 
-                  
                     <div class="nav-item px-1">
-                        <a class="btn login" href="/Identity/Account/Logout">
-                            LOGOUT
-                        </a>
+                        <a class="btn login" href="/Identity/Account/Logout">LOGOUT</a>
                     </div>
                 </Authorized>
 
-                <!-- NOT LOGGED IN -->
                 <NotAuthorized>
                     <div class="nav-item px-1">
                         <a class="btn login"
@@ -68,7 +57,7 @@
                         </a>
                     </div>
                     <div class="nav-item px-1">
-                        <a class="custom-buy-btn mt-3" style="text-decoration: none!important" href="/newcruises">
+                        <a class="custom-buy-btn mt-3" style="text-decoration:none!important" href="/newcruises">
                             ✨ Nouvelles croisières
                         </a>
                     </div>
@@ -78,7 +67,6 @@
         </div>
     </div>
 </nav>
-
 
 <div class="container py-5">
 
@@ -107,7 +95,7 @@
     }
     else
     {
-        <div class="row">
+        <div class="new-cruise-list">
 
             @foreach (var cruise in cruises)
             {
@@ -115,9 +103,9 @@
                 .OrderBy(x => x.DepartureDate)
                 .FirstOrDefault();
 
-                <div class="col-lg-4 col-md-6 mb-4">
+                <div class="new-cruise-item">
 
-                    <div class="card new-cruise-card h-100">
+                    <div class="card new-cruise-card">
 
                         <img src="@cruise.ImageUrl"
                              class="new-cruise-img"
@@ -125,21 +113,14 @@
 
                         <div class="card-body d-flex flex-column">
 
-                            <h4 class="new-cruise-title mb-3">
-                                @cruise.Title
-                            </h4>
+                            <h4 class="new-cruise-title mb-3">@cruise.Title</h4>
 
-                            <!-- ⭐ DESCRIPTION -->
-                            <p class="text-muted mb-3">
-                                @cruise.Description
-                            </p>
+                            <p class="text-muted mb-3">@cruise.Description</p>
 
-                            <!-- ⭐ ITINERARY -->
                             @if (cruise.Itinerary != null && cruise.Itinerary.Any())
                             {
                                 <div class="mb-3">
                                     <strong>Itinéraire</strong>
-
                                     <ul class="mt-2">
                                         @foreach (var day in cruise.Itinerary.OrderBy(d => d.DayNumber))
                                         {
@@ -195,7 +176,7 @@
                             </div>
 
                             <div class="mt-auto">
-                                <button class="btn btn-primary w-100 new-cruise-btn"
+                                <button class="btn btn-primary new-cruise-btn"
                                         @onclick="() => OpenCruise(cruise.Slug)">
                                     Réserver votre cabine
                                 </button>
