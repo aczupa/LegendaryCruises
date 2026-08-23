@@ -4,6 +4,10 @@
 @using System.Security.Claims
 @inject IJSRuntime JSRuntime
 @inject NavigationManager Nav
+@inject ICruiseService CruiseService
+@inject ILogger<Ilesgrecques> Logger
+
+<PageTitle>World Cruises - Îles Grecques</PageTitle>
 
 <nav class="navbar navbar-expand-md navbar-light px-1" style="background-color: rgba(255,255,255,0.25); backdrop-filter: blur(8px);">
 
@@ -238,17 +242,23 @@
 <button id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()">↑</button>
 
 @code {
-
-    [Inject] ICruiseService CruiseService { get; set; }
-
     private string cruiseSlug = "";
 
     protected override async Task OnInitializedAsync()
     {
-        var cruise = await CruiseService.GetCruiseByName("Îles Grecques");
+        try
+        {
+            var cruise = await CruiseService.GetCruiseByName("Îles Grecques");
 
-        if (cruise != null)
-            cruiseSlug = cruise.Slug;
+            if (cruise != null)
+            {
+                cruiseSlug = cruise.Slug;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error fetching cruise data for Îles Grecques");
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -3,6 +3,7 @@
 @using LegendaryCruises.Interfaces
 @using System.Security.Claims
 @inject NavigationManager Nav
+@inject ILogger<Islande> Logger
 
 <nav class="navbar navbar-expand-md navbar-light px-1" style="background-color: rgba(255,255,255,0.25); backdrop-filter: blur(8px);">
 
@@ -135,15 +136,24 @@
 <button id="scrollDownBtn" class="scroll-down-btn" onclick="scrollDown()">↓</button>
 
 @code {
-    [Inject] ICruiseService CruiseService { get; set; }
+    [Inject] 
+    private ICruiseService CruiseService { get; set; } = default!;
 
     private string cruiseSlug = "";
 
     protected override async Task OnInitializedAsync()
     {
-        var cruise = await CruiseService.GetCruiseByName("Norvège Islande");
-
-        if (cruise != null)
-            cruiseSlug = cruise.Slug;
+        try
+        {
+            var cruise = await CruiseService.GetCruiseByName("Norvège Islande");
+            if (cruise != null)
+            {
+                cruiseSlug = cruise.Slug;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Błąd podczas pobierania rejsu dla Islandii");
+        }
     }
 }

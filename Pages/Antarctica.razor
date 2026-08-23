@@ -3,6 +3,8 @@
 @using LegendaryCruises.Interfaces
 @using System.Security.Claims
 @inject NavigationManager Nav
+@inject ICruiseService CruiseService
+@inject ILogger<Antarctica> Logger
 
 <PageTitle>World Cruises</PageTitle>
 
@@ -147,15 +149,22 @@
 <button id="scrollDownBtn" class="scroll-down-btn" onclick="scrollDown()">↓</button>
 
 @code {
-    [Inject] ICruiseService CruiseService { get; set; } = default!;
-
     private string cruiseSlug = "";
 
     protected override async Task OnInitializedAsync()
     {
-        var cruise = await CruiseService.GetCruiseByName("Antarctique");
+        try
+        {
+            var cruise = await CruiseService.GetCruiseByName("Antarctique");
 
-        if (cruise != null)
-            cruiseSlug = cruise.Slug;
+            if (cruise != null)
+            {
+                cruiseSlug = cruise.Slug;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error fetching cruise data for Antarctica.");
+        }
     }
 }

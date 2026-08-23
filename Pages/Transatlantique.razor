@@ -6,6 +6,7 @@
 @inject NavigationManager NavigationManager
 @inject ICruiseService CruiseService
 @inject NavigationManager Nav
+@inject ILogger<Transatlantique> Logger
 
 <nav class="navbar navbar-expand-md navbar-light px-1">
 
@@ -243,10 +244,16 @@
 
     protected override async Task OnInitializedAsync()
     {
+        try{
         var cruise = await CruiseService.GetCruiseByName("Transatlantique");
 
         if (cruise != null)
             cruiseSlug = cruise.Slug;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error fetching cruise data for Transatlantique.");
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

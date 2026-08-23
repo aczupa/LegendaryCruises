@@ -4,6 +4,7 @@
 @using System.Security.Claims
 @inject ICruiseService CruiseService
 @inject NavigationManager Nav
+@inject ILogger<Alaska> Logger
 
 <nav class="navbar navbar-expand-md navbar-light px-1">
     <a class="navbar-brand d-flex align-items-center" href="/">
@@ -120,11 +121,17 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var cruise = await CruiseService.GetCruiseByName("Alaska");
-        if (cruise != null)
-            cruiseSlug = cruise.Slug;
+        try
+        {
+            var cruise = await CruiseService.GetCruiseByName("Alaska");
+            if (cruise != null)
+                cruiseSlug = cruise.Slug;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Błąd podczas pobierania rejsu dla Alaski");
+        }
     }
-
     private void OpenOverlay(int index)
     {
         selectedIndex = index;

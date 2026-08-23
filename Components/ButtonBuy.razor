@@ -1,12 +1,27 @@
 ﻿@inject NavigationManager Nav
 
-<button class="btn login"
-        @onclick="GoToBooking">
-    Acheter le ticket
-</button>
+@if (IsLoading)
+{
+    <button class="btn login" disabled>
+        <span class="spinner-border spinner-border-sm"></span> Chargement...
+    </button>
+}
+else if (string.IsNullOrWhiteSpace(Slug))
+{
+    <button class="btn login" disabled title="Réessayez dans un instant">
+        Indisponible
+    </button>
+}
+else
+{
+    <button class="btn login" @onclick="GoToBooking">
+        Acheter le ticket
+    </button>
+}
 
 @code {
     [Parameter] public string Slug { get; set; } = "";
+    [Parameter] public bool IsLoading { get; set; } = false;
 
     private void GoToBooking()
     {

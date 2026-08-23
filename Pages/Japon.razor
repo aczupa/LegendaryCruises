@@ -8,6 +8,9 @@
 @inject NavigationManager Nav
 @inject AuthenticationStateProvider Auth
 @inject ICartService CartService
+@inject ILogger<Japon> Logger
+
+
 
 <nav class="navbar navbar-expand-md navbar-light px-1">
 
@@ -71,7 +74,6 @@
         </div>
     </div>
 </nav>
-
 
 <div class="japan-grid">
 
@@ -214,11 +216,18 @@
             }
         }
 
-        var cruise = await CruiseService.GetCruiseBySlug("japon");
-
-        if (cruise != null)
+        try
         {
-            cruiseSlug = cruise.Slug;
+            var cruise = await CruiseService.GetCruiseBySlug("japon");
+
+            if (cruise != null)
+            {
+                cruiseSlug = cruise.Slug;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error fetching cruise data for Japon.");
         }
     }
 

@@ -2,6 +2,7 @@
 @using LegendaryCruises.Components
 @using LegendaryCruises.Interfaces
 @inject ICruiseService CruiseService
+@inject ILogger<Polynesie> Logger
 
 <div class="page">
     <div class="top-bar">
@@ -83,9 +84,16 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var cruise = await CruiseService.GetCruiseByName("Polynésie");
-        if (cruise != null)
-            cruiseSlug = cruise.Slug;
+        try
+        {
+            var cruise = await CruiseService.GetCruiseByName("Polynésie");
+            if (cruise != null)
+                cruiseSlug = cruise.Slug;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error fetching cruise data for 'Polynésie'");
+        }
     }
 
     private void OpenOverlay(int index)

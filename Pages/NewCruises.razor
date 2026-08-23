@@ -9,6 +9,9 @@
 @inject ICartService CartService
 @inject AuthenticationStateProvider Auth
 @inject NavigationManager Nav
+@inject ILogger<NewCruises> Logger
+
+<PageTitle>World Cruises - Nouvelles Croisières</PageTitle>
 
 <nav class="navbar navbar-expand-md navbar-light px-1">
     <a class="navbar-brand d-flex align-items-center" href="/">
@@ -200,19 +203,27 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await CruiseService.GetNewCruises();
-        cruises = result.Cruises;
-
-        var authState = await Auth.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        if (user.Identity?.IsAuthenticated ?? false)
+        try
         {
-            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (!string.IsNullOrEmpty(userId))
+            var result = await CruiseService.GetNewCruises();
+            cruises = result.Cruises;
+
+            var authState = await Auth.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (user.Identity?.IsAuthenticated ?? false)
             {
-                CartItemCount = await CartService.GetCartItemCount(userId);
+                var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    CartItemCount = await CartService.GetCartItemCount(userId);
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error initializing New Cruises page");
+            cruises = new List<Cruise>();
         }
     }
 

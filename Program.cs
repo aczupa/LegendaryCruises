@@ -28,7 +28,7 @@ namespace LegendaryCruises
      {
          sqlOptions.EnableRetryOnFailure(
              maxRetryCount: 5,
-             maxRetryDelay: TimeSpan.FromSeconds(10),
+             maxRetryDelay: TimeSpan.FromSeconds(15),
              errorNumbersToAdd: null);
      })
  );
