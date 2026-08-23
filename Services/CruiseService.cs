@@ -365,13 +365,15 @@ public class CruiseService : ICruiseService
 
     public async Task<Cruise?> GetCruiseByName(string name)
     {
-        await using var context = _factory.CreateDbContext();
+        await using var context = await _factory.CreateDbContextAsync();
 
         return await context.Cruises
             .Include(c => c.CruiseDates)
                 .ThenInclude(cd => cd.Cabins)
             .Include(c => c.Itinerary)
-            .FirstOrDefaultAsync(c => c.Destination.ToLower() == name.ToLower());
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(c =>
+                c.Destination.ToLower() == name.ToLower());
     }
 
     public async Task<GetCruisesResponse> GetNewCruises()
