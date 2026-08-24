@@ -104,7 +104,7 @@ html, body {
 /* Desktop: nav-bar jako overlay */
 .video-nav-bar {
     position: absolute;
-    top: 26%;
+    top: 29%;
     left: 50%;
     transform: translateX(-50%);
     display: flex;

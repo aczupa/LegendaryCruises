@@ -48,7 +48,7 @@
 /* Desktop: nav-bar jako overlay */
 .video-nav-bar {
     position: absolute;
-    top: 22%;
+    top: 25%;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
