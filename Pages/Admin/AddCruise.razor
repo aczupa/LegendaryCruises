@@ -1,4 +1,5 @@
 ﻿@page "/admin/add-cruise"
+@attribute [Authorize(Roles = "Admin,Recruiter")]
 @using LegendaryCruises.Interfaces
 @using LegendaryCruises.Models
 @using LegendaryCruises.Models.DTOs
@@ -22,7 +23,7 @@
         <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
             <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
 
-                <AuthorizeView Roles="Admin">
+                <AuthorizeView Roles="Admin,Recruiter">
                     <div class="nav-item px-1">
                         <a class="btn login" href="/admin/cruises-table">CRUISES</a>
                     </div>
@@ -30,7 +31,7 @@
 
                 <AuthorizeView>
                     <Authorized Context="authState">
-                       
+
 
                         <span class="me-2 login2">
                             Bonjour @(authState.User.Identity?.Name ??
@@ -90,7 +91,7 @@
         <label>Image URL</label>
         <InputText @bind-Value="addCruiseForm.ImageUrl" class="form-control mb-2" />
 
-        
+
 
         <label>Max passengers</label>
         <InputNumber @bind-Value="addCruiseForm.MaxPassengers" class="form-control mb-2" />
@@ -240,7 +241,7 @@
 
         IsLoggedIn = user.Identity?.IsAuthenticated ?? false;
 
-      
+
 
         AddDate();
     }
@@ -314,7 +315,8 @@
             return;
         }
 
-        var response = await CruiseService.AddCruise(addCruiseForm);
+        var authState = await Auth.GetAuthenticationStateAsync();
+        var response = await CruiseService.AddCruise(addCruiseForm, authState.User);
 
         if (response.StatusCode == 201)
         {

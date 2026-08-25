@@ -1,4 +1,5 @@
 ﻿@page "/admin/cruises-table"
+@attribute [Authorize(Roles = "Admin,Recruiter")]
 @using LegendaryCruises.Interfaces
 @using LegendaryCruises.Models
 @using LegendaryCruises.Components
@@ -24,7 +25,7 @@
     <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
         <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
 
-            <AuthorizeView Roles="Admin">
+            <AuthorizeView Roles="Admin,Recruiter">
                 <div class="nav-item px-1">
                     <a class="btn login" href="/admin/add-cruise">ADD CRUISE</a>
                 </div>
@@ -41,7 +42,7 @@
 
                     <span class="me-2 login2">
                         Bonjour @(authState.User.Identity?.Name ??
-                                  authState.User.FindFirst(ClaimTypes.Email)?.Value)
+                                                authState.User.FindFirst(ClaimTypes.Email)?.Value)
                     </span>
 
                     <a class="btn btn-primary" href="/newcruises">✨ Nouvelles croisières</a>
@@ -151,8 +152,8 @@
                                                         @if (d.Cabins?.Any() == true)
                                                         {
                                                             @foreach (var group in d.Cabins
-                                                                .GroupBy(x => x.CabinType)
-                                                                .OrderBy(x => x.Key))
+                                                                                                .GroupBy(x => x.CabinType)
+                                                                                                .OrderBy(x => x.Key))
                                                             {
                                                                 var available = group.Sum(x => x.Available);
                                                                 var capacity = group.Sum(x => x.Capacity);
@@ -187,23 +188,39 @@
                                 </td>
 
                                 <td data-label="Actif">
-                                    <button class="btn btn-sm @(c.IsActive ? "btn-success" : "btn-secondary")"
-                                            @onclick="() => ToggleActive(c)">
-                                        @(c.IsActive ? "Oui" : "Non")
-                                    </button>
+                                    <AuthorizeView Roles="Admin" Context="actifCtx">
+                                        <Authorized>
+                                            <button class="btn btn-sm @(c.IsActive ? "btn-success" : "btn-secondary")"
+                                                    @onclick="() => ToggleActive(c)">
+                                                @(c.IsActive ? "Oui" : "Non")
+                                            </button>
+                                        </Authorized>
+                                        <NotAuthorized>
+                                            <span class="badge @(c.IsActive ? "bg-success" : "bg-secondary")">
+                                                @(c.IsActive ? "Oui" : "Non")
+                                            </span>
+                                        </NotAuthorized>
+                                    </AuthorizeView>
                                 </td>
 
                                 <td data-label="Actions" class="text-center">
-                                    <div class="d-flex gap-2 justify-content-center">
-                                        <button class="btn btn-sm btn-primary"
-                                                @onclick="() => EditCruise(c.Id)">
-                                            Modifier
-                                        </button>
-                                        <button class="btn btn-sm btn-danger"
-                                                @onclick="() => DeleteCruise(c.Id)">
-                                            Supprimer
-                                        </button>
-                                    </div>
+                                    <AuthorizeView Roles="Admin" Context="actionsCtx">
+                                        <Authorized>
+                                            <div class="d-flex gap-2 justify-content-center">
+                                                <button class="btn btn-sm btn-primary"
+                                                        @onclick="() => EditCruise(c.Id)">
+                                                    Modifier
+                                                </button>
+                                                <button class="btn btn-sm btn-danger"
+                                                        @onclick="() => DeleteCruise(c.Id)">
+                                                    Supprimer
+                                                </button>
+                                            </div>
+                                        </Authorized>
+                                        <NotAuthorized>
+                                            <span class="text-muted"><em>Lecture seule</em></span>
+                                        </NotAuthorized>
+                                    </AuthorizeView>
                                 </td>
 
                             </tr>
@@ -289,13 +306,15 @@
 
     private async Task ToggleActive(Cruise cruise)
     {
+        var authState = await Auth.GetAuthenticationStateAsync();
         cruise.IsActive = !cruise.IsActive;
-        await CruiseService.EditCruise(cruise);
+        await CruiseService.EditCruise(cruise, authState.User);
     }
 
     private async Task DeleteCruise(int id)
     {
-        var response = await CruiseService.DeleteCruise(id);
+        var authState = await Auth.GetAuthenticationStateAsync();
+        var response = await CruiseService.DeleteCruise(id, authState.User);
         if (response.StatusCode == 200)
         {
             await LoadCruises();

@@ -4,6 +4,7 @@ using LegendaryCruises.Models;
 using LegendaryCruises.Models.DTOs;
 using LegendaryCruises.Models.Responses;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace LegendaryCruises.Services;
 
@@ -17,10 +18,19 @@ public class CruiseService : ICruiseService
     }
 
     // ============================================================
-    // ADD CRUISE
+    // ADD CRUISE — Admin i Recruiter mają dostęp
     // ============================================================
-    public async Task<BaseResponse> AddCruise(AddCruiseForm form)
+    public async Task<BaseResponse> AddCruise(AddCruiseForm form, ClaimsPrincipal currentUser)
     {
+        if (!currentUser.IsInRole("Admin") && !currentUser.IsInRole("Recruiter"))
+        {
+            return new BaseResponse
+            {
+                StatusCode = 403,
+                Message = "Vous n'avez pas les droits pour ajouter une croisière."
+            };
+        }
+
         await using var context = _factory.CreateDbContext();
 
         try
@@ -43,7 +53,7 @@ public class CruiseService : ICruiseService
                 ArrivalPort = form.ArrivalPort,
                 Currency = form.Currency,
                 ImageUrl = form.ImageUrl,
-              
+
                 MaxPassengers = form.MaxPassengers,
                 IsFeatured = form.IsFeatured,
                 IsActive = form.IsActive,
@@ -90,10 +100,19 @@ public class CruiseService : ICruiseService
     }
 
     // ============================================================
-    // DELETE CRUISE
+    // DELETE CRUISE — tylko Admin
     // ============================================================
-    public async Task<BaseResponse> DeleteCruise(int id)
+    public async Task<BaseResponse> DeleteCruise(int id, ClaimsPrincipal currentUser)
     {
+        if (!currentUser.IsInRole("Admin"))
+        {
+            return new BaseResponse
+            {
+                StatusCode = 403,
+                Message = "Vous n'avez pas les droits pour supprimer une croisière."
+            };
+        }
+
         await using var context = _factory.CreateDbContext();
 
         try
@@ -133,10 +152,19 @@ public class CruiseService : ICruiseService
     }
 
     // ============================================================
-    // EDIT CRUISE
+    // EDIT CRUISE — tylko Admin
     // ============================================================
-    public async Task<BaseResponse> EditCruise(Cruise cruise)
+    public async Task<BaseResponse> EditCruise(Cruise cruise, ClaimsPrincipal currentUser)
     {
+        if (!currentUser.IsInRole("Admin"))
+        {
+            return new BaseResponse
+            {
+                StatusCode = 403,
+                Message = "Vous n'avez pas les droits pour modifier une croisière."
+            };
+        }
+
         await using var context = _factory.CreateDbContext();
 
         try
@@ -158,7 +186,7 @@ public class CruiseService : ICruiseService
             existing.ArrivalPort = cruise.ArrivalPort;
             existing.Currency = cruise.Currency;
             existing.ImageUrl = cruise.ImageUrl;
-           
+
             existing.MaxPassengers = cruise.MaxPassengers;
             existing.IsActive = cruise.IsActive;
             existing.IsFeatured = cruise.IsFeatured;

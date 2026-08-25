@@ -1,10 +1,12 @@
 ﻿@page "/admin/cruise/{Id:int}"
+@attribute [Authorize(Roles = "Admin")]
 @using LegendaryCruises.Components
 @using LegendaryCruises.Models
 @using LegendaryCruises.Interfaces
 @using LegendaryCruises.Models.Responses
 @using static LegendaryCruises.Components.Warning
 
+@inject AuthenticationStateProvider Auth
 
 <div class="d-flex align-items-center mb-3">
 
@@ -81,7 +83,7 @@ else
 
 
                 <!-- PRICE -->
-                
+
 
                 <div class="mb-3">
                     <label>Currency</label>
@@ -373,7 +375,8 @@ else
     {
         if (cruise == null) return;
 
-        var response = await CruiseService.EditCruise(cruise);
+        var authState = await Auth.GetAuthenticationStateAsync();
+        var response = await CruiseService.EditCruise(cruise, authState.User);
 
         Warning_Type = response.StatusCode == 200 ? WarningType.Success : WarningType.Error;
         Warning_Message = response.Message;
@@ -382,7 +385,8 @@ else
 
     private async Task DeleteCruise(int id)
     {
-        var result = await CruiseService.DeleteCruise(id);
+        var authState = await Auth.GetAuthenticationStateAsync();
+        var result = await CruiseService.DeleteCruise(id, authState.User);
 
         Warning_Type = result.StatusCode == 200 ? WarningType.Success : WarningType.Error;
         Warning_Message = result.Message;
