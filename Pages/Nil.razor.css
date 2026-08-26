@@ -1,125 +1,500 @@
-﻿/* ===== GLOBAL ===== */
+﻿/* =========================================
+   NIL PAGE - GLOBAL
+========================================= */
 
-html, body {
-    height: 100%;
+html,
+body {
     margin: 0;
-    scroll-snap-type: y mandatory;
+    min-height: 100%;
     scroll-behavior: smooth;
 }
 
-/* ===== SEKCJE FULLSCREEN ===== */
 
-.nil-container,
-.nil-container2 {
-    display: flex;
-    gap: 40px;
+/* =========================================
+   MAIN SECTIONS
+========================================= */
+
+.nil-section {
     width: 100%;
-    margin: 0;
-    /* KLUCZOWE – pełna wysokość bez overflow */
-    height: calc(100svh - 100px);
-    /* usunięty padding pionowy */
-    padding: 0 20px;
+    padding: 50px 20px;
+    background: linear-gradient( to bottom, var(--lc-gray), #ffffff );
+}
+
+.nil-section-alt {
+    background: linear-gradient( to bottom, #ffffff, var(--lc-gray) );
+}
+
+
+/* =========================================
+   TWO COLUMNS
+========================================= */
+
+.nil-section-content {
+    max-width: 1500px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(400px, 0.85fr);
+    gap: 45px;
     align-items: stretch;
-    overflow: hidden;
-    scroll-snap-align: start;
 }
 
-/* ===== KOLUMNY ===== */
 
-.nil-program {
-    flex: 1;
-    height: 100%;
-    background-color: #f5f5f5;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    padding: 30px;
-    line-height: 1.6;
-}
+/* =========================================
+   PROGRAM CARD
+========================================= */
 
-.nil-film,
-.nil-film2 {
-    flex: 1;
-    height: 100%;
-    overflow: hidden;
+.nil-program-luxury {
+    background: white;
+    border-radius: 24px;
+    padding: 35px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(7, 45, 79, 0.08);
     position: relative;
+    overflow: hidden;
 }
 
-    .nil-film img,
-    .nil-film2 img {
+
+    /* GOLD TOP LINE */
+
+    .nil-program-luxury::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient( to right, var(--lc-gold), rgba(212, 175, 55, 0.35), transparent );
+    }
+
+
+/* =========================================
+   SECTION HEADER
+========================================= */
+
+.nil-section-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding-bottom: 25px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(7, 45, 79, 0.08);
+}
+
+
+.nil-header-icon {
+    width: 58px;
+    height: 58px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.12);
+    color: var(--lc-gold);
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    font-size: 1.5rem;
+}
+
+
+.nil-subtitle {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--lc-gold);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+
+.nil-section-header h2 {
+    margin: 0 0 6px;
+    color: var(--lc-navy);
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+
+.nil-section-header p {
+    margin: 0;
+    color: #777;
+    font-size: 0.95rem;
+}
+
+
+/* =========================================
+   ITINERARY
+========================================= */
+
+.nil-itinerary-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 15px;
+}
+
+
+/* =========================================
+   DAY CARD
+========================================= */
+
+.nil-day-card {
+    display: flex;
+    gap: 18px;
+    padding: 18px;
+    background: linear-gradient( 135deg, #ffffff, rgba(7, 45, 79, 0.025) );
+    border-radius: 16px;
+    border: 1px solid rgba(7, 45, 79, 0.08);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.035);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+
+    /* GOLD ACCENT */
+
+    .nil-day-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 18%;
+        bottom: 18%;
+        width: 3px;
+        background: var(--lc-gold);
+        opacity: 0.75;
+    }
+
+
+    /* HOVER */
+
+    .nil-day-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(212, 175, 55, 0.5);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.10);
+    }
+
+
+/* =========================================
+   DAY NUMBER
+========================================= */
+
+.nil-day-number {
+    min-width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient( 135deg, var(--lc-navy), #0a4a80 );
+    border: 2px solid rgba(212, 175, 55, 0.7);
+    box-shadow: 0 6px 15px rgba(7, 45, 79, 0.20);
+}
+
+
+    .nil-day-number span {
+        font-size: 0.52rem;
+        color: rgba(255, 255, 255, 0.7);
+        letter-spacing: 1px;
+    }
+
+
+    .nil-day-number strong {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.3rem;
+        line-height: 1;
+        color: var(--lc-gold);
+    }
+
+
+/* =========================================
+   DAY CONTENT
+========================================= */
+
+.nil-day-content {
+    flex: 1;
+    min-width: 0;
+}
+
+
+    .nil-day-content h3 {
+        margin: 0 0 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--lc-navy);
+        font-family: 'Playfair Display', serif;
+        font-size: 1.15rem;
+        font-weight: 600;
+    }
+
+
+        .nil-day-content h3 i {
+            color: var(--lc-gold);
+            font-size: 1rem;
+        }
+
+
+    .nil-day-content p {
+        margin: 0 0 8px;
+        color: #6c757d;
+        line-height: 1.55;
+        font-size: 0.9rem;
+    }
+
+
+        .nil-day-content p:last-child {
+            margin-bottom: 0;
+        }
+
+
+        .nil-day-content p strong {
+            color: var(--lc-navy);
+            font-weight: 600;
+        }
+
+
+/* =========================================
+   IMAGE
+========================================= */
+
+.nil-film-luxury {
+    min-height: 600px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+
+    .nil-film-luxury::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        z-index: 2;
+        background: linear-gradient( to right, var(--lc-gold), transparent );
+    }
+
+
+    .nil-film-luxury img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         display: block;
-        border-radius: 12px;
+        transition: transform 0.8s ease;
     }
 
-/* ===== TYPO ===== */
 
-.nil-program h2 {
-    margin-bottom: 20px;
-}
-
-.nil-program li {
-    margin-bottom: 15px;
-}
-
-/* ===== MOBILE ===== */
-
-@media (max-width: 768px) {
-
-    .nil-container,
-    .nil-container2 {
-        flex-direction: column;
-        justify-content: center;
-        /* mobile NIE fullscreen */
-        height: auto;
-        padding: 20px 0;
+    .nil-film-luxury:hover img {
+        transform: scale(1.04);
     }
 
-    .nil-program {
-        order: 2;
-        width: 90%;
-        margin-top: 20px;
-    }
 
-    .nil-film,
-    .nil-film2 {
-        order: 1;
-        width: 90%;
-        max-width: 420px;
-        height: 35vh;
-        flex: none;
-    }
-}
-.nil-container {
-    margin-bottom: 50px;
-}
+/* =========================================
+   IMAGE OVERLAY
+========================================= */
 
-.nil-container2 {
-    background-color: #fafafa;
+.nil-image-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 22px;
+    background: linear-gradient( to top, rgba(7, 45, 79, 0.88), transparent );
+    color: white;
 }
 
 
-@media (max-width: 768px) {
-
-    .nil-container,
-    .nil-container2 {
-        flex-direction: column;
-        align-items: center; /* 🔥 KLUCZOWE */
-        justify-content: center;
-        height: auto;
-        padding: 20px 0;
-    }
-
-    .nil-film,
-    .nil-film2 {
-        order: 1;
-        width: 90%;
-        max-width: 420px;
-        height: 35vh;
-        flex: none;
-        display: flex;
-        justify-content: center;
+    .nil-image-overlay span {
+        display: inline-flex;
         align-items: center;
+        gap: 8px;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.15rem;
+        color: white;
+    }
+
+
+    .nil-image-overlay i {
+        color: var(--lc-gold);
+    }
+
+
+/* =========================================
+   SCROLL BUTTONS
+========================================= */
+
+.back-to-top-btn,
+.scroll-down-btn {
+    position: fixed;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid var(--lc-gold);
+    background: var(--lc-navy);
+    color: var(--lc-gold);
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+    transition: all 0.3s ease;
+}
+
+
+.back-to-top-btn {
+    bottom: 80px;
+}
+
+
+.scroll-down-btn {
+    bottom: 20px;
+}
+
+
+    .back-to-top-btn:hover,
+    .scroll-down-btn:hover {
+        transform: translateY(-3px);
+        background: var(--lc-gold);
+        color: var(--lc-navy);
+    }
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1100px) {
+
+    .nil-section-content {
+        grid-template-columns: minmax(0, 1fr) minmax(350px, 0.8fr);
+        gap: 30px;
+    }
+
+    .nil-program-luxury {
+        padding: 28px;
+    }
+
+    .nil-film-luxury {
+        min-height: 650px;
+    }
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+    .nil-section {
+        padding: 25px 15px;
+    }
+
+
+    .nil-section-content {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+
+
+    /* SECOND SECTION:
+       IMAGE FIRST,
+       PROGRAM SECOND */
+
+    .nil-section-reverse {
+        flex-direction: column;
+    }
+
+
+    .nil-program-luxury {
+        padding: 22px 15px;
+        border-radius: 20px;
+    }
+
+
+    .nil-section-header {
+        gap: 12px;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+
+
+    .nil-header-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.25rem;
+    }
+
+
+    .nil-section-header h2 {
+        font-size: 1.45rem;
+    }
+
+
+    .nil-section-header p {
+        font-size: 0.85rem;
+    }
+
+
+    .nil-day-card {
+        gap: 12px;
+        padding: 15px 12px;
+    }
+
+
+    .nil-day-number {
+        min-width: 48px;
+        height: 48px;
+    }
+
+
+        .nil-day-number strong {
+            font-size: 1.1rem;
+        }
+
+
+    .nil-day-content h3 {
+        font-size: 1rem;
+    }
+
+
+    .nil-day-content p {
+        font-size: 0.85rem;
+    }
+
+
+    .nil-film-luxury {
+        width: 100%;
+        min-height: 350px;
+        height: 50vh;
+        border-radius: 20px;
+    }
+
+
+    .back-to-top-btn,
+    .scroll-down-btn {
+        width: 42px;
+        height: 42px;
+        right: 12px;
+    }
+
+
+    .back-to-top-btn {
+        bottom: 70px;
+    }
+
+
+    .scroll-down-btn {
+        bottom: 18px;
     }
 }

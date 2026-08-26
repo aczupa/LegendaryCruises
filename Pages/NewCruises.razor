@@ -14,226 +14,653 @@
 <PageTitle>World Cruises - Nouvelles Croisières</PageTitle>
 
 <nav class="navbar navbar-expand-md navbar-light px-1">
+
     <a class="navbar-brand d-flex align-items-center" href="/">
-        <img src="/logo-world-cruises.png" alt="World Cruises Logo" style="height:70px;" />
+        <img src="/logo-world-cruises.png"
+             alt="World Cruises Logo"
+             style="height:70px;" />
     </a>
 
-    <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler me-2"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+
         <span class="navbar-toggler-icon"></span>
+
     </button>
 
-    <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
+    <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between"
+         id="mainNavbar">
+
         <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
 
             <AuthorizeView Roles="Admin">
+
                 <div class="nav-item px-1">
-                    <a class="btn login" href="/admin/cruises-table">CRUISES</a>
+                    <a class="btn login"
+                       href="/admin/cruises-table">
+                        CRUISES
+                    </a>
                 </div>
+
                 <div class="nav-item px-1">
-                    <a class="btn login" href="/admin/add-cruise">ADD CRUISE</a>
+                    <a class="btn login"
+                       href="/admin/add-cruise">
+                        ADD CRUISE
+                    </a>
                 </div>
+
             </AuthorizeView>
 
+
             <AuthorizeView>
+
                 <Authorized Context="authState">
+
                     <button class="btn btn-primary rounded-pill px-3 py-1 d-flex align-items-center"
                             @onclick="GoToCart">
+
                         <i class="bi bi-cart me-2 icon-white"></i>
+
                         <span>@CartItemCount</span>
+
                     </button>
 
+
                     <span class="me-2 login2">
-                        Bonjour @(authState.User.Identity?.Name ?? authState.User.FindFirst(ClaimTypes.Email)?.Value)
+
+                        Bonjour
+                        @(authState.User.Identity?.Name ??
+                                                authState.User.FindFirst(ClaimTypes.Email)?.Value)
+
                     </span>
 
+
                     <div class="nav-item px-1">
-                        <a class="btn login" href="/Identity/Account/Logout">LOGOUT</a>
+
+                        <a class="btn login"
+                           href="/Identity/Account/Logout">
+
+                            LOGOUT
+
+                        </a>
+
                     </div>
+
                 </Authorized>
 
+
                 <NotAuthorized>
+
                     <div class="nav-item px-1">
+
                         <a class="btn login"
                            href="/Identity/Account/Login?returnUrl=/@Nav.ToBaseRelativePath(Nav.Uri)">
+
                             LOGIN
+
                         </a>
+
                     </div>
+
+
                     <div class="nav-item px-1">
-                        <a class="custom-buy-btn mt-3" style="text-decoration:none!important" href="/newcruises">
+
+                        <a class="custom-buy-btn mt-3"
+                           style="text-decoration:none!important"
+                           href="/newcruises">
+
                             ✨ Nouvelles croisières
+
                         </a>
+
                     </div>
+
                 </NotAuthorized>
+
             </AuthorizeView>
 
         </div>
+
     </div>
+
 </nav>
+
 
 <div class="container py-5">
 
+
+    <!-- PAGE HEADER -->
+
     <div class="text-center mb-5">
-        <h1 class="display-5 fw-light text-uppercase" style="color:#072d4f;">
+
+        <h1 class="display-5 fw-light text-uppercase"
+            style="color:#072d4f;">
+
             Nouvelles croisières
+
         </h1>
 
+
         <p class="lead text-muted">
-            Découvrez nos toutes dernières croisières de luxe et laissez-vous inspirer par des destinations d'exception à travers le monde.
+
+            Découvrez nos toutes dernières croisières de luxe et laissez-vous
+            inspirer par des destinations d'exception à travers le monde.
+
         </p>
+
     </div>
+
 
     @if (cruises == null)
     {
         <div class="text-center py-5">
+
             <div class="spinner-border text-primary"></div>
-            <p class="mt-3">Chargement des croisières...</p>
+
+            <p class="mt-3">
+                Chargement des croisières...
+            </p>
+
         </div>
     }
     else if (!cruises.Any())
     {
         <div class="alert alert-info text-center">
+
             Aucune nouvelle croisière n'est disponible pour le moment.
+
         </div>
     }
     else
     {
+
         <div class="new-cruise-list">
+
 
             @foreach (var cruise in cruises)
             {
+
                 var firstDate = cruise.CruiseDates?
                 .OrderBy(x => x.DepartureDate)
                 .FirstOrDefault();
 
+
                 <div class="new-cruise-item">
 
+
                     <div class="card new-cruise-card">
+
+
+                        <!-- IMAGE -->
 
                         <img src="@cruise.ImageUrl"
                              class="new-cruise-img"
                              alt="@cruise.Title" />
 
+
                         <div class="card-body d-flex flex-column">
 
-                            <h4 class="new-cruise-title mb-3">@cruise.Title</h4>
 
-                            <p class="text-muted mb-3">@cruise.Description</p>
+                            <!-- TITLE -->
 
-                            @if (cruise.Itinerary != null && cruise.Itinerary.Any())
+                            <h4 class="new-cruise-title mb-3">
+
+                                @cruise.Title
+
+                            </h4>
+
+
+                            <!-- DESCRIPTION -->
+
+                            <p class="text-muted mb-3">
+
+                                @cruise.Description
+
+                            </p>
+
+
+                            <!-- =========================
+                                 ITINERARY
+                            ========================== -->
+                            @if (cruise.Itinerary != null &&
+                                                cruise.Itinerary.Any())
                             {
-                                <div class="mb-3">
-                                    <strong>Itinéraire</strong>
-                                    <ul class="mt-2">
-                                        @foreach (var day in cruise.Itinerary.OrderBy(d => d.DayNumber))
+
+                                <div class="cruise-itinerary">
+
+
+                                    <!-- HEADER -->
+
+                                    <div class="itinerary-header">
+
+                                        <div class="itinerary-header-icon">
+
+                                            <i class="bi bi-compass"></i>
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <h5>Itinéraire</h5>
+
+                                            <span>
+                                                Votre voyage jour après jour
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- TWO COLUMN GRID -->
+
+                                    <div class="itinerary-grid">
+
+
+                                        @foreach (var day in cruise.Itinerary
+                                                                    .OrderBy(d => d.DayNumber))
                                         {
-                                            <li>
-                                                <strong>Jour @day.DayNumber :</strong>
-                                                @day.Location<br />
-                                                <span class="text-muted">@day.Description</span>
-                                            </li>
+
+                                            <div class="itinerary-day">
+
+
+                                                <!-- DAY NUMBER -->
+
+                                                <div class="itinerary-day-number">
+
+                                                    <span>JOUR</span>
+
+                                                    <strong>
+                                                        @day.DayNumber
+                                                    </strong>
+
+                                                </div>
+
+
+                                                <!-- DAY CONTENT -->
+
+                                                <div class="itinerary-day-content">
+
+
+                                                    <div class="itinerary-location">
+
+                                                        <i class="bi bi-geo-alt-fill"></i>
+
+                                                        <strong>
+                                                            @day.Location
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                    @if (!string.IsNullOrWhiteSpace(day.Description))
+                                                    {
+
+                                                        <p>
+                                                            @day.Description
+                                                        </p>
+
+                                                    }
+
+
+                                                </div>
+
+
+                                            </div>
+
                                         }
-                                    </ul>
+
+
+                                    </div>
+
+
                                 </div>
+
                             }
 
-                            <hr />
 
-                            <div class="mb-2">
-                                <strong>Destination</strong><br />
-                                @cruise.Destination
+                            <!-- =========================
+                                 CRUISE INFORMATION
+                            ========================== -->
+
+                            <div class="cruise-information">
+
+
+                                <!-- HEADER -->
+
+                                <div class="cruise-information-header">
+
+
+                                    <div class="cruise-information-icon">
+
+                                        <i class="bi bi-info-circle"></i>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <h5>
+                                            Informations sur la croisière
+                                        </h5>
+
+                                        <span>
+                                            Les détails essentiels de votre voyage
+                                        </span>
+
+                                    </div>
+
+
+                                </div>
+
+
+                                <!-- TWO COLUMN GRID -->
+
+                                <div class="cruise-info-grid">
+
+
+                                    <!-- DESTINATION -->
+
+                                    <div class="cruise-info-item">
+
+
+                                        <div class="cruise-info-icon">
+
+                                            <i class="bi bi-globe-europe-africa"></i>
+
+                                        </div>
+
+
+                                        <div class="cruise-info-content">
+
+                                            <span>
+                                                Destination
+                                            </span>
+
+                                            <strong>
+                                                @cruise.Destination
+                                            </strong>
+
+                                        </div>
+
+
+                                    </div>
+
+
+                                    <!-- DEPARTURE PORT -->
+                                    @if (!string.IsNullOrWhiteSpace(cruise.DeparturePort))
+                                    {
+
+                                        <div class="cruise-info-item">
+
+
+                                            <div class="cruise-info-icon">
+
+                                                <i class="bi bi-box-arrow-up-right"></i>
+
+                                            </div>
+
+
+                                            <div class="cruise-info-content">
+
+                                                <span>
+                                                    Port de départ
+                                                </span>
+
+                                                <strong>
+                                                    @cruise.DeparturePort
+                                                </strong>
+
+                                            </div>
+
+
+                                        </div>
+
+                                    }
+
+
+                                    <!-- ARRIVAL PORT -->
+                                    @if (!string.IsNullOrWhiteSpace(cruise.ArrivalPort))
+                                    {
+
+                                        <div class="cruise-info-item">
+
+
+                                            <div class="cruise-info-icon">
+
+                                                <i class="bi bi-geo-alt"></i>
+
+                                            </div>
+
+
+                                            <div class="cruise-info-content">
+
+                                                <span>
+                                                    Port d'arrivée
+                                                </span>
+
+                                                <strong>
+                                                    @cruise.ArrivalPort
+                                                </strong>
+
+                                            </div>
+
+
+                                        </div>
+
+                                    }
+
+
+                                    <!-- FIRST DEPARTURE + DURATION -->
+                                    @if (firstDate != null)
+                                    {
+
+
+                                        <div class="cruise-info-item">
+
+
+                                            <div class="cruise-info-icon">
+
+                                                <i class="bi bi-calendar-event"></i>
+
+                                            </div>
+
+
+                                            <div class="cruise-info-content">
+
+                                                <span>
+                                                    Premier départ
+                                                </span>
+
+                                                <strong>
+                                                    @firstDate.DepartureDate.ToString("dd MMM yyyy")
+                                                </strong>
+
+                                            </div>
+
+
+                                        </div>
+
+
+                                        <div class="cruise-info-item">
+
+
+                                            <div class="cruise-info-icon">
+
+                                                <i class="bi bi-clock-history"></i>
+
+                                            </div>
+
+
+                                            <div class="cruise-info-content">
+
+                                                <span>
+                                                    Durée
+                                                </span>
+
+                                                <strong>
+                                                    @firstDate.DurationDays jours
+                                                </strong>
+
+                                            </div>
+
+
+                                        </div>
+
+
+                                    }
+
+
+                                    <!-- AVAILABLE DEPARTURES -->
+
+                                    <div class="cruise-info-item cruise-info-highlight">
+
+
+                                        <div class="cruise-info-icon">
+
+                                            <i class="bi bi-calendar-check"></i>
+
+                                        </div>
+
+
+                                        <div class="cruise-info-content">
+
+                                            <span>
+                                                Départs disponibles
+                                            </span>
+
+                                            <strong>
+                                                @(cruise.CruiseDates?.Count ?? 0)
+                                            </strong>
+
+                                        </div>
+
+
+                                    </div>
+
+
+                                </div>
+
+
                             </div>
 
-                            @if (!string.IsNullOrWhiteSpace(cruise.DeparturePort))
-                            {
-                                <div class="mb-2">
-                                    <strong>Port de départ</strong><br />
-                                    @cruise.DeparturePort
-                                </div>
-                            }
 
-                            @if (!string.IsNullOrWhiteSpace(cruise.ArrivalPort))
-                            {
-                                <div class="mb-2">
-                                    <strong>Port d'arrivée</strong><br />
-                                    @cruise.ArrivalPort
-                                </div>
-                            }
+                            <!-- =========================
+                                 BOOKING BUTTON
+                            ========================== -->
 
-                            @if (firstDate != null)
-                            {
-                                <div class="mb-2">
-                                    <strong>Premier départ</strong><br />
-                                    @firstDate.DepartureDate.ToString("dd MMM yyyy")
-                                </div>
+                            <div class="mt-auto cruise-booking-action">
 
-                                <div class="mb-2">
-                                    <strong>Durée</strong><br />
-                                    @firstDate.DurationDays jours
-                                </div>
-                            }
 
-                            <div class="mb-3">
-                                <strong>Départs disponibles</strong><br />
-                                @(cruise.CruiseDates?.Count ?? 0)
-                            </div>
-
-                            <div class="mt-auto">
                                 <button class="btn btn-primary new-cruise-btn"
                                         @onclick="() => OpenCruise(cruise.Slug)">
+
+                                    <i class="bi bi-calendar-check me-2"></i>
+
                                     Réserver votre cabine
+
+                                    <i class="bi bi-arrow-right ms-2"></i>
+
                                 </button>
+
+
                             </div>
+
 
                         </div>
 
+
                     </div>
 
+
                 </div>
+
             }
 
+
         </div>
+
     }
+
 
 </div>
 
+
 @code {
+
     private List<Cruise>? cruises;
+
     private int CartItemCount = 0;
+
 
     protected override async Task OnInitializedAsync()
     {
+
         try
         {
+
             var result = await CruiseService.GetNewCruises();
+
             cruises = result.Cruises;
 
+
             var authState = await Auth.GetAuthenticationStateAsync();
+
             var user = authState.User;
+
 
             if (user.Identity?.IsAuthenticated ?? false)
             {
-                var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                var userId =
+                    user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+
                 if (!string.IsNullOrEmpty(userId))
                 {
-                    CartItemCount = await CartService.GetCartItemCount(userId);
+
+                    CartItemCount =
+                        await CartService.GetCartItemCount(userId);
+
                 }
+
             }
+
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Error initializing New Cruises page");
+
+            Logger.LogError(
+                ex,
+                "Error initializing New Cruises page"
+            );
+
             cruises = new List<Cruise>();
+
         }
+
     }
+
 
     private void GoToCart()
     {
+
         Nav.NavigateTo("/cart");
+
     }
+
 
     private void OpenCruise(string slug)
     {
+
         Nav.NavigateTo($"/cruises/{slug}");
+
     }
+
 }
