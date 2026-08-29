@@ -24,11 +24,7 @@ public class CruiseService : ICruiseService
     {
         if (!currentUser.IsInRole("Admin") && !currentUser.IsInRole("Recruiter"))
         {
-            return new BaseResponse
-            {
-                StatusCode = 403,
-                Message = "Vous n'avez pas les droits pour ajouter une croisière."
-            };
+            return new BaseResponse { StatusCode = 403, Message = "Vous n'avez pas les droits pour ajouter une croisière." };
         }
 
         await using var context = _factory.CreateDbContext();
@@ -37,12 +33,10 @@ public class CruiseService : ICruiseService
         {
             if (form.Dates == null || !form.Dates.Any())
             {
-                return new BaseResponse
-                {
-                    StatusCode = 400,
-                    Message = "At least one cruise date is required."
-                };
+                return new BaseResponse { StatusCode = 400, Message = "At least one cruise date is required." };
             }
+
+            var userId = currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var cruise = new Cruise
             {
@@ -53,11 +47,11 @@ public class CruiseService : ICruiseService
                 ArrivalPort = form.ArrivalPort,
                 Currency = form.Currency,
                 ImageUrl = form.ImageUrl,
-
                 MaxPassengers = form.MaxPassengers,
                 IsFeatured = form.IsFeatured,
                 IsActive = form.IsActive,
                 Slug = GenerateSlug(form.Destination),
+                CreatedByUserId = userId,
 
                 Itinerary = form.Itinerary?.Select(i => new ItineraryDay
                 {
@@ -83,34 +77,24 @@ public class CruiseService : ICruiseService
             context.Cruises.Add(cruise);
             await context.SaveChangesAsync();
 
-            return new BaseResponse
-            {
-                StatusCode = 201,
-                Message = "Cruise added successfully."
-            };
+            return new BaseResponse { StatusCode = 201, Message = "Cruise added successfully." };
         }
         catch (Exception ex)
         {
-            return new BaseResponse
-            {
-                StatusCode = 500,
-                Message = ex.Message
-            };
+            return new BaseResponse { StatusCode = 500, Message = ex.Message };
         }
     }
-
     // ============================================================
     // DELETE CRUISE — tylko Admin
     // ============================================================
     public async Task<BaseResponse> DeleteCruise(int id, ClaimsPrincipal currentUser)
     {
-        if (!currentUser.IsInRole("Admin"))
+        var isAdmin = currentUser.IsInRole("Admin");
+        var isRecruiter = currentUser.IsInRole("Recruiter");
+
+        if (!isAdmin && !isRecruiter)
         {
-            return new BaseResponse
-            {
-                StatusCode = 403,
-                Message = "Vous n'avez pas les droits pour supprimer une croisière."
-            };
+            return new BaseResponse { StatusCode = 403, Message = "Vous n'avez pas les droits pour supprimer une croisière." };
         }
 
         await using var context = _factory.CreateDbContext();
@@ -125,32 +109,28 @@ public class CruiseService : ICruiseService
 
             if (cruise == null)
             {
-                return new BaseResponse
+                return new BaseResponse { StatusCode = 404, Message = "Cruise not found." };
+            }
+
+            if (!isAdmin)
+            {
+                var userId = currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (cruise.CreatedByUserId != userId)
                 {
-                    StatusCode = 404,
-                    Message = "Cruise not found."
-                };
+                    return new BaseResponse { StatusCode = 403, Message = "Vous ne pouvez supprimer que les croisières que vous avez créées." };
+                }
             }
 
             context.Cruises.Remove(cruise);
             await context.SaveChangesAsync();
 
-            return new BaseResponse
-            {
-                StatusCode = 200,
-                Message = "Cruise deleted successfully."
-            };
+            return new BaseResponse { StatusCode = 200, Message = "Cruise deleted successfully." };
         }
         catch (Exception ex)
         {
-            return new BaseResponse
-            {
-                StatusCode = 500,
-                Message = $"Error deleting cruise: {ex.Message}"
-            };
+            return new BaseResponse { StatusCode = 500, Message = $"Error deleting cruise: {ex.Message}" };
         }
     }
-
     // ============================================================
     // EDIT CRUISE — tylko Admin
     // ============================================================

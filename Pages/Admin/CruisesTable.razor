@@ -204,25 +204,31 @@
                                 </td>
 
                                 <td data-label="Actions" class="text-center">
-                                    <AuthorizeView Roles="Admin" Context="actionsCtx">
+                                    <AuthorizeView Context="actionsCtx">
                                         <Authorized>
-                                            <div class="d-flex gap-2 justify-content-center">
-                                                <button class="btn btn-sm btn-primary"
-                                                        @onclick="() => EditCruise(c.Id)">
-                                                    Modifier
-                                                </button>
-                                                <button class="btn btn-sm btn-danger"
-                                                        @onclick="() => DeleteCruise(c.Id)">
-                                                    Supprimer
-                                                </button>
-                                            </div>
+                                            @{
+                                                var isAdmin = actionsCtx.User.IsInRole("Admin");
+                                                var isOwner = c.CreatedByUserId == actionsCtx.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                                            }
+
+                                            @if (isAdmin)
+                                            {
+                                                <div class="d-flex gap-2 justify-content-center">
+                                                    <button class="btn btn-sm btn-primary" @onclick="() => EditCruise(c.Id)">Modifier</button>
+                                                    <button class="btn btn-sm btn-danger" @onclick="() => DeleteCruise(c.Id)">Supprimer</button>
+                                                </div>
+                                            }
+                                            else if (isOwner)
+                                            {
+                                                <button class="btn btn-sm btn-danger" @onclick="() => DeleteCruise(c.Id)">Supprimer</button>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted"><em>Lecture seule</em></span>
+                                            }
                                         </Authorized>
-                                        <NotAuthorized>
-                                            <span class="text-muted"><em>Lecture seule</em></span>
-                                        </NotAuthorized>
                                     </AuthorizeView>
                                 </td>
-
                             </tr>
                         }
                     </tbody>

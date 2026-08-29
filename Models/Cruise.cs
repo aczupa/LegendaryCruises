@@ -32,6 +32,8 @@ public class Cruise
 
     public string Slug { get; set; } = "";
 
+    public string? CreatedByUserId { get; set; }
+
 
     public ICollection<CruiseDate> CruiseDates { get; set; } = new List<CruiseDate>();
 
