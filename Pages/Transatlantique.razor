@@ -60,9 +60,15 @@
 </nav>
 
 <div class="video-container">
-    <video autoplay muted loop playsinline id="bg-video">
+    <video autoplay muted loop playsinline id="bg-video"
+           poster="https://worldcruises.blob.core.windows.net/images/fallback/transatlantique-fallback.jpg"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
         <source src="https://worldcruises.blob.core.windows.net/videos/Transatlantique.mp4" type="video/mp4">
     </video>
+
+    <img src="https://worldcruises.blob.core.windows.net/images/fallback/transatlantique-fallback.jpg"
+         class="video-fallback-img" style="display:none;" />
+
     <div id="video-overlay"></div>
 </div>
 
@@ -245,11 +251,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        try{
-        var cruise = await CruiseService.GetCruiseByName("Transatlantique");
+        try
+        {
+            var cruise = await CruiseService.GetCruiseByName("Transatlantique");
 
-        if (cruise != null)
-            cruiseSlug = cruise.Slug;
+            if (cruise != null)
+                cruiseSlug = cruise.Slug;
         }
         catch (Exception ex)
         {

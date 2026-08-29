@@ -55,8 +55,11 @@
             var index = i;
             <div class="cell" @onclick="() => OpenOverlay(index)">
                 <video src="@videos[index]"
-                       autoplay muted loop playsinline preload="metadata">
+                       autoplay muted loop playsinline preload="metadata"
+                       poster="@fallbacks[index]"
+                       onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                 </video>
+                <img src="@fallbacks[index]" class="video-fallback-img" style="display:none;" />
             </div>
         }
     </div>
@@ -79,6 +82,7 @@
     private bool isLoadingSlug = true;
 
     private static readonly string BaseUrl = "https://worldcruises.blob.core.windows.net/videos/alaska/";
+    private static readonly string FallbackBaseUrl = "https://worldcruises.blob.core.windows.net/images/fallback/alaska/";
 
     private string[] videos = new[]
     {
@@ -92,6 +96,20 @@
         $"{BaseUrl}alaska8.mp4",
         $"{BaseUrl}alaska5.mp4",
         $"{BaseUrl}alaska9.mp4"
+    };
+
+    private string[] fallbacks = new[]
+    {
+        $"{FallbackBaseUrl}alaska2-fallback.jpg",
+        $"{FallbackBaseUrl}alaska10-fallback.jpg",
+        $"{FallbackBaseUrl}alaska11-fallback.jpg",
+        $"{FallbackBaseUrl}alaska1-fallback.jpg",
+        $"{FallbackBaseUrl}alaska12-fallback.jpg",
+        $"{FallbackBaseUrl}alaska6-fallback.jpg",
+        $"{FallbackBaseUrl}alaska13-fallback.jpg",
+        $"{FallbackBaseUrl}alaska8-fallback.jpg",
+        $"{FallbackBaseUrl}alaska5-fallback.jpg",
+        $"{FallbackBaseUrl}alaska9-fallback.jpg"
     };
 
     private record DayInfo(string Title, string Content);
