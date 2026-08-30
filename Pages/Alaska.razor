@@ -4,7 +4,6 @@
 @using System.Security.Claims
 @inject ICruiseService CruiseService
 @inject NavigationManager Nav
-@inject ILogger<Alaska> Logger
 
 <nav class="navbar navbar-expand-md navbar-light px-1">
     <a class="navbar-brand d-flex align-items-center" href="/">
@@ -17,7 +16,7 @@
     </button>
     <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
         <div class="d-flex flex-column flex-md-row gap-3 ms-auto align-items-center">
-            <AuthorizeView Roles="Admin, Recruiter">
+            <AuthorizeView Roles="Admin">
                 <div class="nav-item px-1">
                     <a class="btn login" href="/admin/cruises-table">CRUISES</a>
                 </div>
@@ -43,7 +42,7 @@
                     </div>
                 </NotAuthorized>
             </AuthorizeView>
-            <ButtonBuy Slug="@cruiseSlug" IsLoading="@isLoadingSlug" />
+            <ButtonBuy Slug="@cruiseSlug" />
         </div>
     </div>
 </nav>
@@ -55,16 +54,8 @@
             var index = i;
             <div class="cell" @onclick="() => OpenOverlay(index)">
                 <video src="@videos[index]"
-                       autoplay
-                       muted
-                       loop
-                       playsinline
-                       webkit-playsinline
-                       preload="auto"
-                       poster="@fallbacks[index]"
-                       onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                       autoplay muted loop playsinline preload="metadata">
                 </video>
-                <img src="@fallbacks[index]" class="video-fallback-img" style="display:none;" />
             </div>
         }
     </div>
@@ -84,10 +75,8 @@
     private string cruiseSlug = "";
     private bool showOverlay = false;
     private int selectedIndex = 0;
-    private bool isLoadingSlug = true;
 
     private static readonly string BaseUrl = "https://worldcruises.blob.core.windows.net/videos/alaska/";
-    private static readonly string FallbackBaseUrl = "https://worldcruises.blob.core.windows.net/images/fallback/fallback/";
 
     private string[] videos = new[]
     {
@@ -101,20 +90,6 @@
         $"{BaseUrl}alaska8.mp4",
         $"{BaseUrl}alaska5.mp4",
         $"{BaseUrl}alaska9.mp4"
-    };
-
-    private string[] fallbacks = new[]
-    {
-        $"{FallbackBaseUrl}alaska2-fallback.jpg",
-        $"{FallbackBaseUrl}alaska10-fallback.jpg",
-        $"{FallbackBaseUrl}alaska11-fallback.jpg",
-        $"{FallbackBaseUrl}alaska1-fallback.jpg",
-        $"{FallbackBaseUrl}alaska12-fallback.jpg",
-        $"{FallbackBaseUrl}alaska6-fallback.jpg",
-        $"{FallbackBaseUrl}alaska13-fallback.jpg",
-        $"{FallbackBaseUrl}alaska8-fallback.jpg",
-        $"{FallbackBaseUrl}alaska5-fallback.jpg",
-        $"{FallbackBaseUrl}alaska9-fallback.jpg"
     };
 
     private record DayInfo(string Title, string Content);
@@ -145,21 +120,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        try
-        {
-            var cruise = await CruiseService.GetCruiseByName("Alaska");
-            if (cruise != null)
-                cruiseSlug = cruise.Slug;
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Błąd podczas pobierania rejsu dla Alaski");
-        }
-        finally
-        {
-            isLoadingSlug = false;
-        }
+        var cruise = await CruiseService.GetCruiseByName("Alaska");
+        if (cruise != null)
+            cruiseSlug = cruise.Slug;
     }
+
     private void OpenOverlay(int index)
     {
         selectedIndex = index;
