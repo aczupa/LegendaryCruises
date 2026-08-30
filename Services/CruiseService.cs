@@ -132,11 +132,18 @@ public class CruiseService : ICruiseService
         }
     }
     // ============================================================
-    // EDIT CRUISE — tylko Admin
+    // EDIT CRUISE 
+    // ============================================================
+    // ============================================================
+    // EDIT CRUISE — Admin (wszystkie) oraz Recruiter (tylko swoje)
     // ============================================================
     public async Task<BaseResponse> EditCruise(Cruise cruise, ClaimsPrincipal currentUser)
     {
-        if (!currentUser.IsInRole("Admin"))
+        var isAdmin = currentUser.IsInRole("Admin");
+        var isRecruiter = currentUser.IsInRole("Recruiter");
+
+        // 1. Sprawdzenie, czy użytkownik ma jakąkolwiek z wymaganych ról
+        if (!isAdmin && !isRecruiter)
         {
             return new BaseResponse
             {
@@ -158,7 +165,21 @@ public class CruiseService : ICruiseService
             if (existing == null)
                 return new BaseResponse { StatusCode = 404, Message = "Cruise not found." };
 
-            // 1. Update scalar properties
+            // 2. Walidacja właściciela dla Rekrutera
+            if (!isAdmin)
+            {
+                var userId = currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (existing.CreatedByUserId != userId)
+                {
+                    return new BaseResponse
+                    {
+                        StatusCode = 403,
+                        Message = "Vous ne pouvez modifier que les croisières que vous avez créées."
+                    };
+                }
+            }
+
+            // 3. Aktualizacja właściwości obiektów (Scalar properties)
             existing.Title = cruise.Title;
             existing.Description = cruise.Description;
             existing.Destination = cruise.Destination;
@@ -172,7 +193,7 @@ public class CruiseService : ICruiseService
             existing.IsFeatured = cruise.IsFeatured;
             existing.Slug = GenerateSlug(cruise.Destination);
 
-            // 2. Synchronize Itinerary
+            // 4. Synchronizacja planu podróży (Itinerary)
             var incomingItineraryIds = cruise.Itinerary.Where(i => i.Id != 0).Select(i => i.Id).ToList();
             var itineraryToRemove = existing.Itinerary.Where(ei => !incomingItineraryIds.Contains(ei.Id)).ToList();
             context.ItineraryDays.RemoveRange(itineraryToRemove);
@@ -197,7 +218,7 @@ public class CruiseService : ICruiseService
                 }
             }
 
-            // 3. Synchronize CruiseDates & Cabins
+            // 5. Synchronizacja terminów (CruiseDates) i kabin (Cabins)
             var incomingDateIds = cruise.CruiseDates.Where(d => d.Id != 0).Select(d => d.Id).ToList();
             var datesToRemove = existing.CruiseDates.Where(ed => !incomingDateIds.Contains(ed.Id)).ToList();
             context.CruiseDates.RemoveRange(datesToRemove);
@@ -207,7 +228,6 @@ public class CruiseService : ICruiseService
                 var existingDate = existing.CruiseDates.FirstOrDefault(ed => ed.Id == date.Id && ed.Id != 0);
                 if (existingDate == null)
                 {
-                    // New date with cabins
                     existing.CruiseDates.Add(new CruiseDate
                     {
                         DepartureDate = date.DepartureDate,
@@ -223,11 +243,9 @@ public class CruiseService : ICruiseService
                 }
                 else
                 {
-                    // Update existing date
                     existingDate.DepartureDate = date.DepartureDate;
                     existingDate.ReturnDate = date.ReturnDate;
 
-                    // Synchronize Cabins for existing date
                     var incomingCabinIds = date.Cabins.Where(c => c.Id != 0).Select(c => c.Id).ToList();
                     var cabinsToRemove = existingDate.Cabins.Where(ec => !incomingCabinIds.Contains(ec.Id)).ToList();
                     context.DateCabins.RemoveRange(cabinsToRemove);

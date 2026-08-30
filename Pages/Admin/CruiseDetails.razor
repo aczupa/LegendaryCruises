@@ -1,5 +1,5 @@
 ﻿@page "/admin/cruise/{Id:int}"
-@attribute [Authorize(Roles = "Admin")]
+@attribute [Authorize(Roles = "Admin, Recruiter")]
 @using LegendaryCruises.Components
 @using LegendaryCruises.Models
 @using LegendaryCruises.Interfaces
