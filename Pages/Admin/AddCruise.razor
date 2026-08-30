@@ -31,8 +31,6 @@
 
                 <AuthorizeView>
                     <Authorized Context="authState">
-
-
                         <span class="me-2 login2">
                             Bonjour @(authState.User.Identity?.Name ??
                                                         authState.User.FindFirst(ClaimTypes.Email)?.Value)
@@ -58,14 +56,7 @@
 
     <h3>Add New Cruise</h3>
 
-    <EditForm Model="@addCruiseForm" OnValidSubmit="AddNewCruise">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
-        @if (!string.IsNullOrEmpty(errorMessage))
-        {
-            <div class="alert alert-danger">@errorMessage</div>
-        }
+    <EditForm Model="@addCruiseForm" OnSubmit="AddNewCruise">
 
         <!-- BASIC INFO -->
         <label>Title</label>
@@ -90,8 +81,6 @@
 
         <label>Image URL</label>
         <InputText @bind-Value="addCruiseForm.ImageUrl" class="form-control mb-2" />
-
-
 
         <label>Max passengers</label>
         <InputNumber @bind-Value="addCruiseForm.MaxPassengers" class="form-control mb-2" />
@@ -219,6 +208,12 @@
             </button>
         </LegendaryCruises.Components.Card>
 
+        <!-- OSTRZEŻENIA / BŁĘDY PRZED PRZYCISKIEM SAVE -->
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger mt-3 mb-0">@errorMessage</div>
+        }
+
         <button type="submit" class="btn btn-success mt-3">Save</button>
 
     </EditForm>
@@ -231,7 +226,6 @@
 
     private string? errorMessage;
     private AddCruiseForm addCruiseForm = new();
-
     private bool IsLoggedIn = false;
 
     protected override async Task OnInitializedAsync()
@@ -240,9 +234,6 @@
         var user = authState.User;
 
         IsLoggedIn = user.Identity?.IsAuthenticated ?? false;
-
-
-
         AddDate();
     }
 
@@ -278,7 +269,6 @@
     {
         errorMessage = null;
 
-        // VALIDATION
         if (string.IsNullOrWhiteSpace(addCruiseForm.Title))
         {
             errorMessage = "Title is required.";
@@ -294,6 +284,30 @@
         if (string.IsNullOrWhiteSpace(addCruiseForm.Destination))
         {
             errorMessage = "Destination is required.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(addCruiseForm.DeparturePort))
+        {
+            errorMessage = "Departure port is required.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(addCruiseForm.ArrivalPort))
+        {
+            errorMessage = "Arrival port is required.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(addCruiseForm.ImageUrl))
+        {
+            errorMessage = "Image URL is required.";
+            return;
+        }
+
+        if (addCruiseForm.MaxPassengers <= 0)
+        {
+            errorMessage = "Max passengers is required.";
             return;
         }
 
