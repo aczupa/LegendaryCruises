@@ -11,7 +11,7 @@
     </a>
     <h3>Alaska</h3>
     <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                  aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse flex-column flex-md-row justify-content-between" id="mainNavbar">
@@ -36,7 +36,7 @@
                 <NotAuthorized>
                     <div class="nav-item px-1">
                         <a class="btn login"
-                           href="/Identity/Account/Login?returnUrl=/@Nav.ToBaseRelativePath(Nav.Uri)">
+                                         href="/Identity/Account/Login?returnUrl=/@Nav.ToBaseRelativePath(Nav.Uri)">
                             LOGIN
                         </a>
                     </div>
@@ -54,7 +54,7 @@
             var index = i;
             <div class="cell" @onclick="() => OpenOverlay(index)">
                 <video src="@videos[index]"
-                       autoplay muted loop playsinline preload="metadata">
+                                   autoplay muted loop playsinline preload="metadata">
                 </video>
             </div>
         }
@@ -80,43 +80,43 @@
 
     private string[] videos = new[]
     {
-        $"{BaseUrl}alaska2.mp4",
-        $"{BaseUrl}alaska10.mp4",
-        $"{BaseUrl}alaska11.mp4",
-        $"{BaseUrl}alaska1.mp4",
-        $"{BaseUrl}alaska12.mp4",
-        $"{BaseUrl}alaska6.mp4",
-        $"{BaseUrl}alaska13.mp4",
-        $"{BaseUrl}alaska8.mp4",
-        $"{BaseUrl}alaska5.mp4",
-        $"{BaseUrl}alaska9.mp4"
-    };
+    $"{BaseUrl}alaska2.mp4",
+    $"{BaseUrl}alaska10.mp4",
+    $"{BaseUrl}alaska11.mp4",
+    $"{BaseUrl}alaska1.mp4",
+    $"{BaseUrl}alaska12.mp4",
+    $"{BaseUrl}alaska6.mp4",
+    $"{BaseUrl}alaska13.mp4",
+    $"{BaseUrl}alaska8.mp4",
+    $"{BaseUrl}alaska5.mp4",
+    $"{BaseUrl}alaska9.mp4"
+  };
 
     private record DayInfo(string Title, string Content);
 
     private List<DayInfo> days = new()
-    {
-        new("Jour 1 – Embarquement & départ",
-            "Accueil au port et embarquement à bord du navire.<br>Installation en cabine, premières découvertes du bateau.<br><br>Le voyage commence, cap vers les terres sauvages de l'Alaska."),
-        new("Jour 2 – Navigation en mer",
-            "Journée de navigation le long du Pacifique Nord.<br>Conférences, observation des oiseaux marins et détente à bord.<br><br>L'horizon s'élargit, le rythme ralentit."),
-        new("Jour 3 – Fjords & Inside Passage",
-            "Entrée dans l'Inside Passage, l'une des plus belles routes maritimes du monde.<br>Montagnes abruptes, forêts profondes et eaux calmes.<br><br>Une navigation spectaculaire et silencieuse."),
-        new("Jour 4 – Glaciers majestueux",
-            "Approche des grands glaciers d'Alaska.<br>La glace millénaire se fracture et glisse lentement vers la mer.<br><br>Un moment de pure contemplation."),
-        new("Jour 5 – Faune sauvage",
-            "Observation des baleines, orques, phoques et aigles.<br>Chaque apparition est un privilège rare et fugace.<br><br>La nature règne en maître."),
-        new("Jour 6 – Escale en Alaska",
-            "Escale dans une ville emblématique (Juneau, Skagway ou Ketchikan).<br>Découverte de l'histoire locale et des cultures autochtones.<br><br>Entre civilisation et immensité sauvage."),
-        new("Jour 7 – Forêts boréales & montagnes",
-            "Navigation le long de vastes étendues forestières.<br>Brume légère, sommets enneigés, silence profond.<br><br>Le temps semble suspendu."),
-        new("Jour 8 – Navigation polaire",
-            "Le navire progresse entre glace, mer et ciel changeant.<br>Observation des paysages depuis le pont ou le salon panoramique.<br><br>Une expérience hors du monde."),
-        new("Jour 9 – Ciel du Nord & derniers glaciers",
-            "Derniers panoramas glacés avant le retour.<br>Selon les conditions, observation du ciel boréal.<br><br>Un final tout en émotion."),
-        new("Jour 10 – Retour & débarquement",
-            "Arrivée au port et débarquement.<br>Fin de la croisière après un voyage hors du temps.<br><br>L'Alaska laisse une empreinte durable.")
-    };
+  {
+    new("Jour 1 – Embarquement & départ",
+      "Accueil au port et embarquement à bord du navire.<br>Installation en cabine, premières découvertes du bateau.<br><br>Le voyage commence, cap vers les terres sauvages de l'Alaska."),
+    new("Jour 2 – Navigation en mer",
+      "Journée de navigation le long du Pacifique Nord.<br>Conférences, observation des oiseaux marins et détente à bord.<br><br>L'horizon s'élargit, le rythme ralentit."),
+    new("Jour 3 – Fjords & Inside Passage",
+      "Entrée dans l'Inside Passage, l'une des plus belles routes maritimes du monde.<br>Montagnes abruptes, forêts profondes et eaux calmes.<br><br>Une navigation spectaculaire et silencieuse."),
+    new("Jour 4 – Glaciers majestueux",
+      "Approche des grands glaciers d'Alaska.<br>La glace millénaire se fracture et glisse lentement vers la mer.<br><br>Un moment de pure contemplation."),
+    new("Jour 5 – Faune sauvage",
+      "Observation des baleines, orques, phoques et aigles.<br>Chaque apparition est un privilège rare et fugace.<br><br>La nature règne en maître."),
+    new("Jour 6 – Escale en Alaska",
+      "Escale dans une ville emblématique (Juneau, Skagway ou Ketchikan).<br>Découverte de l'histoire locale et des cultures autochtones.<br><br>Entre civilisation et immensité sauvage."),
+    new("Jour 7 – Forêts boréales & montagnes",
+      "Navigation le long de vastes étendues forestières.<br>Brume légère, sommets enneigés, silence profond.<br><br>Le temps semble suspendu."),
+    new("Jour 8 – Navigation polaire",
+      "Le navire progresse entre glace, mer et ciel changeant.<br>Observation des paysages depuis le pont ou le salon panoramique.<br><br>Une expérience hors du monde."),
+    new("Jour 9 – Ciel du Nord & derniers glaciers",
+      "Derniers panoramas glacés avant le retour.<br>Selon les conditions, observation du ciel boréal.<br><br>Un final tout en émotion."),
+    new("Jour 10 – Retour & débarquement",
+      "Arrivée au port et débarquement.<br>Fin de la croisière après un voyage hors du temps.<br><br>L'Alaska laisse une empreinte durable.")
+  };
 
     protected override async Task OnInitializedAsync()
     {

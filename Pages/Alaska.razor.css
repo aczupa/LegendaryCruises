@@ -90,6 +90,9 @@
 /* =========================
    MOBILE RESPONSIVE LAYOUT
    ========================= */
+/* =========================
+   MOBILE RESPONSIVE LAYOUT
+   ========================= */
 @media (max-width: 768px) {
 
     .page {
@@ -112,18 +115,10 @@
     .cell {
         animation: none !important;
         opacity: 1;
-        will-change: auto;
     }
-
-        .cell video {
-            transform: none;
-            backface-visibility: visible;
-            will-change: auto;
-        }
 
         .cell:nth-child(5n) {
             grid-column: 1 / -1;
-            grid-auto-rows: 45vw;
         }
 }
 
