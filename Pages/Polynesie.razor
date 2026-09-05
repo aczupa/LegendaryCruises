@@ -12,16 +12,23 @@
         <h1 class="title">Polynésie Française</h1>
         <ButtonBuy Slug="@cruiseSlug" IsLoading="@isLoadingSlug" />
     </div>
+
     <div class="accordion-grid">
         @for (int i = 0; i < videos.Length; i++)
         {
             var index = i;
+
             <div class="cell" @onclick="() => OpenOverlay(index)">
                 <video src="@videos[index]"
-                       autoplay muted loop playsinline preload="metadata"
+                       autoplay
+                       muted
+                       playsinline
+                       preload="metadata"
+                       loop
                        poster="@fallbacks[index]"
                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                 </video>
+
                 <img src="@fallbacks[index]" class="video-fallback-img" style="display:none;" />
             </div>
         }
@@ -31,6 +38,7 @@
 <div class="overlay @(showOverlay ? "active" : "")" @onclick="CloseOverlay">
     <div class="overlay-content" @onclick:stopPropagation="true">
         <button class="close-btn" @onclick="CloseOverlay">×</button>
+
         <div>
             <strong>@days[selectedIndex].Title</strong><br /><br />
             @((MarkupString)days[selectedIndex].Content)
