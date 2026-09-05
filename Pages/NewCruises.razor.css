@@ -12,14 +12,15 @@
 
 
 .new-cruise-card {
-    max-width: 900px; 
-    margin: 0 auto; 
+    max-width: 900px;
+    margin: 0 auto;
     border: none;
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 12px 35px rgba(0,0,0,.08);
     transition: all .3s ease;
     background: white;
+    
 }
 
     .new-cruise-card:hover {
@@ -30,11 +31,11 @@
 
 .new-cruise-img {
     width: 100%;
-    max-width: 700px; 
-    height: 380px; 
+    max-width: 700px;
+    height: 380px;
     object-fit: cover;
     display: block;
-    margin: 0 auto; 
+    margin: 30px auto 0 auto;
     border-radius: 18px;
 }
 

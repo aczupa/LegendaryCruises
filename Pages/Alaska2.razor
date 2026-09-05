@@ -1,0 +1,134 @@
+﻿@page "/Alaska2"
+@using LegendaryCruises.Components
+@using LegendaryCruises.Interfaces
+@inject ICruiseService CruiseService
+@inject ILogger<Alaska2> Logger
+
+<div class="page">
+    <div class="top-bar">
+        <NavLink class="home-link" href="/" Match="NavLinkMatch.All">
+            <span class="oi oi-home" aria-hidden="true"></span>
+        </NavLink>
+        <h1 class="title">Alaska</h1>
+        <ButtonBuy Slug="@cruiseSlug" IsLoading="@isLoadingSlug" />
+    </div>
+
+    <div class="accordion-grid">
+        @for (int i = 0; i < videos.Length; i++)
+        {
+            var index = i;
+            <div class="cell" @onclick="() => OpenOverlay(index)">
+                <video src="@videos[index]"
+                       autoplay muted loop playsinline preload="metadata"
+                       poster="@fallbacks[index]"
+                       onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                </video>
+                <img src="@fallbacks[index]" class="video-fallback-img" style="display:none;" />
+            </div>
+        }
+    </div>
+</div>
+
+<div class="overlay @(showOverlay ? "active" : "")" @onclick="CloseOverlay">
+    <div class="overlay-content" @onclick:stopPropagation="true">
+        <button class="close-btn" @onclick="CloseOverlay">×</button>
+        <div>
+            <strong>@days[selectedIndex].Title</strong><br /><br />
+            @((MarkupString)days[selectedIndex].Content)
+        </div>
+    </div>
+</div>
+
+@code {
+    private string cruiseSlug = "";
+    private bool showOverlay = false;
+    private int selectedIndex = 0;
+    private bool isLoadingSlug = true;
+
+    // UŻYWAMY POLINEZJI
+    private static readonly string BaseUrl = "https://worldcruises.blob.core.windows.net/videos/";
+    private static readonly string FallbackBaseUrl = "https://worldcruises.blob.core.windows.net/images/fallback/fallback/";
+
+    private string[] videos = new[]
+    {
+        $"{BaseUrl}Polynesie7.mp4",
+        $"{BaseUrl}Polynesie1.mp4",
+        $"{BaseUrl}tahiti.mp4",
+        $"{BaseUrl}Polynesie3.mp4",
+        $"{BaseUrl}Polynesie4.mp4",
+        $"{BaseUrl}polynesie8.mp4",
+        $"{BaseUrl}Polynesie6.mp4",
+        $"{BaseUrl}Polynesie2.mp4",
+        $"{BaseUrl}Polynesie5.mp4",
+        $"{BaseUrl}Polynesie9.mp4"
+    };
+
+    private string[] fallbacks = new[]
+    {
+        $"{FallbackBaseUrl}polynesie7-fallback.jpg",
+        $"{FallbackBaseUrl}polynesie1-fallback.jpg",
+        $"{FallbackBaseUrl}tahiti-fallback.jpg",
+        $"{FallbackBaseUrl}polynesie3-fallback.jpg",
+        $"{FallbackBaseUrl}polynesie4-fallback.jpg",
+        $"{FallbackBaseUrl}polynesie8-fallback.jpg",
+        $"{FallbackBaseUrl}polynesie6-fallback.jpg",
+        $"{FallbackBaseUrl}polynesie2-fallback.jpg",
+        $"{FallbackBaseUrl}polynesie5-fallback.jpg",
+        $"{FallbackBaseUrl}polynesie9-fallback.jpg"
+    };
+
+    private record DayInfo(string Title, string Content);
+
+    private List<DayInfo> days = new()
+    {
+        new("❄️ Day 1 — Anchorage: Gateway to the North",
+            "Arrival in Anchorage.<br>Warm welcome aboard with Alaskan snacks.<br>Evening sail-out along the rugged coastline."),
+        new("🦅 Day 2 — Hubbard Glacier: The Giant of Alaska",
+            "Morning approach to the glacier.<br>Witness massive ice calving.<br>Hot chocolate served on deck."),
+        new("🌲 Day 3 — Sitka: Native Culture & Wildlife",
+            "Visit Sitka National Historical Park.<br>Totem poles, native crafts.<br>Optional: sea otter & whale watching."),
+        new("🐋 Day 4 — Juneau: Capital in the Wilderness",
+            "Excursion to Mendenhall Glacier.<br>Helicopter flight optional.<br>Evening salmon barbecue."),
+        new("🌄 Day 5 — Skagway: Gold Rush Town",
+            "Ride the historic White Pass Railway.<br>Explore old gold rush streets.<br>Live folk music onboard."),
+        new("🐻 Day 6 — Icy Strait Point: Untouched Alaska",
+            "Brown bear viewing.<br>Zipline over the forest canopy.<br>Campfire storytelling at sunset."),
+        new("🧊 Day 7 — Glacier Bay: UNESCO Wonder",
+            "Park rangers join the ship.<br>Scenic cruising among glaciers.<br>Photography workshop onboard."),
+        new("🌧️ Day 8 — Ketchikan: Totems & Rainforest",
+            "Visit Saxman Totem Village.<br>Walk through lush rainforest.<br>Evening lumberjack show."),
+        new("🌊 Day 9 — Inside Passage: Serenity at Sea",
+            "Relaxing day of scenic sailing.<br>Whale sightings common.<br>Alaskan craft beer tasting."),
+        new("🌅 Day 10 — Return to Anchorage",
+            "Final sunrise over the fjords.<br>Farewell breakfast.<br>Disembarkation with Alaskan souvenirs.")
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var cruise = await CruiseService.GetCruiseByName("Alaska");
+            if (cruise != null)
+                cruiseSlug = cruise.Slug;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error fetching cruise data for 'Alaska'");
+        }
+        finally
+        {
+            isLoadingSlug = false;
+        }
+    }
+
+    private void OpenOverlay(int index)
+    {
+        selectedIndex = index;
+        showOverlay = true;
+    }
+
+    private void CloseOverlay()
+    {
+        showOverlay = false;
+    }
+}
