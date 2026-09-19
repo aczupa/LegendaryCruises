@@ -423,3 +423,10 @@ CRUISE GALLERY
     color: #666;
     font-size: 0.85rem;
 }
+
+
+@media (min-width: 992px) {
+    .cruise-card {
+        max-width: 1000px;
+    }
+}

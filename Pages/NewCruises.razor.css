@@ -548,3 +548,9 @@
     }
 }
 
+
+@media (min-width: 992px) {
+    .card {
+        max-width: 1000px;
+    }
+}
