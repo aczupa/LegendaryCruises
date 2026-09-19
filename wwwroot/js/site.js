@@ -47,8 +47,7 @@
             });
         });
 
-        // scroll-behavior: smooth jest teraz ustawiane globalnie w CSS (html { scroll-behavior: smooth; }),
-        // niezależnie od tego, czy ta funkcja się wykona.
+       
     }
 
     window.initVideoNavScroll = initVideoNavScroll;
@@ -149,16 +148,14 @@ window.stopPropagation = function (e) {
 
     const nilPlayer1 = createFilmPlayer("nilFrame", [
         "https://worldcruises.blob.core.windows.net/images/Nil/nile1.jpg",
-        "https://worldcruises.blob.core.windows.net/images/Nil/luxor1.jpg",
         "https://worldcruises.blob.core.windows.net/images/Nil/nile2.jpg",
         "https://worldcruises.blob.core.windows.net/images/Nil/nile3.jpg",
-        "https://worldcruises.blob.core.windows.net/images/Nil/nile4.jpg",
         "https://worldcruises.blob.core.windows.net/images/Nil/nile11.jpg",
         "https://worldcruises.blob.core.windows.net/images/Nil/nile5.jpg",
         "https://worldcruises.blob.core.windows.net/images/Nil/nile6.jpg",
         "https://worldcruises.blob.core.windows.net/images/Nil/nile7.jpg",
         "https://worldcruises.blob.core.windows.net/images/Nil/nile8.jpg",
-        "https://worldcruises.blob.core.windows.net/images/Nil/nile9.jpg",
+        "https://worldcruises.blob.core.windows.net/images/Nil/egypt9.jpg",
         "https://worldcruises.blob.core.windows.net/images/Nil/nile10.jpg"
     ]);
 
