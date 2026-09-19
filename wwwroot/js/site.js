@@ -162,7 +162,6 @@ window.stopPropagation = function (e) {
     const nilPlayer2 = createFilmPlayer("nilFrame2", [
         "https://worldcruises.blob.core.windows.net/images/Nil/egypt1.jpg",
         "https://worldcruises.blob.core.windows.net/images/Nil/egypt13.jpg",
-        "https://worldcruises.blob.core.windows.net/images/Nil/egypt2.jpg",
         "https://worldcruises.blob.core.windows.net/images/Nil/egypt3.jpg",
         "https://worldcruises.blob.core.windows.net/images/Nil/egypt4.jpg",
         "https://worldcruises.blob.core.windows.net/images/Nil/egypt5.jpg",
