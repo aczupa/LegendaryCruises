@@ -123,13 +123,15 @@ window.stopPropagation = function (e) {
     }
 
     function createFilmPlayer(frameElementId, urls) {
-        const frames = preload(urls);
+        let frames = null;
         let interval = null;
         let i = 0;
 
         return {
             start() {
                 if (interval !== null) return;
+
+                frames ??= preload(urls);
 
                 interval = setInterval(() => {
                     const img = document.getElementById(frameElementId);
