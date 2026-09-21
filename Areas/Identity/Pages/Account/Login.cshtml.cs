@@ -68,11 +68,14 @@ namespace LegendaryCruises.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = "L'adresse e-mail est obligatoire.")]
+            [EmailAddress(ErrorMessage = "Format d'e-mail invalide (exemple : nom@exemple.com).")]
             public string Email { get; set; }
 
-            [Required]
+            [Required(ErrorMessage = "Le mot de passe est obligatoire.")]
+            [MinLength(10, ErrorMessage = "Le mot de passe doit contenir au moins 10 caractères.")]
+            [RegularExpression(@"^(?=.*\d)(?=.*[A-Z]).+$",
+                ErrorMessage = "Le mot de passe doit contenir au moins un chiffre et une majuscule.")]
             [DataType(DataType.Password)]
             public string Password { get; set; }
         }

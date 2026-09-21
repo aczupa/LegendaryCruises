@@ -9,5 +9,7 @@
 <body style="margin:50px">
    
     @RenderBody()
+
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

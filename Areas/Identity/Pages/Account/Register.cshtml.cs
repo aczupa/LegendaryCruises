@@ -31,6 +31,15 @@ namespace LegendaryCruises.Areas.Identity.Pages.Account
                     await _signInManager.SignInAsync(identity, isPersistent: false);
                     return LocalRedirect("~/");
                 }
+                foreach (var error in result.Errors)
+                {
+                    var message = error.Code switch
+                    {
+                        "DuplicateUserName" or "DuplicateEmail" => "Un compte existe déjà avec cet e-mail.",
+                        _ => error.Description
+                    };
+                    ModelState.AddModelError(string.Empty, message);
+                }
             }
 
             return Page();

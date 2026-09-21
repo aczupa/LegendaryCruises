@@ -23,11 +23,13 @@
                         <div class="form-floating mb-3">
                             <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="E-mail">
                             <label asp-for="Input.Email">Adresse e-mail</label>
+                            <span asp-validation-for="Input.Email" class="text-danger small"></span>
                         </div>
 
                         <div class="form-floating mb-3">
                             <input asp-for="Input.Password" class="form-control" autocomplete="password" aria-required="true" placeholder="Mot de passe">
                             <label asp-for="Input.Password">Mot de passe</label>
+                            <span asp-validation-for="Input.Password" class="text-danger small"></span>
                         </div>
 
                         <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary mb-3">Se connecter</button>
@@ -42,3 +44,9 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+}
