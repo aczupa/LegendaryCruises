@@ -368,6 +368,18 @@ body {
     }
 
 
+.back-to-top-btn {
+    opacity: 0;
+    pointer-events: none;
+}
+
+  
+    .back-to-top-btn.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+
 /* =========================================
    TABLET
 ========================================= */

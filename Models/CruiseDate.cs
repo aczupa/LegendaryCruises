@@ -11,7 +11,8 @@ public class CruiseDate
     public DateTime ReturnDate { get; set; }
 
     public int DurationDays =>
-     Math.Max(1, (ReturnDate - DepartureDate).Days + 1);
+      Math.Max(1, (ReturnDate - DepartureDate).Days);
+
 
     public ICollection<DateCabin> Cabins { get; set; } = new List<DateCabin>();
 }
