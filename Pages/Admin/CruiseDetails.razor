@@ -300,6 +300,33 @@ else
         isLoading = false;
     }
 
+    private void EnsureItineraryHasLastDay()
+    {
+        if (cruise == null || cruise.CruiseDates == null || !cruise.CruiseDates.Any())
+            return;
+
+        var firstDate = cruise.CruiseDates
+            .OrderBy(d => d.DepartureDate)
+            .FirstOrDefault();
+
+        if (firstDate == null)
+            return;
+
+        int nights = firstDate.DurationDays;  
+        int expectedDays = nights + 1;         
+
+        if (cruise.Itinerary.Any(i => i.DayNumber == expectedDays))
+            return;
+
+        cruise.Itinerary.Add(new ItineraryDay
+        {
+            DayNumber = expectedDays,
+            Location = cruise.ArrivalPort ?? "Arrivée",
+            Description = "Débarquement et fin de la croisière."
+        });
+    }
+
+
     // ============================
     // ADD / REMOVE DATES
     // ============================
@@ -374,6 +401,8 @@ else
     private async Task SaveChanges()
     {
         if (cruise == null) return;
+
+        EnsureItineraryHasLastDay();
 
         var authState = await Auth.GetAuthenticationStateAsync();
         var response = await CruiseService.EditCruise(cruise, authState.User);

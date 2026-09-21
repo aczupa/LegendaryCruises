@@ -17,9 +17,7 @@ public class CruiseService : ICruiseService
         _factory = factory;
     }
 
-    // ============================================================
-    // ADD CRUISE — Admin i Recruiter mają dostęp
-    // ============================================================
+
     public async Task<BaseResponse> AddCruise(AddCruiseForm form, ClaimsPrincipal currentUser)
     {
         if (!currentUser.IsInRole("Admin") && !currentUser.IsInRole("Recruiter"))
@@ -85,7 +83,7 @@ public class CruiseService : ICruiseService
         }
     }
     // ============================================================
-    // DELETE CRUISE — tylko Admin
+    // DELETE CRUISE — Admin
     // ============================================================
     public async Task<BaseResponse> DeleteCruise(int id, ClaimsPrincipal currentUser)
     {
@@ -134,9 +132,7 @@ public class CruiseService : ICruiseService
     // ============================================================
     // EDIT CRUISE 
     // ============================================================
-    // ============================================================
-    // EDIT CRUISE — Admin (wszystkie) oraz Recruiter (tylko swoje)
-    // ============================================================
+
     public async Task<BaseResponse> EditCruise(Cruise cruise, ClaimsPrincipal currentUser)
     {
         var isAdmin = currentUser.IsInRole("Admin");
@@ -434,4 +430,7 @@ public class CruiseService : ICruiseService
             };
         }
     }
+
+  
+
 }
